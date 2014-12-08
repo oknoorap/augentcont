@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# before installation
 # wget https://bitbucket.org/oknoorap/augencont/raw/master/install.sh && chmod +x install.sh && ./install.sh 
 
 #--------------------------
@@ -13,6 +14,13 @@ sudo apt-get update
 #--------------------------
 echo "Install Git"
 sudo apt-get install git-core -y
+
+#--------------------------
+# Change mysql Password
+#--------------------------
+echo "MySQL old's password: "
+read opwd
+mysqladmin -u root -p'$opwd' password sukses999
 
 
 #--------------------------
