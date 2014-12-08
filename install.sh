@@ -5,17 +5,20 @@
 #--------------------------
 # Update apt-get repository
 #--------------------------
+echo "Update repository"
 sudo apt-get update
 
 #--------------------------
 # Install git
 #--------------------------
+echo "Install Git"
 sudo apt-get install git-core -y
 
 
 #--------------------------
 # Install phpMyAdmin
 #--------------------------
+echo "Install phpMyAdmin"
 sudo apt-get install phpmyadmin -y
 sudo php5enmod mcrypt
 sudo service apache2 restart
@@ -81,6 +84,7 @@ sudo htpasswd -c /etc/phpmyadmin/.htpasswd agc
 #--------------------------
 # Install mod-rewrite
 #--------------------------
+echo "Mod Rewrite"
 sudo a2enmod rewrite
 sudo service apache2 restart
 
@@ -97,11 +101,23 @@ EOFTEST1
 #--------------------------
 # Install Tor
 #--------------------------
+echo "Install Tor"
 sudo apt-get install tor -y
 
 #--------------------------
 # Install FTP
 #--------------------------
+echo "Install FTP"
+sudo apt-get install pure-ftpd pureadmin -y
+sudo groupadd ftpgroup
+sudo useradd -g ftpgroup -d /dev/null -s /etc ftpuser
+sudo pure-pw useradd agc -u ftpuser -d /var/www/html
+sudo pure-pw mkdb
+sudo ln -s /etc/pure-ftpd/pureftpd.passwd /etc/pureftpd.passwd
+sudo ln -s /etc/pure-ftpd/pureftpd.pdb /etc/pureftpd.pdb
+sudo ln -s /etc/pure-ftpd/conf/PureDB /etc/pure-ftpd/auth/PureDB
+sudo chown -hR ftpuser:ftpgroup /var/www/html/
+sudo /etc/init.d/pure-ftpd restart
 
 
 #--------------------------
@@ -109,6 +125,27 @@ sudo apt-get install tor -y
 #--------------------------
 mv monitor.sh /home/monitor.sh
 crontab -l | { cat; echo "* * * * * sh -x /home/monitor.sh"; } | crontab -
+
+
+#--------------------------
+# Clone website source
+#--------------------------
+git clone https://oknoorap@bitbucket.org/oknoorap/augencont.git
+mv augencont/* ./
+rm augencont -rf
+
+
+#--------------------------
+# Fix Permission
+#--------------------------
+chown -R www-data:www-data /var/www/html
+find /var/www/html -type d -exec chmod 755 {} \;
+find /var/www/html -type f -exec chmod 644 {} \;
+usermod -aG ftpgroup www-data
+chown -R ftpuser:ftpgroup /var/www/html
+chmod -R g+ws /var/www/html
+service apache2 restart
+service pure-ftpd restart
 
 
 #--------------------------
