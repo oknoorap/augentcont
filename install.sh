@@ -150,12 +150,34 @@ find /var/www/html -type f -exec chmod 644 {} \;
 usermod -aG ftpgroup www-data
 chown -R ftpuser:ftpgroup /var/www/html
 chmod -R g+ws /var/www/html
+chmod +x backup.sh
 service apache2 restart
 service pure-ftpd restart
-
 
 #--------------------------
 # Finishing Installation
 #--------------------------
+promptyn () {
+    while true; do
+        read -p "$1 " yn
+        case $yn in
+            [Yy]* ) return 0;;
+            [Nn]* ) return 1;;
+            * ) echo "Please answer yes or no.";;
+        esac
+    done
+}
+
+if promptyn "NEW installation [y/n]?"; then
+    echo "Success. Please insert keyword."
+else
+    echo "Enter website's source (include http:// without /) : "
+    read website
+    wget $website/backup.tar.gz
+    mysql -u root -psukses999 agc < db.sql
+    mv config_backup.php config.php
+    rm db.sql -rf
+fi
+
 rm monitor.sh -rf
 rm install.sh -rf
