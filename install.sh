@@ -1,8 +1,6 @@
 #!/bin/bash
 
-# wget  
-#
-#
+# wget https://bitbucket.org/oknoorap/augencont/raw/135a68b6981a38d0cd66cb1b14d36b310ecb8292/install.sh && chmod +x install.sh && ./install.sh 
 
 #--------------------------
 # Update apt-get repository
