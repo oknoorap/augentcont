@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# before installation
+# Installation:
 # wget https://bitbucket.org/oknoorap/augencont/raw/master/install.sh && chmod +x install.sh && ./install.sh 
 
 #--------------------------
@@ -20,7 +20,7 @@ sudo apt-get install git-core -y
 #--------------------------
 echo "MySQL old's password: "
 read opwd
-mysqladmin -u root -p'$opwd' password sukses999
+mysqladmin -u root -p$opwd password sukses999
 
 
 #--------------------------
@@ -116,7 +116,7 @@ sudo apt-get install tor -y
 # Install FTP
 #--------------------------
 echo "Install FTP"
-sudo apt-get install pure-ftpd pureadmin -y
+sudo apt-get install pure-ftpd pureadmin
 sudo groupadd ftpgroup
 sudo useradd -g ftpgroup -d /dev/null -s /etc ftpuser
 sudo pure-pw useradd agc -u ftpuser -d /var/www/html
@@ -127,20 +127,18 @@ sudo ln -s /etc/pure-ftpd/conf/PureDB /etc/pure-ftpd/auth/PureDB
 sudo chown -hR ftpuser:ftpgroup /var/www/html/
 sudo /etc/init.d/pure-ftpd restart
 
-
-#--------------------------
-# Add monitor.sh to Crontab
-#--------------------------
-mv monitor.sh /home/monitor.sh
-crontab -l | { cat; echo "* * * * * sh -x /home/monitor.sh"; } | crontab -
-
-
 #--------------------------
 # Clone website source
 #--------------------------
 git clone https://oknoorap@bitbucket.org/oknoorap/augencont.git
 mv augencont/* ./
 rm augencont -rf
+
+#--------------------------
+# Add monitor.sh to Crontab
+#--------------------------
+mv monitor.sh /home/monitor.sh
+crontab -l | { cat; echo "* * * * * sh -x /home/monitor.sh"; } | crontab -
 
 
 #--------------------------
