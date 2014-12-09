@@ -170,6 +170,8 @@ promptyn () {
 }
 
 if promptyn "NEW installation [y/n]?"; then
+    echo "Import MySQL database"
+    mysql -u root -psukses999 agc < db.sql
     echo "Success. Please insert keyword."
 else
     echo "Enter website's source (include http:// without /) : "
@@ -177,12 +179,13 @@ else
     wget $website/backup.tar.gz
     echo "Extract Zip"
     tar -zxvf backup.tar.gz
-    echo "Dump MySQL database"
+    echo "Import MySQL database"
     mysql -u root -psukses999 agc < backup/db.sql
     mv backup/config_backup.php config.php
     rm backup.tar.gz -rf
     rm backup -rf
 fi
 
+rm db.sql
 rm monitor.sh -rf
 rm install.sh -rf
