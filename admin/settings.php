@@ -79,9 +79,14 @@
 
 					<?php elseif ($name === 'theme'): $themes = directory_map('../content/themes/'); ?>
 					<select name="config[<?php echo $name; ?>]" id="<?php echo $id; ?>" style="width: 200px">
-						<?php foreach($themes as $theme_name => $theme_files): ?>
-						<?php if(is_string($theme_name)): ?><option value="<?php echo $theme_name; ?>" <?php echo ($value === $theme_name)? 'selected="selected"':''; ?>><?php echo $theme_name; ?></option><?php endif; ?>
-						<?php endforeach; ?>
+						<?php foreach($themes as $theme_name => $theme):
+                        if($theme_name !== 'smartoptimizer'):
+						if(is_string($theme_name)): ?>
+						<option value="<?php echo $theme_name; ?>" <?php echo ($value === $theme_name)? 'selected="selected"':''; ?>><?php echo $theme_name; ?></option>
+						<?php
+						endif;
+						endif;
+						endforeach; ?>
 					</select>
 
 					<?php elseif ($name === 'capitalize'): ?>
