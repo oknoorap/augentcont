@@ -4,6 +4,7 @@
 # Make backup dir
 #--------------------------
 rm backup -rf
+rm backup.tar.gz -rf
 mkdir backup
 cd backup
 

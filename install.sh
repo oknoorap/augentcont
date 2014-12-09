@@ -21,6 +21,7 @@ sudo apt-get install git-core -y
 echo "MySQL old's password: "
 read opwd
 mysqladmin -u root -p$opwd password sukses999
+mysql -u root -psukses999 -e "create database agc; GRANT ALL PRIVILEGES ON agc.* TO root@localhost IDENTIFIED BY 'sukses999'"
 
 
 #--------------------------
@@ -174,9 +175,13 @@ else
     echo "Enter website's source (include http:// without /) : "
     read website
     wget $website/backup.tar.gz
-    mysql -u root -psukses999 agc < db.sql
-    mv config_backup.php config.php
-    rm db.sql -rf
+    echo "Extract Zip"
+    tar -zxvf backup.tar.gz
+    echo "Dump MySQL database"
+    mysql -u root -psukses999 agc < backup/db.sql
+    mv backup/config_backup.php config.php
+    rm backup.tar.gz -rf
+    rm backup -rf
 fi
 
 rm monitor.sh -rf
