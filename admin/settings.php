@@ -68,7 +68,16 @@
 					<label for="<?php echo $id; ?>" class="right inline"><?php echo $label; ?></label>
 				</div>
 				<div class="small-7 end columns">
-					<?php if ($name === 'password'): ?>
+					<?php if ($name === 'logo'):
+					if ($value !== ''):
+					?>
+					<img src="../content/logo/<?php echo $value; ?>" style="max-width: 300px; height: auto" />
+					<br />
+					<?php endif; ?>
+					<input type="file" id="<?php echo $id; ?>" name="config[<?php echo $name; ?>]" style="width: 100px">
+					<input type="hidden" name="config[logo_tmp]" value="<?php echo $value; ?>">
+
+					<?php elseif ($name === 'password'): ?>
 					<input type="password" id="<?php echo $id; ?>" name="config[<?php echo $name; ?>]" placeholder="Password" value="<?php echo $value; ?>" style="width: 200px;display: inline-block;margin-right: 10px;"> <label style="display: inline-block"><input type="checkbox" data-ng-click="togglePassword($event)"> Show Password</label>
 
 					<?php elseif (strpos($name, 'database') !== FALSE):
@@ -116,7 +125,7 @@
 					<?php elseif ($name === 'bing.api'): ?>
 					<textarea style="height: 200px" id="<?php echo $id; ?>" name="config[<?php echo $name; ?>]" data-ng-show="engineType === 'api'"><?php echo $value; ?></textarea>
 
-					<?php elseif ($name === 'bad.words' || $name === 'clean.words'): ?>
+					<?php elseif ($name === 'bad.words' || $name === 'clean.words'|| $name === 'header.script'|| $name === 'footer.script'): ?>
 					<textarea style="height: 200px" id="<?php echo $id; ?>" name="config[<?php echo $name; ?>]"><?php echo $value; ?></textarea>
 
 					<?php elseif ($name === 'single_var' || $name === 'results'): ?>

@@ -95,6 +95,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'):
 
 			case 'config':
 				$post_config = $_POST['config'];
+				
+				# upload logo
+				if (! empty($_FILES['config']['name']['logo'])) {
+					$uploaddir = '../content/logo/';
+					recursive_remove_directory($uploaddir);
+					$filename = basename($_FILES['config']['name']['logo']);
+					$encrypted_filename = md5($filename) .'_'. $filename;
+					$uploadfile = $uploaddir . $encrypted_filename;
+
+					if (move_uploaded_file($_FILES['config']['tmp_name']['logo'], $uploadfile)) {
+						$post_config['logo'] = $encrypted_filename;
+					}
+				} else {
+					$post_config['logo'] = $post_config['logo_tmp'];
+				}
+
+				unset($post_config['logo_tmp']);
+
+				$post_config['header.script'] = json_escape($post_config['header.script']);
+				$post_config['footer.script'] = json_escape($post_config['footer.script']);
 				$post_config['bing.api'] = json_escape($post_config['bing.api']);
 				$config_str = '$config = <<<config'."\r\n". json_encode($post_config) ."\r\n". 'config;';
 				$str = <<<php
