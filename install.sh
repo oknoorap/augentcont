@@ -152,6 +152,7 @@ usermod -aG ftpgroup www-data
 chown -R ftpuser:ftpgroup /var/www/html
 chmod -R g+ws /var/www/html
 chmod +x backup.sh
+chmod +x update.sh
 service apache2 restart
 service pure-ftpd restart
 
@@ -186,6 +187,6 @@ else
     rm backup -rf
 fi
 
-rm db.sql
+rm db.sql -rf
 rm monitor.sh -rf
 rm install.sh -rf
