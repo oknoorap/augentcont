@@ -114,6 +114,12 @@ echo "Install Tor"
 sudo apt-get install tor -y
 
 #--------------------------
+# Install CURL
+#--------------------------
+echo "Install CURL"
+sudo apt-get install php5-curl -y
+
+#--------------------------
 # Install FTP
 #--------------------------
 echo "Install FTP"
