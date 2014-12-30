@@ -12,7 +12,7 @@
 		'about', 'copyrights', 'privacy', 'terms', 'contact', 'faq'
 	);
 	for($i = 1; $i < 7; $i++):
-		$json = file_get_contents('../content/pages/'. $page_name[$i - 1] .'.txt');
+		$json = read_file('../content/pages/'. $page_name[$i - 1] .'.txt');
 		$json = json_decode($json, TRUE);
 		$title = htmlentities($json['title']);
 		$content = htmlentities($json['content']);
@@ -20,7 +20,7 @@
 	<div class="content <?php echo ($i === 1) ? 'active': ''; ?>" id="panel-<?php echo $i; ?>">
 		<form method="POST" enctype="multipart/form-data" action="">
 			<input type="text" name="title" placeholder="Page Title" value="<?php echo $title; ?>">
-			<textarea class="ckeditor" name="content"><?php echo $content; ?></textarea>
+			<textarea class="editor" name="content"><?php echo $content; ?></textarea>
 			<input type="hidden" name="name" value="<?php echo $page_name[$i - 1]; ?>">
 			<input type="hidden" name="type" value="page">
 			<br />
@@ -31,3 +31,4 @@
 	</div>
 	<?php endfor; ?>
 </div>
+<script>var usingSpinner = '<?php echo (config('using.spinner')) ? 'true': 'false'; ?>';</script>

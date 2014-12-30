@@ -1,0 +1,2273 @@
+article, aside, details, figcaption, figure, footer, header, hgroup, main, nav, section, summary {
+    display: block
+}
+audio, canvas, video {
+    display: inline-block
+}
+audio:not([controls]) {
+    display: none;
+    height: 0
+}
+[hidden] {
+    display: none
+}
+html {
+    font-family: sans-serif;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%
+}
+body {
+    margin: 0
+}
+a:focus {
+    outline: thin dotted
+}
+a:active, a:hover {
+    outline: 0
+}
+h1 {
+    font-size: 2em;
+    margin: .67em 0
+}
+abbr[title] {
+    border-bottom: 1px dotted
+}
+b, strong {
+    font-weight: bold
+}
+dfn {
+    font-style: italic
+}
+hr {
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 0
+}
+mark {
+    background: #ff0;
+    color: #000
+}
+code, kbd, pre, samp {
+    font-family: monospace, serif;
+    font-size: 1em
+}
+pre {
+    white-space: pre-wrap
+}
+q {
+    quotes: "“" "”" "‘" "’"
+}
+small {
+    font-size: 80%
+}
+sub, sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline
+}
+sup {
+    top: -.5em
+}
+sub {
+    bottom: -.25em
+}
+img {
+    border: 0
+}
+svg:not(:root) {
+    overflow: hidden
+}
+figure {
+    margin: 0
+}
+fieldset {
+    border: 1px solid silver;
+    margin: 0 2px;
+    padding: .35em .625em .75em
+}
+legend {
+    border: 0;
+    padding: 0
+}
+button, input, select, textarea {
+    font-family: inherit;
+    font-size: 100%;
+    margin: 0
+}
+button, input {
+    line-height: normal
+}
+button, select {
+    text-transform: none
+}
+button, html input[type="button"], input[type="reset"], input[type="submit"] {
+    -webkit-appearance: button;
+    cursor: pointer
+}
+button[disabled], html input[disabled] {
+    cursor: default
+}
+input[type="checkbox"], input[type="radio"] {
+    box-sizing: border-box;
+    padding: 0
+}
+input[type="search"] {
+    -webkit-appearance: textfield;
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box;
+    box-sizing: content-box
+}
+input[type="search"]::-webkit-search-cancel-button, input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none
+}
+button::-moz-focus-inner, input::-moz-focus-inner {
+    border: 0;
+    padding: 0
+}
+textarea {
+    overflow: auto;
+    vertical-align: top
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0
+}
+html, body {
+    height: 100%
+}
+body {
+    font-family: OpenSans, sans-serif;
+    font-size: small;
+    color: #333
+}
+body>.wrapper {
+    width: 80%;
+    max-width: 1500px;
+    margin: auto
+}
+a[href="#main"] {
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: .5em;
+    text-decoration: none;
+    color: #424242
+}
+a[href="#main"]:focus {
+    z-index: 1
+}
+body>header {
+    margin: 5em 0 1em 0
+}
+body>header a {
+    text-decoration: none;
+    color: #666
+}
+body>header img {
+    margin: 0 15px -5px 0
+}
+body>header a:hover {
+    color: #333
+}
+body>header p {
+    font-size: 130%;
+    font-family: ProximaNovaLight;
+    width: 80%;
+    max-width: 1500px;
+    margin: auto;
+    letter-spacing: 1px
+}
+body>header>ul {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    text-align: right;
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-bottom: 1px solid #d4d4d4;
+    background-color: #fafafa;
+    background-image: -moz-linear-gradient(top, #fff, #f2f2f2);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#fff), to(#f2f2f2));
+    background-image: -webkit-linear-gradient(top, #fff, #f2f2f2);
+    background-image: -o-linear-gradient(top, #fff, #f2f2f2);
+    background-image: linear-gradient(to bottom, #fff, #f2f2f2);
+    background-repeat: repeat-x;
+    filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff2f2f2', GradientType=0);
+    -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, .065);
+    -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, .065);
+    box-shadow: 0 6px 6px rgba(0, 0, 0, .065)
+}
+body>header>ul>li {
+    display: inline;
+    position: relative;
+    border-left: 1px solid #999
+}
+body>header>ul>li:first-child {
+    border-left: 0
+}
+body>header>ul>li>a {
+    display: inline-block;
+    padding: .5em 1em
+}
+#languages {
+    display: none
+}
+#languages:target {
+    display: block;
+    position: absolute;
+    top: 100%;
+    width: 100%;
+    padding: 1em 0;
+    text-align: left;
+    background: #f2f2f2;
+    z-index: 1;
+    right: 0
+}
+#languages li {
+    display: block;
+    padding: .25em 1em
+}
+#search {
+    margin: 2em 0;
+    padding: .75em 10%;
+    background: #f78f40;
+    background: -moz-linear-gradient(top, #f78f40 0%, #f89b51 25%, #f89b51 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f78f40), color-stop(25%, #f89b51), color-stop(100%, #f89b51));
+    background: -webkit-linear-gradient(top, #f78f40 0%, #f89b51 25%, #f89b51 100%);
+    background: -o-linear-gradient(top, #f78f40 0%, #f89b51 25%, #f89b51 100%);
+    background: -ms-linear-gradient(top, #f78f40 0%, #f89b51 25%, #f89b51 100%);
+    background: linear-gradient(to bottom, #f78f40 0%, #f89b51 25%, #f89b51 100%);
+    filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#f78f40', endColorstr='#f89b51', GradientType=0);
+    box-shadow: 0 3px 6px 0 #bbb
+}
+#search>form {
+    margin: 0;
+    padding: 0 80px 0 0;
+    height: 3em;
+    background: #fff;
+    border: 1px solid #fff;
+    box-shadow: 0 0 2px 1px #bbb;
+    border-radius: 4px;
+    position: relative;
+    background: #fff;
+    background: -moz-linear-gradient(top, #fff 0%, #fff 25%, #e6e6e6 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fff), color-stop(25%, #fff), color-stop(100%, #e6e6e6));
+    background: -webkit-linear-gradient(top, #fff 0%, #fff 25%, #e6e6e6 100%);
+    background: -o-linear-gradient(top, #fff 0%, #fff 25%, #e6e6e6 100%);
+    background: -ms-linear-gradient(top, #fff 0%, #fff 25%, #e6e6e6 100%);
+    background: linear-gradient(to bottom, #fff 0%, #fff 25%, #e6e6e6 100%)
+}
+#search>form>input {
+    width: 96%;
+    height: 1.5em;
+    background: transparent;
+    padding: 10px 2%;
+    border: 0
+}
+#search>form>button {
+    position: absolute;
+    right: 0;
+    top: 0;
+    border: 0;
+    width: 78px;
+    height: 3em;
+    border-radius: 0 5px 5px 0;
+    background: #424242;
+    color: #fff;
+    filter: none
+}
+#search>form>button:hover {
+    background: #0ecfd8
+}
+a[href="#categories"] {
+    display: none
+}
+#categories {
+    float: left;
+    width: 20%
+}
+body.nomenu #categories {
+    display: none
+}
+#categories a {
+    display: block;
+    text-decoration: none
+}
+#categories ul, #categories li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    position: relative
+}
+#categories li li .toggle:before {
+    font-family: FontAwesome;
+    color: #bcbcbc;
+    content: '';
+    position: absolute;
+    right: 3px;
+    top: 0;
+    width: 20px;
+    height: 15px;
+    text-align: center;
+    padding-top: 10px
+}
+#categories li li.open .toggle:before {
+    content: ''
+}
+#categories>ul>li {
+    margin: 0 0 1em 0;
+    border-radius: 5px;
+    border: 1px solid #e6e6e6
+}
+#categories>ul>li>a {
+    padding: .5em 1em;
+    font-size: 110%;
+    color: #fff;
+    text-decoration: none;
+    background: #f78f40;
+    background: -moz-linear-gradient(top, #f78f40 0%, #f89b51 25%, #f89b51 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f78f40), color-stop(25%, #f89b51), color-stop(100%, #f89b51));
+    background: -webkit-linear-gradient(top, #f78f40 0%, #f89b51 25%, #f89b51 100%);
+    background: -o-linear-gradient(top, #f78f40 0%, #f89b51 25%, #f89b51 100%);
+    background: -ms-linear-gradient(top, #f78f40 0%, #f89b51 25%, #f89b51 100%);
+    background: linear-gradient(to bottom, #f78f40 0%, #f89b51 25%, #f89b51 100%);
+    filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#f78f40', endColorstr='#f89b51', GradientType=0)
+}
+a[href="#categories"] {
+    padding: .5em 1em .5em 2em;
+    font-size: 110%;
+    color: #fff;
+    text-decoration: none;
+    background: #00d4e9;
+    background: -moz-linear-gradient(top, #00d4e9 0%, #00c1d0 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #00d4e9), color-stop(100%, #00c1d0));
+    background: -webkit-linear-gradient(top, #00d4e9 0%, #00c1d0 100%);
+    background: -o-linear-gradient(top, #00d4e9 0%, #00c1d0 100%);
+    background: -ms-linear-gradient(top, #00d4e9 0%, #00c1d0 100%);
+    background: linear-gradient(to bottom, #00d4e9 0%, #00c1d0 100%);
+    filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#00d4e9', endColorstr='#00c1d0', GradientType=0);
+    position: relative
+}
+a[href="#categories"]:before {
+    content: '';
+    font: 14px FontAwesome;
+    position: absolute;
+    left: 10px;
+    top: 10px
+}
+#categories>ul>li>.toggle {
+    background: url('/content/images/business.png') no-repeat;
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    width: 30px;
+    height: 15px;
+    text-align: center;
+    padding-top: 2px;
+    background-size: cover
+}
+#categories>ul>li:first-child>.toggle {
+    background: url('/content/images/student.png') no-repeat;
+    background-size: cover
+}
+#categories>ul>li>ul {
+    padding: .5em 0
+}
+#categories>ul>li>ul a {
+    padding: .5em 1em;
+    color: #333
+}
+#categories>ul>li>ul a:hover, #categories>ul>li>ul li.current>a {
+    background: #fff4e4
+}
+#categories ul ul ul {
+    display: none
+}
+#categories ul ul li.open ul {
+    display: block
+}
+#categories ul ul ul a {
+    padding-left: 2em;
+    font-weight: normal
+}
+#cookieBanner {
+    background-color: #111;
+    z-index: 999999;
+    opacity: .9;
+    position: fixed;
+    padding: 10px 0;
+    width: 100%;
+    left: 0;
+    font-size: 13px;
+    font-weight: normal;
+    text-align: left;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 0 8px #000;
+    bottom: 0;
+    display: none
+}
+#cookieBanner div {
+    margin: 0 0;
+    font-size: 13px;
+    font-weight: normal;
+    text-align: center;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    line-height: 23px
+}
+#floater {
+    width: 275px;
+    position: fixed;
+    bottom: 6px;
+    right: 6px;
+    box-shadow: 0 0 3px 3px #ddd;
+    z-index: 1000;
+    display: none
+}
+#floater .header {
+    padding: 5px 8px;
+    background: #424242;
+    border-bottom: 2px solid #f78f40;
+    font-size: 90%;
+    line-height: 1.2;
+    color: #fff
+}
+#floater .body {
+    height: 72px;
+    padding: 10px 0;
+    background-color: #fafafa;
+    background-image: -moz-linear-gradient(top, #fff, #f2f2f2);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#fff), to(#f2f2f2));
+    background-image: -webkit-linear-gradient(top, #fff, #f2f2f2);
+    background-image: -o-linear-gradient(top, #fff, #f2f2f2);
+    background-image: linear-gradient(to bottom, #fff, #f2f2f2);
+    text-align: center
+}
+#floater .body span[class^="st_"] {
+    margin: 0 15px
+}
+#floater a.close {
+    position: absolute;
+    right: 8px;
+    top: 4px;
+    color: #ccc;
+    cursor: pointer
+}
+#floater a.close:before {
+    content: '×'
+}
+footer {
+    clear: both;
+    width: 100%;
+    padding-top: 30px
+}
+footer>div {
+    clear: both;
+    width: 100%
+}
+footer .sharing {
+    height: 25px;
+    font-size: 130%;
+    margin: 10px 0 45px 0;
+    -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, .065);
+    -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, .065);
+    box-shadow: 0 6px 6px rgba(0, 0, 0, .065);
+    position: relative
+}
+footer .sharing>div {
+    position: absolute;
+    top: 36px;
+    width: 100%;
+    text-align: center;
+    display: block
+}
+footer .sharing>div span {
+    text-align: left
+}
+footer .copyright, footer #footer>div {
+    width: 80%;
+    max-width: 1500px;
+    margin: auto
+}
+footer .copyright {
+    padding: 20px 0
+}
+footer .copyright img {
+    width: 140px
+}
+footer #footer {
+    padding: 22px 0 60px 0;
+    color: #2b2b2b;
+    background-color: #efece8;
+    line-height: 1.6;
+    float: left
+}
+#footer a {
+    color: #2b2b2b;
+    text-decoration: none
+}
+#footer li {
+    list-style: none
+}
+#footer .pages {
+    list-style: none;
+    float: left;
+    width: 168px;
+    margin: 0 22px 24px 22px;
+    min-height: 110px;
+    text-align: left
+}
+#footer .pages:first-child {
+    margin: 0 22px 24px 0
+}
+#footer .pages ul {
+    width: auto;
+    font-size: 8pt;
+    padding: 0
+}
+#footer .pages li {
+    float: none;
+    margin: 0
+}
+body:not(.nomenu) #categories+#main {
+    float: right;
+    width: 75%
+}
+#main>section {
+    margin: 2em 0;
+    padding: 1em;
+    border: 1px solid #ccc;
+    border-radius: .5em;
+    overflow: hidden
+}
+#main>section.recent {
+	margin-top: 0;
+}
+h1, h2, h3 {
+    margin: 0 0 1em 0;
+    font-weight: normal
+}
+h3 {
+    font-size: 1.2em
+}
+b, em {
+    color: #f78f40;
+    font-weight: inherit;
+    font-style: normal
+}
+ol.breadcrumbs {
+    margin: 0 0 1em 0;
+    padding: 0;
+    list-style: none;
+    color: #999
+}
+ol.breadcrumbs li {
+    display: inline
+}
+ol.breadcrumbs li:before {
+    content: '>';
+    padding: 0 .5em
+}
+ol.breadcrumbs li:first-child:before {
+    display: none
+}
+ol.breadcrumbs li a {
+    color: #999;
+    text-decoration: none
+}
+ol.breadcrumbs li a:hover {
+    color: #81cce1
+}
+ol.breadcrumbs li.current {
+    font-weight: bold
+}
+button, .button {
+    color: #fff;
+    border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0);
+    background: #00d4e9;
+    background: -moz-linear-gradient(top, #00d4e9 0%, #00c1d0 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #00d4e9), color-stop(100%, #00c1d0));
+    background: -webkit-linear-gradient(top, #00d4e9 0%, #00c1d0 100%);
+    background: -o-linear-gradient(top, #00d4e9 0%, #00c1d0 100%);
+    background: -ms-linear-gradient(top, #00d4e9 0%, #00c1d0 100%);
+    background: linear-gradient(to bottom, #00d4e9 0%, #00c1d0 100%);
+    filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#00d4e9', endColorstr='#00c1d0', GradientType=0);
+    font-weight: bold;
+    padding: 2px 15px;
+    border-radius: 4px;
+    cursor: pointer
+}
+button:hover, .button:hover {
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1), 0 1px 5px rgba(0, 0, 0, .25);
+    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1), 0 1px 5px rgba(0, 0, 0, .25);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1), 0 1px 5px rgba(0, 0, 0, .25);
+    background: #0ecfd8
+}
+.carouselViewport a.left, .carouselViewport a.right {
+    width: 32px;
+    height: 100%;
+    font-size: 160%;
+    position: absolute;
+    top: 0;
+    z-index: 100;
+    cursor: pointer;
+    background-color: #fff
+}
+.carouselViewport {
+    position: relative;
+    overflow: hidden;
+    padding: 0 36px
+}
+.carouselViewport a.left {
+    left: 0
+}
+.carouselViewport a.right {
+    right: 0
+}
+.carouselViewport a.left:before, .carouselViewport a.right:before {
+    position: absolute;
+    top: 50%;
+    width: 1em;
+    height: 1em;
+    margin-top: -.75em;
+    background: #f7f7f7;
+    border: 1px solid #e6e6e6;
+    border-radius: 1.5em;
+    text-align: center;
+    color: #666;
+    padding: 4px;
+    font-family: FontAwesome
+}
+.carouselViewport a.left:hover:before, .carouselViewport a.right:hover:before {
+    box-shadow: 0 0 1px #999
+}
+.carouselViewport a.left:before {
+    left: 1px;
+    content: ''
+}
+.carouselViewport a.right:before {
+    right: 1px;
+    content: ''
+}
+ul.checkboxes {
+    margin: .5em;
+    line-height: 1.8;
+    list-style-type: none
+}
+ul.checkboxes input {
+    margin-right: 1px;
+    position: relative;
+    top: 2px
+}
+.submit {
+    margin-top: 1em
+}
+.rating {
+    position: relative;
+    font-size: 120%;
+    color: #e6e6e6;
+    white-space: nowrap
+}
+.rating:before, .rating .stars:before {
+    font-family: FontAwesome;
+    content: ''
+}
+.rating .stars {
+    position: absolute;
+    overflow: hidden;
+    left: 0;
+    top: 0;
+    color: #e6ae61
+}
+.premium-banner {
+    display: none
+}
+.welcome-banner {
+    display: none
+}
+body.newuser .welcome-banner {
+    display: block;
+    height: 290px;
+    margin: 0 0 20px 0;
+    border: 1px solid #ccc;
+    border-radius: .5em;
+    position: relative;
+    background: #f3f3f3;
+    background: -moz-linear-gradient(top, #f3f3f3 0%, #fff 50%, #f3f3f3 100%);
+    background: -webkit-linear-gradient(top, #f3f3f3 0%, #fff 50%, #f3f3f3 100%);
+    background: -o-linear-gradient(top, #f3f3f3 0%, #fff 50%, #f3f3f3 100%);
+    background: -ms-linear-gradient(top, #f3f3f3 0%, #fff 50%, #f3f3f3 100%);
+    background: linear-gradient(to bottom, #f3f3f3 0%, #fff 50%, #f3f3f3 100%);
+    filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#f3f3f3', endColorstr='#ffffff', GradientType=0)
+}
+body.newuser .welcome-banner.slim {
+    background: transparent;
+    height: 170px
+}
+.welcome-banner hgroup {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    width: 100%;
+    text-align: center
+}
+.welcome-banner hgroup h1, .welcome-banner hgroup h2 {
+    margin: 0 5px;
+    font-size: 160%
+}
+.welcome-banner hgroup ol {
+    padding: 6px 0;
+    list-style: none;
+    border-top: 1px solid #d3d3d3
+}
+.welcome-banner hgroup ol li {
+    float: left;
+    width: 30%;
+    margin-right: 3%
+}
+.welcome-banner hgroup ol li a {
+    color: #333
+}
+.welcome-banner ol.steps {
+    margin: 30px;
+    padding: 0;
+    list-style: none
+}
+.welcome-banner ol.steps li {
+    float: left;
+    width: 30%;
+    height: 30px;
+    padding: 90px 0 0 0;
+    text-align: center;
+    font-size: 120%;
+    margin-right: 3%
+}
+.welcome-banner ol.steps li:nth-child(1) {
+    background: url(/content/images/welcome-1.png) no-repeat center top
+}
+.welcome-banner ol.steps li:nth-child(2) {
+    background: url(/content/images/welcome-2.png) no-repeat center top
+}
+.welcome-banner ol.steps li:nth-child(3) {
+    background: url(/content/images/welcome-3.png) no-repeat center top
+}
+article.book {
+    position: relative
+}
+article.book .main {
+    position: relative;
+    min-height: 450px;
+    overflow: hidden
+}
+article.book header {
+    margin-bottom: 15px
+}
+article.book header a {
+    color: #333
+}
+article.book header * {
+    margin: 0
+}
+article.book header>div {
+    margin: 10px 0
+}
+article.book header .institution {
+    display: block
+}
+article.book img.thumb {
+    width: 100%;
+    box-shadow: 0 0 6px 0 gray
+}
+article.book img.thumb.premium, body.premium article.book.premium img.thumb {
+    display: none
+}
+body.premium article.book.premium img.thumb.premium {
+    display: block
+}
+article.book .facts {
+    width: 30%;
+    float: left;
+    max-width: 360px;
+    padding-left: 5px
+}
+article.book .facts .reviews {
+    margin: 15px 0 25px 0;
+    text-align: center
+}
+article.book .facts .reviews a {
+    display: block;
+    color: #f89b51
+}
+article.book .facts .reviews .rating {
+    display: inline-block;
+    font-size: 200%
+}
+article.book .facts .reviews .numbers {
+    white-space: nowrap;
+    margin: 5px 0;
+    position: relative;
+    top: -4px;
+    display: block
+}
+article.book .facts .reviews button {
+    background: #424242;
+    display: none
+}
+article.book .facts .reviews *[itemprop="ratingValue"] {
+    display: none
+}
+article.book .main section {
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: .5em;
+    float: right;
+    width: 65%
+}
+article.book .main section>* {
+    margin: 15px
+}
+article.book section.premium {
+    display: none;
+    background: url(/content/images/premium-stamp.png) 99% 20px no-repeat;
+    min-height: 330px
+}
+article.book section.premium div.features {
+    position: absolute;
+    bottom: 0
+}
+article.book.premium section.premium h2.non-exclusive, article.book:not(.premium) section.premium h2.exclusive {
+    display: none
+}
+article.book section.premium div.features ul {
+    padding: 0
+}
+article.book section.premium div.features li {
+    list-style-type: none;
+    display: inline-block
+}
+article.book section.premium div.features li:before {
+    content: " - "
+}
+article.book section.premium div.features li:first-child:before {
+    content: ""
+}
+article.book section.premium div.features a {
+    color: #f78f40
+}
+article.book section.premium>p {
+    width: 70%
+}
+body.premium article.book.premium section.premium {
+    display: block;
+    position: relative
+}
+article.book section.premium ul.features {
+    padding: 0 0 50px 0;
+    margin: 60px 20px;
+    list-style: none;
+    overflow: hidden
+}
+article.book .buttons {
+    position: absolute;
+    right: 0;
+    bottom: 5px;
+    text-align: center
+}
+article.book .buttons p {
+    margin: 5px 0
+}
+article.book section.premium .subscription span {
+    display: block
+}
+article.book section.premium .buy .singlebook, article.book section.premium .buy .subscription {
+    width: 49%;
+    float: left;
+    text-align: center;
+    margin-bottom: 30px
+}
+article.book section.premium .buy {
+    margin-bottom: 15px
+}
+article.book section.premium .buy a, article.book section.premium .subscription a {
+    width: 130px;
+    padding: 8px 10px;
+    display: inline-block;
+    text-decoration: none;
+    background: #666;
+    border-radius: 3px;
+    color: #fff;
+    position: relative
+}
+article.book section.premium .subscription a {
+    background: #00d4e9;
+    background: -moz-linear-gradient(top, #00d4e9 0%, #00c1d0 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #00d4e9), color-stop(100%, #00c1d0));
+    background: -webkit-linear-gradient(top, #00d4e9 0%, #00c1d0 100%);
+    background: -o-linear-gradient(top, #00d4e9 0%, #00c1d0 100%);
+    background: -ms-linear-gradient(top, #00d4e9 0%, #00c1d0 100%);
+    background: linear-gradient(to bottom, #00d4e9 0%, #00c1d0 100%);
+    filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#00d4e9', endColorstr='#00c1d0', GradientType=0)
+}
+article.book section.premium .buttons a:after {
+    font: 10px FontAwesome;
+    content: "";
+    position: absolute;
+    right: 6px;
+    top: 10px
+}
+body.premium article.book.premium section.download {
+    display: none
+}
+article.book .featured .books {
+    height: 240px;
+    overflow: hidden
+}
+article.book .featured .books li {
+    float: left;
+    margin-bottom: 10px
+}
+article.book>section {
+    margin: 30px 0;
+    overflow: hidden;
+    clear: both
+}
+article.book>section>h2 {
+    margin: 20px 0;
+    padding: 20px 0;
+    border: 1px solid #ccc;
+    border-width: 1px 0 1px 0;
+    font-size: 180%
+}
+article.book section.details>ol {
+    float: left;
+    width: 20%;
+    margin: 0;
+    padding: 0;
+    list-style: none
+}
+article.book section.details>ol a {
+    padding: 10px 0;
+    display: block;
+    font-size: 110%;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    color: #999;
+    position: relative
+}
+article.book section.details>ol li.active a {
+    color: #000;
+    border-bottom-color: #999
+}
+article.book section.details>ol li a:hover:after, article.book section.details>ol li.active a:after {
+    content: '';
+    font-family: FontAwesome;
+    font-weight: normal;
+    margin-right: 6px;
+    position: absolute;
+    right: 0;
+    top: 14px
+}
+article.book section.details .content {
+    float: right;
+    width: 65%
+}
+article.book section.details .content div {
+    margin-top: 40px
+}
+article.book section.details .content div:first-child {
+    margin-top: 10px
+}
+article.book section.details .content h3 {
+    border-bottom: 1px solid #eee;
+    margin-bottom: 20px;
+    clear: both;
+    width: 100%
+}
+article.book .includes {
+    margin: 20px 0
+}
+article.book .includes h2 {
+    margin-bottom: 15px
+}
+article.book .includes li {
+    margin: 5px 0
+}
+body.premium article.book .includes li.premium {
+    display: none
+}
+article.book .includes a {
+    color: #666
+}
+article.book .includes a:hover {
+    border-color: #f89b51;
+    color: #f89b51
+}
+article.book .static ul, article.book .static ol {
+    margin: 1em 0;
+    line-height: 1.6;
+    padding-left: 1em
+}
+article.book .static ul {
+    list-style: disc
+}
+article.book .static ol {
+    counter-reset: item
+}
+article.book .static ol li {
+    display: block
+}
+article.book .static ol li:before {
+    content: counters(item, ".") ". ";
+    counter-increment: item;
+    margin-left: -15px
+}
+article.book .static li ol {
+    margin: .5em 0 .5em 0
+}
+article.book .static li {
+    margin-left: 1em
+}
+.category>header {
+    margin: 0 0 20px 0;
+    padding: 10px 10% 20px 30px;
+    min-height: 100px;
+    background: -moz-linear-gradient(top, transparent 0%, rgba(0, 0, 0, .04) 100%);
+    background: -webkit-linear-gradient(top, transparent 0%, rgba(0, 0, 0, .04) 100%);
+    background: -o-linear-gradient(top, transparent 0%, rgba(0, 0, 0, .04) 100%);
+    background: -ms-linear-gradient(top, transparent 0%, rgba(0, 0, 0, .04) 100%);
+    background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, .04) 100%);
+    filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#f6f6f6', GradientType=0)
+}
+.category>header h1 {
+    font-size: 250%;
+    font-weight: normal;
+    font-family: ProximaNovaLight;
+    margin: 0 0 .5em 0
+}
+article.category {
+    position: relative;
+    overflow: hidden
+}
+.category>a.zip~.books {
+    margin-top: 210px
+}
+.category a.zip {
+    padding-left: 130px;
+    height: 170px;
+    top: 240px;
+    position: absolute;
+    text-decoration: none;
+    color: #333;
+    width: 100%
+}
+.category a.zip span {
+    position: absolute;
+    right: 140px;
+    padding: 4px 17px
+}
+.category a.zip~.list {
+    border-top: 1px solid #ccc
+}
+.category a.zip h3 {
+    font-size: 140%
+}
+.category a.zip img {
+    box-shadow: 0 0 6px 0 gray;
+    width: 100px;
+    position: absolute;
+    left: 15px
+}
+.category .toolbar {
+    margin: 20px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-width: 1px 0 1px 0;
+    position: relative
+}
+.category .toolbar menu {
+    margin: 0;
+    position: absolute;
+    top: 10px;
+    right: 0;
+    background: #fff
+}
+.category .toolbar menu ul {
+    margin: 0;
+    padding: 0;
+    list-style: none
+}
+.category .toolbar menu ul li {
+    float: left;
+    margin-left: 10px;
+    padding-left: 10px;
+    border-left: 1px solid #ccc
+}
+.category .toolbar input[name="layout"] {
+    display: none
+}
+.category .toolbar label[for^="layout_"] {
+    width: 13px;
+    height: 14px;
+    margin: 0 4px;
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    white-space: nowrap
+}
+.category .toolbar label[for^="layout_"]:before {
+    font: 14px FontAwesome;
+    color: #aaa
+}
+.category .toolbar label[for="layout_list"]:before {
+    content: ''
+}
+.category .toolbar label[for="layout_grid"]:before {
+    content: ''
+}
+.category input:checked+label[for^="layout_"]:before {
+    color: #000
+}
+.category .toolbar menu ul li:first-child {
+    border-left: 0
+}
+.category .books .pages>span:first-child {
+    border-left: 0;
+    padding-left: 0
+}
+.category .books .pages>span {
+    border-left: 1px solid #d3d3d3;
+    padding-left: 10px;
+    margin-right: 8px
+}
+body.premium .category .books article.premium div.premium::before {
+    content: '';
+    width: 100px;
+    height: 75px;
+    background: url(/content/images/premium-stamp.png) no-repeat;
+    background-size: cover
+}
+.category .books article img.thumb.premium, body.premium .category .books article.preium img.thumb {
+    display: none
+}
+body.premium .category .books article.premium img.thumb.premium {
+    display: block
+}
+.category .books.grid article {
+    width: 50%;
+    float: left;
+    position: relative
+}
+.category .books.grid article a {
+    display: block;
+    height: 200px;
+    margin: 0 10px 20px 0;
+    padding: 14px 20px 20px 130px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-decoration: none;
+    color: #000
+}
+.category .books.grid article img.thumb {
+    box-shadow: 0 0 6px 0 gray;
+    width: 100px;
+    position: absolute;
+    left: 15px;
+    top: 15px
+}
+body.premium .category .books.grid article div.premium::before {
+    position: absolute;
+    left: 15px;
+    top: 15px
+}
+.category .books.grid article:nth-child(even) {
+    left: 10px
+}
+.category .books.grid h3 {
+    margin: 0 0 .5em 0;
+    font-size: 125%
+}
+.category .books.grid article .description {
+    height: 2.5em;
+    overflow: hidden
+}
+.category .books.grid article .premium {
+    font-weight: bold;
+    line-height: 1
+}
+.category .books.grid button {
+    position: absolute;
+    bottom: 40px;
+    left: 130px
+}
+.category .books.list article {
+    width: 100%;
+    float: left;
+    position: relative;
+    height: 165px;
+    border-bottom: 1px solid #ccc;
+    padding-top: 20px;
+    overflow: hidden
+}
+body.premium .category .books.list article.premium {
+    background: -moz-linear-gradient(top, rgba(4, 10, 1, .08) 0%, rgba(4, 10, 1, .08) 1%, rgba(255, 255, 255, 0) 48%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(4, 10, 1, .08)), color-stop(1%, rgba(4, 10, 1, .08)), color-stop(48%, rgba(255, 255, 255, 0)));
+    background: -webkit-linear-gradient(top, rgba(4, 10, 1, .08) 0%, rgba(4, 10, 1, .08) 1%, rgba(255, 255, 255, 0) 48%);
+    background: -o-linear-gradient(top, rgba(4, 10, 1, .08) 0%, rgba(4, 10, 1, .08) 1%, rgba(255, 255, 255, 0) 48%);
+    background: -ms-linear-gradient(top, rgba(4, 10, 1, .08) 0%, rgba(4, 10, 1, .08) 1%, rgba(255, 255, 255, 0) 48%);
+    background: linear-gradient(to bottom, rgba(4, 10, 1, .08) 0%, rgba(4, 10, 1, .08) 1%, rgba(255, 255, 255, 0) 48%);
+    filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#14040a01', endColorstr='#00ffffff', GradientType=0)
+}
+.category .books.list article div.book {
+    padding: 0 0 0 130px;
+    float: left;
+    text-decoration: none;
+    color: #000
+}
+.category .books.list article img.thumb {
+    box-shadow: 0 0 6px 0 gray;
+    width: 100px;
+    position: absolute;
+    left: 15px;
+    top: 20px
+}
+.category .books.list .description {
+    width: 80%;
+    overflow: hidden;
+    height: 3em
+}
+.button {
+    display: inline-block;
+    padding: 5px 20px;
+	text-decoration: none;
+}
+body.premium .category .books.list article.pdf.premium>form {
+    display: none
+}
+.category .books article a:hover img.thumb {
+    box-shadow: 0 0 10px 2px gray
+}
+.category .books.list article div.premium {
+    display: none
+}
+body.premium .category .books.list article div.premium {
+    position: absolute;
+    right: 10px;
+    width: 100px;
+    bottom: 55px;
+    display: block
+}
+body.premium .category .books.list article div.premium ul {
+    list-style-type: none;
+    display: inline;
+    margin: 0;
+    padding: 0
+}
+body.premium .category .books.list article div.premium button {
+    display: block;
+    bottom: -35px;
+    right: 0;
+    white-space: nowrap
+}
+body.premium .category .books.list article div.premium::before {
+    position: absolute;
+    top: -80px;
+    left: 0
+}
+body.premium.textbooks .category .books article.premium {
+    display: none
+}
+.evaluation p {
+    margin: .5em 0
+}
+.evaluation .steps {
+    position: relative;
+    padding: 4em 0 0 0
+}
+.evaluation ul.customers {
+    margin: 1.5em .5em;
+    list-style-type: none
+}
+.evaluation ul.customers li {
+    margin: .5em 0;
+    font-size: 130%
+}
+.evaluation ul.thumbnails {
+    margin: 1.5em 0;
+    list-style-type: none;
+    overflow: hidden;
+    -height: 1px;
+    -overflow: visible
+}
+.evaluation ul.thumbnails label {
+    float: left;
+    margin: 8px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden
+}
+.evaluation ul.thumbnails input {
+    position: absolute;
+    top: 6px;
+    right: 6px
+}
+.evaluation ul.thumbnails img {
+    border: 4px solid #efefef
+}
+.evaluation ul.thumbnails .checked img {
+    border-color: #f89b51
+}
+.evaluation .primary {
+    margin: 2em 0;
+    text-align: center
+}
+.evaluation .primary img {
+    border: 4px solid #efefef
+}
+.evaluation .annotations {
+    position: relative;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 110%;
+    color: #666
+}
+.evaluation .annotations .left {
+    position: absolute;
+    right: 552px;
+    text-align: right
+}
+.evaluation .annotations .right {
+    position: absolute;
+    left: 552px
+}
+.evaluation .likert {
+    display: block;
+    margin: 2em .5em;
+    background: #f7f7f7;
+    border: 1px solid #e6e6e6;
+    text-align: center;
+    position: relative;
+    height: 20px
+}
+.evaluation .likert label {
+    width: 10%;
+    float: left;
+    position: relative;
+    top: -1.6em;
+    text-transform: uppercase;
+    font-size: 80%
+}
+.evaluation .likert label input {
+    position: absolute;
+    top: 1.9em;
+    left: 50%;
+    margin-left: -6px
+}
+.evaluation textarea {
+    display: block;
+    margin: 1em 1%;
+    width: 98%
+}
+.evaluation .paging {
+    margin-top: 3em;
+    text-align: center
+}
+.evaluation .paging .prev {
+    float: left
+}
+.evaluation .paging .next {
+    float: right
+}
+.featured {
+    overflow: hidden
+}
+.featured .books {
+    margin: 0;
+    padding: 0;
+    white-space: normal
+}
+.featured .books li {
+    width: 160px;
+    height: 255px;
+    padding: 0 8px;
+    padding-top: 5px;
+    display: inline-block;
+    white-space: normal;
+    position: relative;
+    font-size: 90%
+}
+.featured .books img {
+    width: 110px !important;
+    box-shadow: 0 0 6px 0 gray
+}
+.featured .books a:hover img {
+    box-shadow: 0 0 10px 2px gray
+}
+.featured .books a {
+    height: 220px;
+    display: block;
+    text-decoration: none;
+    color: #000
+}
+.featured .books .rating {
+    position: absolute;
+    top: 168px;
+    left: 5px
+}
+.featured .books h3 {
+    position: absolute;
+    top: 190px;
+    left: 5px;
+    font-size: 100%;
+    line-height: 1.1;
+    hyphens: auto;
+    -ms-hyphens: auto;
+    -webkit-hyphens: auto;
+    -moz-hyphens: auto;
+}
+.featured .books button {
+    position: absolute;
+    bottom: 0;
+    left: 5px
+}
+#slider {
+    height: 300px;
+    margin: 0 0 20px 0;
+    border: 1px solid #ccc;
+    border-radius: .5em;
+    position: relative;
+    overflow: hidden
+}
+body.newuser #slider {
+    display: none
+}
+#slider article {
+    height: 100%;
+    position: relative;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    overflow: hidden
+}
+#slider article .text {
+    width: 400px;
+    padding: 15px;
+    position: absolute;
+    bottom: 40px;
+    background: #333;
+    background: rgba(0, 0, 0, .6);
+    border-radius: .5em;
+    color: #fff
+}
+#slider article .text.left {
+    left: 60px
+}
+#slider article .text.right {
+    right: 60px
+}
+#slider article .text a {
+    color: #f89b51
+}
+#slider>a {
+    display: none
+}
+#slider:hover>a {
+    display: block;
+    width: 30px;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    background: rgba(0, 0, 0, .4);
+    cursor: pointer;
+    color: #fff;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none
+}
+#slider>a:hover {
+    background: rgba(0, 0, 0, .8)
+}
+#slider>a.prev {
+    left: 0
+}
+#slider>a.next {
+    right: 0
+}
+#slider>a:before {
+    font: 20px FontAwesome;
+    position: absolute;
+    top: 120px;
+    left: 12px
+}
+#slider>a.prev:before {
+    content: ''
+}
+#slider>a.next:before {
+    content: ''
+}
+#slider>menu {
+    position: absolute;
+    bottom: 15px;
+    right: 75px;
+    margin: 0
+}
+#slider>menu a {
+    float: left;
+    width: 8px;
+    height: 8px;
+    margin-left: 8px;
+    border-radius: 4px;
+    background: #e6e6e6;
+    background: rgba(255, 255, 255, .4);
+    border: 1px solid #ccc;
+    border-color: rgba(255, 255, 255, .6);
+    cursor: pointer
+}
+#slider>menu a.current {
+    background: #fff;
+    background: rgba(255, 255, 255, .8);
+    border-color: rgba(255, 255, 255, 1)
+}
+.postdownload {
+    width: 100%;
+    height: 30%;
+    background: #666;
+    background: rgba(0, 0, 0, .6);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    color: #fff
+}
+.postdownload h2 {
+    margin: 40px 0 35px 40px;
+    font-size: 150%;
+    font-weight: bold;
+    max-height: 50px;
+    line-height: 25px;
+    overflow: hidden;
+    width: 550px
+}
+.postdownload h3 {
+    font-size: 120%;
+    font-weight: bold;
+    margin-bottom: 15px
+}
+.postdownload .share {
+    margin: 20px 40px 40px 40px;
+    float: left
+}
+.postdownload .recommendations {
+    margin: 20px 0 0 40px;
+    height: 190px;
+    overflow: hidden
+}
+.postdownload .recommendations li {
+    float: left;
+    width: 100px;
+    height: 150px;
+    margin: 0 10px 5px 0;
+    text-align: center;
+    position: relative;
+    list-style-type: none
+}
+.postdownload .recommendations li a {
+    font-size: 11px;
+    font-weight: bold;
+    text-decoration: none;
+    color: #fff
+}
+.postdownload .recommendations li img {
+    width: 64px;
+    position: absolute;
+    left: 18px;
+    bottom: 0
+}
+.postdownload a.close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: url(/content/images/overlay-close.png);
+    width: 21px;
+    height: 21px;
+    cursor: pointer
+}
+.review {
+    min-height: 410px;
+    background: #f3f3f3;
+    border: 1px solid #f79a4b;
+    border-radius: 3px;
+    padding: 15px 30px
+}
+.review header img {
+    width: 180px;
+    position: absolute;
+    bottom: 40px;
+    right: 40px
+}
+.review header h2 {
+    height: 36px;
+    margin: -15px -30px 15px -30px;
+    padding: 6px 15px 0 15px;
+    color: #fff;
+    background: #f79a4b;
+    background: -moz-linear-gradient(top, rgba(248, 169, 98, 1) 0%, rgba(243, 152, 71, 1) 67%, rgba(243, 152, 71, 1) 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(248, 169, 98, 1)), color-stop(67%, rgba(243, 152, 71, 1)), color-stop(100%, rgba(243, 152, 71, 1)));
+    background: -webkit-linear-gradient(top, rgba(248, 169, 98, 1) 0%, rgba(243, 152, 71, 1) 67%, rgba(243, 152, 71, 1) 100%);
+    background: -o-linear-gradient(top, rgba(248, 169, 98, 1) 0%, rgba(243, 152, 71, 1) 67%, rgba(243, 152, 71, 1) 100%);
+    background: -ms-linear-gradient(top, rgba(248, 169, 98, 1) 0%, rgba(243, 152, 71, 1) 67%, rgba(243, 152, 71, 1) 100%);
+    background: linear-gradient(to bottom, rgba(248, 169, 98, 1) 0%, rgba(243, 152, 71, 1) 67%, rgba(243, 152, 71, 1) 100%)
+}
+.review header h2:before {
+    font: 26px FontAwesome;
+    content: '';
+    margin-right: 10px;
+    position: relative;
+    top: 3px
+}
+.review h3 {
+    margin: 4.5em 0 1.5em 0
+}
+.review fieldset {
+    margin: 20px 0;
+    padding: 0;
+    border: 0
+}
+.review fieldset legend {
+    margin-bottom: 10px;
+    font-size: 130%
+}
+.review fieldset legend small {
+    font-style: italic;
+    font-size: 100%
+}
+.review .stars {
+    margin: 10px 0;
+    overflow: hidden;
+    position: relative;
+    font-size: 28px
+}
+.review .stars input, .review .stars label {
+    position: relative;
+    top: -100px;
+    cursor: pointer
+}
+.review .stars label:before {
+    font-family: FontAwesome;
+    content: '';
+    position: absolute;
+    top: 100px;
+    color: #f79a4b
+}
+.review .stars input:checked+label~label:before {
+    color: #999
+}
+.review .text {
+    width: 300px;
+    margin: 20px 0
+}
+.review .text label {
+    font-weight: bold;
+    color: #666
+}
+.review .text small {
+    font-size: 90%
+}
+.review .text input, .review .text textarea {
+    width: 100%;
+    margin: 6px 0;
+    padding: 2px;
+    font: 12px OpenSans, Helvetica, Arial, sans-serif;
+    border: 1px solid #ccc
+}
+.review .text textarea {
+    height: 50px
+}
+.review .text.large textarea {
+    height: 195px;
+    width: 335px
+}
+section.details .reviews h4 {
+    float: left;
+    margin: 0;
+    font-weight: bold
+}
+section.details .reviews h4 .stars {
+    font: normal 100% sans-serif;
+    margin-left: 5px;
+    color: #333
+}
+section.details .reviews article {
+    margin-bottom: 10px
+}
+section.details .reviews time {
+    float: right
+}
+section.details .reviews p {
+    clear: both;
+    padding: 5px 0 20px 0;
+    line-height: 1.6
+}
+section.details .reviews button.more {
+    padding: 0;
+    background: transparent;
+    border: 0;
+    font-weight: bold;
+    cursor: pointer;
+    color: #333
+}
+section.details .reviews button.more:before, section.details .reviews button.more:after {
+    content: '▾'
+}
+section.details .reviews button.more:hover {
+    color: #f89b51
+}
+#content .searchresults h1 {
+    float: right;
+    font-size: 100%
+}
+.searchresults ol {
+    margin: 2em 0;
+    font-size: 125%
+}
+.searchresults ol li {
+    height: 90px;
+    margin: 1em 0;
+    padding: 5px 0 5px 80px;
+    position: relative;
+    overflow: hidden
+}
+.searchresults ol li img {
+    width: 64px;
+    position: absolute;
+    left: 0;
+    top: 0
+}
+.searchresults ol li img.lang {
+    left: 52px;
+    top: 73px;
+    clip: rect(0, 20px, 20px, 0)
+}
+.searchresults ol li .context {
+    display: block;
+    margin: 1em 0;
+    font-size: 80%;
+    line-height: 1.5
+}
+.searchresults ol li b {
+    font-weight: bold
+}
+.searchresults nav a {
+    margin: 0 20px 0 0;
+    font-weight: bold
+}
+form.steps {
+    position: relative;
+    counter-reset: item;
+    overflow: hidden
+}
+form.steps .profile, form.steps .conditions, form.steps .submit, form.steps .cookie, .js form.steps .no-js {
+    display: none
+}
+form.steps .step {
+    min-height: 2em;
+    margin: 2em 0;
+    padding: 3px 0 0 48px;
+    counter-increment: item;
+    position: relative;
+    color: #666
+}
+form.steps .step:before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: counter(item);
+    width: 20px;
+    height: 20px;
+    padding: 7px;
+    font-size: 120%;
+    font-weight: bold;
+    text-align: center;
+    background: #f89b51;
+    border-radius: 20px;
+    color: #fff
+}
+form.steps .step:empty:before {
+    background: #aaa
+}
+form.steps label {
+    display: block;
+    font-weight: bold;
+    padding: 4px
+}
+form.steps input, form.steps select {
+    width: 100%;
+    padding: 4px;
+    border: 1px solid #ccc;
+    background: #fff
+}
+form.steps select {
+    width: 103%
+}
+form.steps small {
+    display: block;
+    padding: 4px;
+    font-size: 80%;
+    color: #999
+}
+form.steps button.submit {
+    float: left;
+    clear: both;
+    padding: 8px 24px;
+    margin-left: 48px;
+    text-transform: uppercase;
+    border: 0;
+    width: 60%
+}
+form.steps.skip button.submit {
+    margin-left: 0
+}
+form.steps button.submit[disabled] {
+    background: #868788;
+    background: -moz-linear-gradient(top, rgba(134, 135, 136, 1) 0%, rgba(93, 96, 101, 1) 67%, rgba(93, 96, 102, 1) 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(134, 135, 136, 1)), color-stop(67%, rgba(93, 96, 101, 1)), color-stop(100%, rgba(93, 96, 102, 1)));
+    background: -webkit-linear-gradient(top, rgba(134, 135, 136, 1) 0%, rgba(93, 96, 101, 1) 67%, rgba(93, 96, 102, 1) 100%);
+    background: -o-linear-gradient(top, rgba(134, 135, 136, 1) 0%, rgba(93, 96, 101, 1) 67%, rgba(93, 96, 102, 1) 100%);
+    background: -ms-linear-gradient(top, rgba(134, 135, 136, 1) 0%, rgba(93, 96, 101, 1) 67%, rgba(93, 96, 102, 1) 100%);
+    background: linear-gradient(to bottom, rgba(134, 135, 136, 1) 0%, rgba(93, 96, 101, 1) 67%, rgba(93, 96, 102, 1) 100%);
+    filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#868788', endColorstr='#5d6066', GradientType=0)
+}
+form.steps.skip {
+    margin: 60px 0;
+    padding: 0
+}
+form.steps.skip .cookie {
+    display: block
+}
+form.steps .profile, form.steps .evaluation {
+    width: 65%;
+    float: left
+}
+form.steps .evaluation .step {
+    margin: 0
+}
+form.steps .conditions {
+    float: right;
+    width: 30%;
+    padding-top: 20px
+}
+form.steps .cookie {
+    line-height: 1.6
+}
+form.steps .cookie .info {
+    margin-bottom: 30px;
+    font-size: 110%
+}
+form.steps .cookie .value {
+    font-weight: bold
+}
+form.steps .cookie .clear {
+    display: block;
+    margin-top: 30px;
+    color: #f89b51;
+    cursor: pointer
+}
+.flexselect_dropdown {
+    display: none;
+    position: absolute;
+    z-index: 999999;
+    margin: 0;
+    padding: 0;
+    border: 1px solid WindowFrame;
+    max-height: 200px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background-color: Window;
+    color: WindowText;
+    text-align: left;
+    box-shadow: 0 6px 12px #ccc;
+    -webkit-box-shadow: 0 6px 12px #ccc
+}
+.flexselect_dropdown ul {
+    width: 100%;
+    list-style-position: outside;
+    list-style: none;
+    padding: 0;
+    margin: 0
+}
+.flexselect_dropdown li {
+    margin: 0;
+    padding: 2px 5px;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    font: Menu;
+    overflow: hidden
+}
+.flexselect_selected {
+    background-color: Highlight;
+    color: HighlightText
+}
+.acResults {
+    padding: 0;
+    border: 1px solid WindowFrame;
+    background-color: Window;
+    overflow: hidden
+}
+.acResults ul {
+    margin: 0;
+    padding: 0;
+    list-style-position: outside;
+    list-style: none
+}
+.acResults ul li {
+    margin: 0;
+    padding: 2px 5px;
+    cursor: pointer;
+    display: block;
+    font: menu;
+    font-size: 12px;
+    overflow: hidden
+}
+.acLoading {
+    background: url('indicator.gif') right center no-repeat
+}
+.acSelect {
+    background-color: Highlight;
+    color: HighlightText
+}
+body.newuser .banners.top {
+    display: none
+}
+.banners.top .banner {
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: .5em
+}
+.banners.bottom {
+    margin: 20px 0;
+    overflow: hidden
+}
+.banners.bottom .banner {
+    float: left;
+    width: 32%;
+    height: 100%;
+    margin: 0 0 0 2%;
+    padding: 0;
+    position: relative
+}
+.banners.bottom .banner:first-child {
+    margin-left: 0
+}
+.banners.bottom .banner a {
+    display: block;
+    height: 160px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    text-decoration: none;
+    color: #000;
+    text-align: center;
+    background: #f3f3f3;
+    background: -moz-linear-gradient(top, #f3f3f3 0%, #fff 50%, #fff 100%);
+    background: -webkit-linear-gradient(top, #f3f3f3 0%, #fff 50%, #fff 100%);
+    background: -o-linear-gradient(top, #f3f3f3 0%, #fff 50%, #fff 100%);
+    background: -ms-linear-gradient(top, #f3f3f3 0%, #fff 50%, #fff 100%);
+    background: linear-gradient(to bottom, #f3f3f3 0%, #fff 50%, #fff 100%);
+    filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#f3f3f3', endColorstr='#ffffff', GradientType=0)
+}
+.banners.bottom .banner a:hover {
+    border-color: #999
+}
+.banners.bottom p {
+    margin-top: 0;
+    font-size: 120%;
+    font-weight: bold
+}
+.banners.bottom img {
+    max-width: 100%
+}
+.banner.outer {
+    width: 80%;
+    margin: auto;
+    position: relative;
+    max-width: 1500px
+}
+@media(min-width:768px)and (max-width:1200px) {
+    .banner.outer {
+        width: 95%
+    }
+}
+.banner.facebook {
+    position: absolute;
+    background: #3b5998 url(/content/images/facebook_f.png) no-repeat 14px 11px;
+    color: #fff;
+    width: 220px;
+    float: right;
+    border-radius: 20px;
+    height: 78px;
+    right: 0;
+    top: -60px;
+    box-shadow: 0 0 6px 2px #ccc
+}
+@media(max-width:767px) {
+    .banner.facebook {
+        display: none
+    }
+}
+.banner.facebook p {
+    margin-left: 50px;
+    font-size: 110%;
+    margin-top: 20px
+}
+.banner.facebook p span {
+    clear: both;
+    display: block
+}
+.banner.facebook .st_fblike_vcount {
+    position: absolute;
+    right: 0;
+    top: 0;
+    background-color: #fff;
+    height: 68px;
+    width: 60px;
+    padding: 5px;
+    border-radius: 0 19px 19px 0
+}
+.shield {
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, .8);
+    position: fixed;
+    left: 0;
+    top: 0
+}
+.overlay {
+    width: 640px;
+    margin-left: -320px;
+    position: absolute;
+    left: 50%;
+    top: 0;
+    z-index: 101
+}
+.overlay a.close {
+    display: block;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    cursor: pointer;
+    color: #fff
+}
+.overlay a.close:before {
+    font: 24px FontAwesome;
+    content: ''
+}
+@media(max-width:767px) {
+    body>.wrapper, body>header p, footer .copyright, footer #footer>div {
+        width: auto;
+        margin: 1em
+    }
+    #search {
+        padding: .75em
+    }
+    #main>.banners {
+        display: none
+    }
+    footer .sharing {
+        margin: 10px 0 70px 0
+    }
+    body:not(.nomenu) a[href="#categories"] {
+        display: block;
+        margin: 15px 0
+    }
+    #categories {
+        display: none
+    }
+    #categories:target, #main, #categories+#main, body.newuser .welcome-banner {
+        display: block;
+        width: auto!important;
+        float: none!important
+    }
+    #search>form>label {
+        display: none
+    }
+    #search>form {
+        padding-left: 40px
+    }
+    #search>form:before {
+        left: 10px
+    }
+    article.book .facts {
+        width: 97%
+    }
+    article.book .main section {
+        clear: both;
+        float: left;
+        width: 100%;
+        max-width: none
+    }
+    article.book section.details .content {
+        float: none;
+        width: 100%
+    }
+    article.book section.details>ol {
+        display: none
+    }
+    article.book .main section {
+        width: 99%
+    }
+    article.book section.premium h2 {
+        width: 50%
+    }
+    article.book section.premium {
+        min-height: 530px
+    }
+    article.book section.premium .buttons {
+        position: relative
+    }
+    article.book section.premium div.features {
+        position: relative
+    }
+    form.steps .profile, form.steps .evaluation {
+        width: 95%
+    }
+    form.steps .conditions {
+        float: left;
+        width: 95%
+    }
+    .category .books.list article {
+        height: 230px;
+        margin-top: 10px
+    }
+    .category a.zip {
+        display: none
+    }
+    .category>a.zip~.books {
+        margin-top: auto
+    }
+    .category a.zip~.list {
+        border-top: none
+    }
+    .category .books.list button {
+        bottom: 10px
+    }
+    body.premium .category .books.list article div.premium button {
+        bottom: -45px
+    }
+    .category .toolbar {
+        text-align: right
+    }
+    .category .toolbar menu ul li:first-child {
+        display: none
+    }
+    .category .toolbar menu ul li {
+        border-left: 0
+    }
+    .category .books.grid article {
+        float: none;
+        width: 100%
+    }
+    .category .books.grid article a {
+        margin: 0 0 20px 0
+    }
+    .category .books.grid article:nth-child(even) {
+        left: auto
+    }
+    body.premium .category .books.list article div.premium:before {
+        position: absolute;
+        top: -15px;
+        left: -150px
+    }
+    body.premium .category .books article div.premium:before {
+        width: 70px;
+        height: 52px
+    }
+    body.newuser .welcome-banner {
+        height: 230px
+    }
+    .welcome-banner hgroup {
+        bottom: 12px
+    }
+    .welcome-banner hgroup ol li a {
+        font-size: 85%
+    }
+    .welcome-banner hgroup h1, .welcome-banner hgroup h2 {
+        font-size: 120%
+    }
+    .welcome-banner ol li {
+        font-size: 110%;
+        padding: 0 0 0 0
+    }
+    .welcome-banner>ol.steps>li {
+        padding: 60px 0 0 0
+    }
+    .welcome-banner ol li:nth-child(1), .welcome-banner ol li:nth-child(2), .welcome-banner ol li:nth-child(3) {
+        background-size: contain!important;
+        font-size: 100%
+    }
+    #footer .pages:first-child {
+        margin: 0 22px 24px 22px
+    }
+    #slider article .text {
+        width: 100%
+    }
+    #slider article .text.left {
+        left: 0
+    }
+    #slider article .text.right {
+        right: auto;
+        left: 0
+    }
+    .premium-banner>div {
+        height: 360px
+    }
+}
+@media(min-width:768px)and (max-width:1200px) {
+    body {
+        font-size: 75%
+    }
+    body>.wrapper, body>header p, footer .copyright, footer #footer>div {
+        width: 95%
+    }
+}
+
+.featured h2 a {
+	text-decoration: none;
+	color: #000000;
+}
+
+.books .item {
+	padding-top: 10px;
+	text-align: center;
+}
+
+.books h3 {
+	line-height: 18px !important;
+}
+
+.books img {
+	margin: 0 auto !important;
+}
+
+.breadcrumb {
+	margin: 0 0 20px;
+	font-size: 12px;
+}
+
+.breadcrumb a {
+	color: #51545E;
+}
+.square {
+    list-style: square;
+    padding-left: 15px;
+}
+.inline-list {
+    display: inline;
+    margin: 0;
+    padding: 0;
+} 
+.inline-list li {
+    display: inline;
+    margin: 0 10px 0 0;
+}

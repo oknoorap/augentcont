@@ -1,16 +1,14 @@
 <?php
 session_start();
 
-function is_login ()
-{
-	if (isset($_SESSION['login']) && $_SESSION['login'] === 'yes') return true;
-	return false;
-}
+require '../includes/helpers.php';
+$config = build_config('../config.php');
 
-require '../config.php';
 require '../includes/DB_Driver.php';
 require '../includes/Hashids.php';
-require '../includes/helpers.php';
+
+$info = json_decode(read_file('engine.json'), TRUE);
+$version = $info['version'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST'):
 	if (is_login () && isset($_POST['type']))
@@ -139,6 +137,34 @@ php;
 				write_file('../content/pages/'.$_POST['name'].'.txt', $json, 'w');
 				header("Location: ./?page=1");
 			break;
+
+			case 'spinner':
+				$content = $_POST['content'];
+				$spinner_config = '../content/spinner/conf.json';
+				$spinner = explode(',', read_file($spinner_config));
+				$content_clean = strip_tags($content);
+				$id = $_POST['name'];
+
+				if (empty($content_clean))
+				{
+					$spinner = array_diff($spinner, array($id));
+				}
+				else
+				{
+					$spinner = array_merge($spinner, array($id));
+				}
+
+				$json = array('content' => $content);
+				$json = json_encode($json);
+				write_file('../content/spinner/'.$id.'.spinner', $json, 'w');
+
+				$spinner = remove_empty_array(array_unique($spinner));
+				sort($spinner);
+				$spinner = implode(',', $spinner);
+				write_file($spinner_config, $spinner, 'w');
+
+				header("Location: ./?spinner=1");
+			break;
 		}
 	}
 	else
@@ -182,7 +208,7 @@ endif;
 			</div>
 			<div class="large-5 large-offset-1 columns">
 				<form method="POST">
-					<h2>Admin Login</h2>
+					<h2>Admin Login <?php echo $version; ?></h2>
 					<p>This is secret area, please leave this page if you're not an administrator of this site</p>
 
 					<div class="row">
@@ -213,15 +239,19 @@ endif;
 			<div class="large-12 columns">
 				<div class="row">
 					<div class="large-12 columns">
-						<?php if(! isset($_GET['page'])):?><a href="?page=1" class="no-margin tiny secondary button"><i class="fa fa-file-text-o"></i> Page</a><?php endif; ?>
-						<?php if(isset($_GET['page'])):?><a href="./" class="no-margin tiny secondary button"><i class="fa fa-home"></i> Home</a><?php endif; ?>
+						<a href="./" class="no-margin tiny secondary button"><i class="fa fa-home"></i> Home</a>
+						<a href="?page=1" class="no-margin tiny secondary button"><i class="fa fa-file-text-o"></i> Page</a>
+						<a  data-ng-show="usingSpinner === 'true'" href="?spinner=1" class="no-margin tiny secondary button"><i class="fa fa-file-text-o"></i> Spinner</a>
 						<a href="logout.php" class="no-margin tiny alert button"><i class="fa fa-sign-out"></i> Logout</a>
+						<a target="_blank" class="right a-small" href="<?php echo dirname(base_url()); ?>"><i class="fa fa-share"></i> View Site</a>
 					</div>
 				</div>
 
 				<?php
 				if (isset($_GET['page'])):
 					include 'page.php';
+				elseif(isset($_GET['spinner'])):
+					include 'spinner.php';
 				else:
 					include 'settings.php';
 				endif;
@@ -237,8 +267,23 @@ endif;
 <script type="text/javascript" src="./assets/w2ui.min.js"></script>
 <script type="text/javascript" src="./assets/underscore.min.js"></script>
 <script type="text/javascript" src="./assets/async.js"></script>
-<?php if(isset($_GET['page'])): ?>
+<?php if(isset($_GET['page']) || isset($_GET['spinner'])): ?>
 <script type="text/javascript" src="./assets/ckeditor/ckeditor.js" charset="utf-8"></script>
+<script type="text/javascript">
+var fileEditor = './assets/fileman/index.php'; 
+(function($){
+	$(document).ready(function() {
+		$('.editor').each(function (i, el) {
+			CKEDITOR.replace($(el).get(0), {
+				filebrowserBrowseUrl: fileEditor,
+				filebrowserImageBrowseUrl: fileEditor + '?type=Images',
+				removeDialogTabs: 'link:upload;image:upload',
+				skin: 'moono'
+			}); 
+		});
+	});
+})(jQuery);
+</script>
 <?php endif; ?>
 <script type="text/javascript" src="./assets/site.js"></script>
 <?php endif; ?>

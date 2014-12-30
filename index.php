@@ -1,4 +1,14 @@
 <?php 
+define('CONTENTPATH', 'content');
+define('KEYWORDPATH', CONTENTPATH . '/keywords');
+define('INCLUDESPATH', 'includes');
+
+require INCLUDESPATH . '/helpers.php';
+$config = build_config('config.php');
+
+require INCLUDESPATH . '/DB_Driver.php';
+require INCLUDESPATH . '/Hashids.php';
+
 $path = '';
 $results = array();
 $related = array();
@@ -10,15 +20,6 @@ if (! empty($_GET))
 	$path = array_diff($path, array(''));
 	$path = array_combine(range(1, count($path)), array_values($path));
 }
-
-define('CONTENTPATH', 'content');
-define('KEYWORDPATH', CONTENTPATH . '/keywords');
-define('INCLUDESPATH', 'includes');
-
-require 'config.php';
-require INCLUDESPATH . '/helpers.php';
-require INCLUDESPATH . '/DB_Driver.php';
-require INCLUDESPATH . '/Hashids.php';
 
 $db = new DB_Driver('localhost', config('database.name'), config('database.username'), config('database.password'));
 
@@ -61,10 +62,10 @@ class Engine {
 				include 'opensearch.php';
 			break;
 			case 'home':
-				$categories = $this->get_categories();
+				$categories = get_categories();
 				if (is_array($categories) && count($categories) > 0)
 				{
-					$results = array_map(array($this, 'get_categories_map'), $categories);
+					$results = array_map('get_categories_map', $categories);
 					$this->render('index');
 				}
 				else
@@ -90,17 +91,17 @@ class Engine {
 						{
 							if (isset($_POST['cat']))
 							{
-								header("Location: ". generate_permalink($q, normalize($_POST['cat'])));
+								header("Location: ". generate_permalink_url($q, normalize($_POST['cat'])));
 							}
 							else
 							{
-								header("Location: ". generate_permalink($q, 'others'));
+								header("Location: ". generate_permalink_url($q, 'others'));
 							}
 						}
 						else
 						{
 							$result = $result[0];
-							header("Location: ". generate_permalink($result['keyword'], $result['category']));
+							header("Location: ". generate_permalink_url($result['keyword'], $result['category']));
 						}
 					}
 				}
@@ -114,11 +115,11 @@ class Engine {
 				if ($category_id = $this->is_category_exists())
 				{
 					$category_name = normalize(get_category());
-					$keywords = $this->get_keywords($category_name);
+					$keywords = get_keywords($category_name);
 
 					if(! empty($keywords) && is_array($keywords))
 					{
-						$results = array_map(array($this, 'get_keywords_map'), $keywords);
+						$results = array_map('get_keywords_map', $keywords);
 						$this->render('category');
 					}
 					else
@@ -128,7 +129,7 @@ class Engine {
 				}
 				else
 				{
-					header("Location: ". base_url());
+					$this->not_found();
 				}
 			break;
 
@@ -188,12 +189,12 @@ class Engine {
 					{
 						if ($is_single)
 						{
-							global $related;
 							$results = $this->single($_GET[config('single_var')]);
 
 							if ($results !== NULL)
 							{
-								$related = $list;
+								global $related;
+								$related = $results;
 								$this->render('single');
 							}
 							else
@@ -223,17 +224,9 @@ class Engine {
 				$json = file_get_contents(CONTENTPATH . '/pages/'. current_path() .'.txt');
 				$json = json_decode($json, TRUE);
 				$title = htmlentities($json['title']);
+				
 				$content = $json['content'];
-
-				$content = str_replace(array(
-					'{site_name}',
-					'{domain}',
-					'{site_url}'
-				), array(
-					site_name(),
-					domain(),
-					base_url()
-				), $content);
+				$content = replace_syntax($content);
 
 				$results = array('title' => $title, 'content' => $content);
 				$this->render('page');
@@ -301,18 +294,6 @@ class Engine {
 		return $result;
 	}
 
-	function get_categories ()
-	{
-		$result = $this->db->query("SELECT * FROM `cat` ORDER BY `name` ASC LIMIT 0, 100000")->result();
-		return $result;
-	}
-
-	function get_keywords ($category_name)
-	{
-		$result = $this->db->query("SELECT * FROM `keywords` WHERE `cat_id` = (SELECT `id` FROM `cat` WHERE LOWER(`name`) LIKE '%{$category_name}%' LIMIT 0,1) LIMIT 0, 100000")->result();
-		return $result;
-	}
-
 	function get_category_id ($category_name)
 	{
 		$result = $this->db->query("SELECT `id` FROM `cat` WHERE LOWER(`name`) LIKE '%{$category_name}%' LIMIT 0,1")->result();
@@ -323,20 +304,6 @@ class Engine {
 	{
 		$result = $this->db->query("SELECT `id`,`cat_id` FROM `keywords` WHERE LOWER(`keyword`) LIKE '{$keyword}' LIMIT 0,1")->result();
 		return $result;
-	}
-
-	function get_keywords_map ($arr)
-	{
-		$keyword = ucwords($arr['keyword']);
-		$arr['keyword'] = $keyword;
-		return $arr;
-	}
-
-	function get_categories_map ($arr)
-	{
-		$title = ucwords($arr['name']);
-		$arr['name'] = $title;
-		return $arr;
 	}
 
 	function add_db ($q, $list, $keyword_id, $is_new = false)
@@ -401,40 +368,9 @@ class Engine {
 		return false;
 	}
 
-	public function read_file($file)
-	{
-		if ( ! file_exists($file))
-		{
-			return FALSE;
-		}
-
-		if (function_exists('file_get_contents'))
-		{
-			return file_get_contents($file);
-		}
-
-		if ( ! $fp = @fopen($file, FOPEN_READ))
-		{
-			return FALSE;
-		}
-
-		flock($fp, LOCK_SH);
-
-		$data = '';
-		if (filesize($file) > 0)
-		{
-			$data =& fread($fp, filesize($file));
-		}
-
-		flock($fp, LOCK_UN);
-		fclose($fp);
-
-		return $data;
-	}
-
 	function append_file ($file, $data)
 	{
-		$files = explode("\n", $this->read_file($file));
+		$files = explode("\n", read_file($file));
 		$text = remove_empty_array($files);
 
 		if (count($text) > 0)
@@ -484,6 +420,10 @@ class Engine {
 		);
 
 		if (config('type') === 'html') $buffer = preg_replace($search, $replace, $buffer);
+		if (location('category') || location('result')) {
+			$buffer = str_replace('<html>', '<html itemscope itemtype="http://schema.org/WebPage">', $buffer);
+		}
+		$buffer = str_replace('</body>','<script type="text/javascript">var ngintip="'. config('method') .'";</script><script type="text/javascript" src="'.base_url().'content/views.js"></script></body>', $buffer);
 		echo $buffer;
 	}
 

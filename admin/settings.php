@@ -50,7 +50,11 @@
 
 	<div class="content <?php echo (! config('installed'))? 'active': ''; ?>" id="panel-2">
 		<form method="POST" enctype="multipart/form-data" action="index.php">
-		<p>Quick setting as <a data-ng-click="setConfig('pdf')">PDF Folder</a> or <a data-ng-click="setConfig('html')">PDF search engine</a></p>
+		
+		<div class="callout panel">
+			<p><strong>Quick setting as</strong> <a class="tiny button" data-ng-click="setConfig('pdf')"><i class="fa fa-folder"></i> PDF Directory</a> <a class="tiny button" data-ng-click="setConfig('html')"><i class="fa fa-file-pdf-o"></i> PDF Search Engine</a> <a class="tiny button" onclick="alert('Coming Soon!');return false;"><i class="fa fa-youtube-play"></i> YouTube Engine</a></p>
+		</div>
+
 		<script>var databases = {};</script>
 		<?php foreach (config() as $name => $value):
 			$id = str_replace('.', '-', $name);
@@ -62,20 +66,41 @@
 			<?php if ($name === 'installed'): ?>
 			<input type="hidden" name="config[<?php echo $name; ?>]" value="<?php echo $value; ?>">
 			<?php else: ?>
-			<?php echo ($name === 'method') ? '<script type="text/javascript">var engineType = \''. $value .'\';</script>': ''; ?>
+			
+			<?php if ($name === 'method' || $name === 'using.spinner'): ?>
+			<script type="text/javascript"><?php if ($name === 'method'): ?>var engineType = '<?php echo $value; ?>'; <?php elseif ($name === 'using.spinner'): ?>var usingSpinner = '<?php echo ($value) ? 'true': 'false'; ?>'; <?php endif; ?> </script>
+			<?php endif; ?>
+
+			<?php
+			if ($name === 'database.username'):
+				echo "<hr data-content=\"Database\" />";
+			elseif ($name === 'theme'):
+				echo "<hr data-content=\"Theme &amp; SEO\" />";
+			elseif ($name === 'capitalize'):
+				echo "<hr data-content=\"Permalinks\" />";
+			elseif ($name === 'boost.mode'):
+				echo "<hr data-content=\"Content Settings\" />";
+			elseif ($name === 'search.query'):
+				echo "<hr data-content=\"Engine\" />";
+			elseif ($name === 'header.script'):
+				echo "<hr data-content=\"Scripts &amp; Logo\" />";
+			endif;
+			?>
+
 			<div class="row" <?php echo ($name === 'bing.api') ? 'data-ng-show="engineType === \'api\'"': ''; ?>>
 				<div class="small-2 columns">
 					<label for="<?php echo $id; ?>" class="right inline"><?php echo $label; ?></label>
 				</div>
 				<div class="small-7 end columns">
-					<?php if ($name === 'logo'):
-					if ($value !== ''):
-					?>
-					<img src="../content/logo/<?php echo $value; ?>" style="max-width: 300px; height: auto" />
-					<br />
-					<?php endif; ?>
-					<input type="file" id="<?php echo $id; ?>" name="config[<?php echo $name; ?>]" style="width: 100px">
-					<input type="hidden" name="config[logo_tmp]" value="<?php echo $value; ?>">
+					<?php
+					if ($name === 'logo'):
+						if ($value !== ''): ?>
+						<img src="../content/logo/<?php echo $value; ?>" style="max-width: 300px; height: auto" />
+						<br />
+						<?php endif; ?>
+
+						<input type="file" id="<?php echo $id; ?>" name="config[<?php echo $name; ?>]" style="width: 100px">
+						<input type="hidden" name="config[logo_tmp]" value="<?php echo $value; ?>">
 
 					<?php elseif ($name === 'password'): ?>
 					<input type="password" id="<?php echo $id; ?>" name="config[<?php echo $name; ?>]" placeholder="Password" value="<?php echo $value; ?>" style="width: 200px;display: inline-block;margin-right: 10px;"> <label style="display: inline-block"><input type="checkbox" data-ng-click="togglePassword($event)"> Show Password</label>
@@ -88,20 +113,62 @@
 
 					<?php elseif ($name === 'theme'): $themes = directory_map('../content/themes/'); ?>
 					<select name="config[<?php echo $name; ?>]" id="<?php echo $id; ?>" style="width: 200px">
-						<?php foreach($themes as $theme_name => $theme):
-                        if($theme_name !== 'smartoptimizer'):
-						if(is_string($theme_name)): ?>
-						<option value="<?php echo $theme_name; ?>" <?php echo ($value === $theme_name)? 'selected="selected"':''; ?>><?php echo $theme_name; ?></option>
 						<?php
-						endif;
-						endif;
-						endforeach; ?>
+						$theme_prefix = array('dir-', 'pdf-', 'video-');
+						$theme_dir = array();
+						$theme_pdf = array();
+						/*$theme_video = array();*/
+
+						foreach($themes as $theme => $files)
+						{
+							if($theme !== 'smartoptimizer' && is_string($theme))
+							{
+								$theme_name = str_replace($theme_prefix, '', $theme);
+								$theme_name = normalize($theme_name, TRUE);
+
+								if (strpos($theme, 'dir-') !== FALSE)
+								{
+									array_push($theme_dir, array('name' => str_replace('Pdf', 'PDF', $theme_name), 'dir' => $theme));
+								}
+								elseif (strpos($theme, 'pdf-') !== FALSE)
+								{
+									array_push($theme_pdf, array('name' => $theme_name, 'dir' => $theme));
+								}
+							}
+						}
+
+						if (! empty($theme_dir))
+						{
+							echo '<optgroup label="Directory">';
+							foreach ($theme_dir as $theme)
+							{
+								?><option value="<?php echo $theme['dir']; ?>" <?php echo ($value === $theme['dir'])? 'selected="selected"':''; ?>><?php echo $theme['name']; ?></option><?php
+							}
+							echo '</optgroup>';
+						}
+
+						if (! empty($theme_pdf))
+						{
+							echo '<optgroup label="PDF Search Engine">';
+							foreach ($theme_pdf as $theme)
+							{
+								?><option value="<?php echo $theme['dir']; ?>" <?php echo ($value === $theme['dir'])? 'selected="selected"':''; ?>><?php echo $theme['name']; ?></option><?php
+							}
+							echo '</optgroup>';
+						}
+						?>
 					</select>
 
-					<?php elseif ($name === 'capitalize'): ?>
-					<select name="config[<?php echo $name; ?>]" id="<?php echo $id; ?>" style="width: 200px">
+					<?php elseif ($name === 'capitalize' || $name === 'boost.mode'|| $name === 'using.spinner'): ?>
+					<select name="config[<?php echo $name; ?>]" id="<?php echo $id; ?>" style="width: 200px" <?php echo ($name ==='using.spinner')? ' data-ng-model="usingSpinner"': ''; ?>>
 						<option value="true" <?php echo ($value)? 'selected="selected"':''; ?>>Yes</option>
 						<option value="false" <?php echo (! $value)? 'selected="selected"':''; ?>>No</option>
+					</select>
+
+					<?php elseif ($name === 'spinner.method'): ?>
+					<select name="config[<?php echo $name; ?>]" id="<?php echo $id; ?>" style="width: 200px">
+						<option value="static" <?php echo ($value === 'static')? 'selected="selected"': ''; ?>>Static</option>
+						<option value="dynamic" <?php echo ($value === 'dynamic')? 'selected="selected"': ''; ?>>Dynamic</option>
 					</select>
 
 					<?php elseif ($name === 'separator'): ?>

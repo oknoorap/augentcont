@@ -1,0 +1,311 @@
+body {
+	font-size: 12px;
+	background: #BFD5D5;
+	color: #0A1414;
+	text-align: center;
+}
+
+a {
+	color: #006666;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #990033;
+	text-decoration: underline;
+}
+
+.left {
+	float: left;
+}
+
+.right {
+	float: right;
+}
+
+.clear {
+	clear: both;
+	float: none;
+}
+
+#main {
+	margin: auto;
+	width: 910px;
+	text-align: left;
+}
+
+#header, #footer {
+	width: 900px;
+	padding: 5px;
+	background: #FFFFFF;
+	clear: both;
+}
+
+#logo {
+	width: 884px;
+	padding-top: 5px;
+	background: #F2F7F7;
+	padding-left: 8px;
+	padding-right: 8px;
+	padding-bottom: 5px;
+}
+
+.heading {
+	font-size: 30px;
+	font-weight: bold;
+}
+
+#footer-navigation {
+	background: #BFD5D5;
+	padding: 5px 10px;
+	border-top: 2px solid #006666;
+}
+
+#footer-menu ul {
+	list-style: none;
+	display: inline;
+	margin: 0;
+	padding: 0;
+}
+
+#footer-menu li {
+	display: inline;
+	margin-right: 3px;
+}
+
+#footer-menu a {
+	color: #006666;
+	background: #FFFFFF;
+	padding: 1px 5px;
+	text-decoration: none;
+}
+
+#footer-menu a:hover {
+	color: #FFFFFF;
+	background: #006666;
+	padding: 1px 5px;
+}
+
+#sitemap {
+	text-align: center;
+	margin-bottom: 20px;
+}
+
+#sitemap h3 {
+	text-align: center;
+	color: #990033;
+	margin: 0 0 5px;
+}
+
+#sitemap ul, #sitemap li {
+	display: inline;
+}
+
+#sitemap ul {
+	margin: 0;
+	padding: 0;
+}
+
+#sitemap li {
+	margin: 0 5px;
+}
+
+#sitemap a {
+	font-weight: bold;
+}
+
+#container {
+	width: 900px;
+	padding: 0px 5px;
+	background: #FFFFFF;
+	padding-top: 0px;
+	clear: both;
+}
+
+#contents {
+	background: #F2F7F7;
+	width: 555px;
+	padding: 7px;
+	line-height: 140%;
+	overflow: hidden;
+}
+
+#sidebar {
+	background: #EAF0F0;
+	width: 326px;
+}
+
+.box {
+	width: 312px;
+	margin: 7px;
+	line-height: 140%;
+}
+
+.box-border {
+	border: 1px solid #006666;
+	background: #FFFFFF;
+	text-align: left;
+	margin: 7px;
+	padding: 5px;
+}
+
+.box-border strong {
+	display: block;
+	background: #EAF0F0;
+	text-align: center;
+	padding: 5px 0px;
+	margin-bottom: 5px;
+	font-size: 14px;
+}
+
+.box-border .tab {
+	background: #006666;
+	padding: 10px 0 0;
+}
+
+#tab {
+	padding: 3px 0;
+	margin-top: 0px;
+	font: 12px Verdana;
+	list-style-type: none;
+	text-align: center;
+}
+
+#tab li {
+	display: inline;
+	margin: 0 5px 0 0;
+}
+
+#tab li a:hover {
+	text-decoration: underline;
+	background: #EAF0F0;
+	color: #000000;
+}
+#tab li a:visited {
+	color: #000000;
+}
+#tab li a {
+	text-decoration: none;
+	padding: 3px 10px;
+	margin-right: 0px;
+	color: #000000;
+	background: #C7E2E2;
+}
+
+#tab li.selected a:hover {
+	text-decoration: none;
+}
+#tab li.selected a {
+	background: #FFFFFF;
+	border-bottom: 1px solid #FFFFFF;
+	font-weight: bold;
+}
+
+.box-border .tab-contents {
+	background: #FFFFFF;
+	line-height: 140%;
+	color: #333333;
+}
+
+.tab-content ul {
+	list-style: square;
+	margin: 0;
+	padding-left: 20px;
+}
+
+#contents h2, h1.title {
+	color: #990033;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+h1.title.single {
+	font-size: 18px;
+}
+
+#contents h2, h1.title, .info, .breadcrumb, #related {
+	width: 555px;
+	margin: 7px;
+	line-height: 140%;
+}
+
+.info {
+	color: #666666;
+	height: 20px;
+	border-bottom: 1px solid #CCCCCC;
+}
+
+.breadcrumb .current-page {
+	font-weight: bold;
+}
+
+#q {
+	width: 243px;
+	border: 1px solid #006666;
+	height: 15px;
+	padding: 2px;
+	font-size: 12px;
+}
+
+#search-btn {
+	margin-left: 5px;
+	background: url(../img/search.gif) no-repeat;
+	width: 55px;
+	height: 19px;
+	text-indent: -9999px;
+	border: none;
+}
+
+.document {
+	border-top: 1px dashed #CCCCCC;
+	padding: 3px 0px;
+	height: 114px;
+	margin: 7px;
+}
+
+.doc-thumb {
+	padding: 0px 0px;
+	float: left;
+	margin-right: 7px;
+}
+
+.doc-title {
+	font-size: 16px;
+	padding: 2px 0px 5px 0px;
+}
+
+.doc-title a {
+	color: #006666;
+	text-decoration: underline;
+}
+
+.doc-title a:hover {
+	color: #FFFFFF;
+	background: #006666;
+	text-decoration: none;
+}
+.doc-description {
+	color: #333333;
+}
+.doc-info {
+	margin: 10px 0;
+	color: #666666;
+	text-align: right;
+}
+
+table {
+	width: 100%;
+	border: none;
+}
+
+table td {
+	width: 50%;
+}
+
+table i {
+	margin-right: 3px;
+}
+
+ul.square {
+	list-style: square;
+}

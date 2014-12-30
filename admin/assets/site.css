@@ -43,6 +43,10 @@ p {
 	margin-right: 1px;
 }
 
+.tabs dd>a {
+	padding: 3px 10px !important;
+}
+
 .tabs dd.active {
 	font-weight: bold;
 	border-bottom: 1px solid #ffffff;
@@ -108,4 +112,45 @@ label {
 	background: #dadfe1;
 	height: 200px;
 	overflow: auto
+}
+
+hr {
+    border: none;
+    border-bottom: 1px solid #cccccc;
+    border-top: 1px solid #cccccc;
+    line-height: 0px;
+    height: 2px;
+    margin: 30px 0;
+    z-index: 0;
+    position: relative;
+    text-align: center;
+}
+
+hr:after {
+    content: attr(data-content);
+    display: inline-block;
+    background: #ffffff;
+    line-height: 18px;
+    font-size: 11px;
+    padding: 0 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #cccccc;
+    z-index: 1;
+    position: relative;
+    margin: -30px auto 0;
+}
+
+.panel p {
+	margin: 0;
+}
+
+.panel a.button {
+	margin: 0;
+	font-size: 11px !important;
+	padding: 5px 10px !important;
+}
+
+.a-small {
+	font-size: 11px;
 }
