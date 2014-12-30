@@ -145,6 +145,7 @@ rm augencont -rf
 # Add monitor.sh to Crontab
 #--------------------------
 mv monitor.sh /home/monitor.sh
+sudo chmod +x /home/monitor.sh
 crontab -l | { cat; echo "* * * * * sh -x /home/monitor.sh"; } | crontab -
 
 
