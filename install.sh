@@ -198,6 +198,9 @@ else
     rm backup -rf
 fi
 
+# change config.php password
+sed -i 's/sukses999/$kunci/g' config.php
+
 rm db.sql -rf
 rm monitor.sh -rf
 rm install.sh -rf
