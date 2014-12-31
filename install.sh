@@ -2,6 +2,10 @@
 
 # Installation:
 # wget https://bitbucket.org/oknoorap/augencont/raw/master/install.sh && chmod +x install.sh && ./install.sh 
+# wget https://bitbucket.org/oknoorap/augencont/raw/master/install.sh && chmod +x install.sh && ./install.sh password
+
+# Set Default password
+kunci=${1-sukses999}
 
 #--------------------------
 # Update apt-get repository
@@ -20,8 +24,8 @@ sudo apt-get install git-core -y
 #--------------------------
 echo "MySQL old's password: "
 read opwd
-mysqladmin -u root -p$opwd password sukses999
-mysql -u root -psukses999 -e "create database agc; GRANT ALL PRIVILEGES ON agc.* TO root@localhost IDENTIFIED BY 'sukses999'"
+mysqladmin -u root -p$opwd password $kunci
+mysql -u root -p$kunci -e "create database agc; GRANT ALL PRIVILEGES ON agc.* TO root@localhost IDENTIFIED BY '$kunci'"
 
 
 #--------------------------
@@ -179,7 +183,7 @@ promptyn () {
 
 if promptyn "NEW installation [y/n]?"; then
     echo "Import MySQL database"
-    mysql -u root -psukses999 agc < db.sql
+    mysql -u root -p$kunci agc < db.sql
     echo "Success. Please insert keyword."
 else
     echo "Enter website's source (include http:// without /) : "
@@ -188,7 +192,7 @@ else
     echo "Extract Zip"
     tar -zxvf backup.tar.gz
     echo "Import MySQL database"
-    mysql -u root -psukses999 agc < backup/db.sql
+    mysql -u root -p$kunci agc < backup/db.sql
     mv backup/config_backup.php config.php
     rm backup.tar.gz -rf
     rm backup -rf
