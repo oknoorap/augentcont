@@ -152,6 +152,20 @@ mv monitor.sh /home/monitor.sh
 sudo chmod +x /home/monitor.sh
 crontab -l | { cat; echo "* * * * * sh -x /home/monitor.sh"; } | crontab -
 
+#--------------------------
+# nano .htaccess
+#--------------------------
+cat << EOFTEST1 >> /var/www/html/.htaccess
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php?$1 [L,QSA]
+</IfModule>
+EOFTEST1
+sudo service apache2 restart
+
 
 #--------------------------
 # Fix Permission
@@ -200,18 +214,6 @@ fi
 
 # change config.php password
 sed -i "s/sukses999/${kunci}/g" config.php
-
-# nano .htaccess
-cat << EOFTEST1 >> /var/www/html/.htaccess
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ index.php?$1 [L,QSA]
-</IfModule>
-EOFTEST1
-sudo service apache2 restart
 
 rm db.sql -rf
 rm monitor.sh -rf
