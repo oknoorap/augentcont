@@ -1,5 +1,6 @@
 <?php
-session_start();
+$info = json_decode(read_file('engine.json'), TRUE);
+$version = $info['version'];
 
 require '../includes/helpers.php';
 $config = build_config('../config.php');
@@ -7,8 +8,7 @@ $config = build_config('../config.php');
 require '../includes/DB_Driver.php';
 require '../includes/Hashids.php';
 
-$info = json_decode(read_file('engine.json'), TRUE);
-$version = $info['version'];
+session_start();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST'):
 	if (is_login () && isset($_POST['type']))
