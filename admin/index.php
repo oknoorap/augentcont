@@ -1,8 +1,7 @@
 <?php
+require '../includes/helpers.php';
 $info = json_decode(read_file('engine.json'), TRUE);
 $version = $info['version'];
-
-require '../includes/helpers.php';
 $config = build_config('../config.php');
 
 require '../includes/DB_Driver.php';
