@@ -199,7 +199,7 @@ else
 fi
 
 # change config.php password
-sed -i 's/sukses999/$kunci/g' config.php
+sed -i "s/sukses999/${kunci}/g" config.php
 
 # nano .htaccess
 cat << EOFTEST1 >> /var/www/html/.htaccess
