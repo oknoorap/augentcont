@@ -161,7 +161,7 @@ cat << EOFTEST1 >> /var/www/html/.htaccess
 
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ index.php?$1 [L,QSA]
+    RewriteRule ^(.*)$ index.php?\$1 [L,QSA]
 </IfModule>
 EOFTEST1
 sudo service apache2 restart
