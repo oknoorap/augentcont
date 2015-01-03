@@ -22,6 +22,9 @@ CREATE TABLE IF NOT EXISTS `cat` (
 
 -- --------------------------------------------------------
 
+INSERT INTO `cat` (`id`, `name`, `icon`, `time`) VALUES
+('VoXl0m3N1q', 'Others', 'ellipsis-h', 1415098244);
+
 --
 -- Table structure for table `index`
 --
