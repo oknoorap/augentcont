@@ -171,8 +171,8 @@ sudo service apache2 restart
 # Fix Permission
 #--------------------------
 chown -R www-data:www-data /var/www/html
--find /var/www/html -type d -exec chmod 755 {} \;
--find /var/www/html -type f -exec chmod 644 {} \;
+find /var/www/html -type d -exec chmod 755 {} \;
+find /var/www/html -type f -exec chmod 644 {} \;
 usermod -aG ftpgroup www-data
 chown -R ftpuser:ftpgroup /var/www/html
 chmod -R g+ws /var/www/html
