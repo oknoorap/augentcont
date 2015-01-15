@@ -9,7 +9,7 @@
 	
 	RewriteCond %{REQUEST_FILENAME} !-f
 	RewriteCond %{REQUEST_FILENAME} !-d
-	RewriteRule ^(.*\.(js|css))$ /public/smartoptimizer/?$1
+	RewriteRule ^(.*\.(js|css))$ smartoptimizer/?$1
 	
 	<IfModule mod_expires.c>
 		RewriteCond %{REQUEST_FILENAME} -f
