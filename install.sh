@@ -3,9 +3,11 @@
 # Installation:
 # wget https://bitbucket.org/oknoorap/augencont/raw/master/install.sh && chmod +x install.sh && ./install.sh 
 # wget https://bitbucket.org/oknoorap/augencont/raw/master/install.sh && chmod +x install.sh && ./install.sh password
+# wget https://bitbucket.org/oknoorap/augencont/raw/master/install.sh && chmod +x install.sh && ./install.sh password domain
 
 # Set Default password
 kunci=${1-sukses999}
+folder=${2-html}
 
 #--------------------------
 # Update apt-get repository
@@ -102,7 +104,7 @@ sudo a2enmod rewrite
 sudo service apache2 restart
 
 cat << EOFTEST1 >> /etc/apache2/sites-available/000-default.conf
-<Directory /var/www/html>
+<Directory /var/www/$folder>
 Options Indexes FollowSymLinks MultiViews
 AllowOverride All
 Order allow,deny
@@ -130,12 +132,12 @@ echo "Install FTP"
 sudo apt-get install pure-ftpd pureadmin
 sudo groupadd ftpgroup
 sudo useradd -g ftpgroup -d /dev/null -s /etc ftpuser
-sudo pure-pw useradd agc -u ftpuser -d /var/www/html
+sudo pure-pw useradd agc -u ftpuser -d ./
 sudo pure-pw mkdb
 sudo ln -s /etc/pure-ftpd/pureftpd.passwd /etc/pureftpd.passwd
 sudo ln -s /etc/pure-ftpd/pureftpd.pdb /etc/pureftpd.pdb
 sudo ln -s /etc/pure-ftpd/conf/PureDB /etc/pure-ftpd/auth/PureDB
-sudo chown -hR ftpuser:ftpgroup /var/www/html/
+sudo chown -hR ftpuser:ftpgroup ./
 sudo /etc/init.d/pure-ftpd restart
 
 #--------------------------
@@ -155,7 +157,7 @@ crontab -l | { cat; echo "* * * * * sh -x /home/monitor.sh"; } | crontab -
 #--------------------------
 # nano .htaccess
 #--------------------------
-cat << EOFTEST1 >> /var/www/html/.htaccess
+cat << EOFTEST1 >> ./.htaccess
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
@@ -170,12 +172,12 @@ sudo service apache2 restart
 #--------------------------
 # Fix Permission
 #--------------------------
-chown -R www-data:www-data /var/www/html
-find /var/www/html -type d -exec chmod 755 {} \;
-find /var/www/html -type f -exec chmod 644 {} \;
+chown -R www-data:www-data ./
+find ./ -type d -exec chmod 755 {} \;
+find ./ -type f -exec chmod 644 {} \;
 usermod -aG ftpgroup www-data
-chown -R ftpuser:ftpgroup /var/www/html
-chmod -R g+ws /var/www/html
+chown -R ftpuser:ftpgroup ./
+chmod -R g+ws ./
 chmod +x backup.sh
 chmod +x update.sh
 service apache2 restart
