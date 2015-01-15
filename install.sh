@@ -104,7 +104,7 @@ sudo a2enmod rewrite
 sudo service apache2 restart
 
 cat << EOFTEST1 >> /etc/apache2/sites-available/000-default.conf
-<Directory /var/www/$folder>
+<Directory /var/www/${folder}>
 Options Indexes FollowSymLinks MultiViews
 AllowOverride All
 Order allow,deny
