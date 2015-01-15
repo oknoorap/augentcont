@@ -9,7 +9,7 @@
 	$db = new DB_Driver('localhost', config('database.name'), config('database.username'), config('database.password'));
 	?>
 	<div class="content active" id="panel-1">
-		<p>Insert keywords separated by line.</p>
+		<p>Insert keywords separated by line. Total keywords <code><?php echo get_count(); ?></code>.</p>
 		<form method="POST" enctype="multipart/form-data">
 			<div id="insert-keyword-box" data-ng-if="! $root.onPrepare">
 				<textarea data-ng-model="$root.keywords" style="height: 250px"></textarea>
@@ -36,7 +36,7 @@
 						<input type="text" data-ng-model="$root.newCategory" placeholder="e.g Business">
 					</div>
 				</div>
-				<div id="icons" data-ng-show="$root.expandIcons">
+				<div id="icons" data-ng-show="$root.expandIcons" style="display:none">
 					<a class="tiny secondary button" data-ng-repeat="i in icon track by $index" data-ng-class="{'success': $root.selectedIcon === i}" ng-click="$root.selectedIcon = i"><i class="fa fa-{{ i }}"></i></a>
 				</div>
 			</div>
@@ -49,7 +49,7 @@
 	<?php endif; ?>
 
 	<div class="content <?php echo (! config('installed'))? 'active': ''; ?>" id="panel-2">
-		<form method="POST" enctype="multipart/form-data" action="index.php">
+		<form id="config" method="POST" enctype="multipart/form-data" action="index.php">
 		
 		<div class="callout panel">
 			<p><strong>Quick setting as</strong> <a class="tiny button" data-ng-click="setConfig('pdf')"><i class="fa fa-folder"></i> PDF Directory</a> <a class="tiny button" data-ng-click="setConfig('html')"><i class="fa fa-file-pdf-o"></i> PDF Search Engine</a> <a class="tiny button" onclick="alert('Coming Soon!');return false;"><i class="fa fa-youtube-play"></i> YouTube Engine</a></p>
@@ -93,14 +93,11 @@
 				</div>
 				<div class="small-7 end columns">
 					<?php
-					if ($name === 'logo'):
-						if ($value !== ''): ?>
-						<img src="../content/logo/<?php echo $value; ?>" style="max-width: 300px; height: auto" />
-						<br />
-						<?php endif; ?>
-
-						<input type="file" id="<?php echo $id; ?>" name="config[<?php echo $name; ?>]" style="width: 100px">
-						<input type="hidden" name="config[logo_tmp]" value="<?php echo $value; ?>">
+					if ($name === 'logo'): ?>
+					<canvas id="canvas" width="0" height="0" data-url="<?php echo (! empty($value)) ? '../content/logo/'. $value:'' ?>">Browser missing HTML5 support.</canvas> <br />
+					<input type="file" id="<?php echo $id; ?>" name="config[<?php echo $name; ?>]" />
+					<input type="hidden" name="config[logo_tmp]" id="logo_tmp" value="no">
+					<input type="hidden" name="config[logo_old]" value="<?php echo $value; ?>">
 
 					<?php elseif ($name === 'password'): ?>
 					<input type="password" id="<?php echo $id; ?>" name="config[<?php echo $name; ?>]" placeholder="Password" value="<?php echo $value; ?>" style="width: 200px;display: inline-block;margin-right: 10px;"> <label style="display: inline-block"><input type="checkbox" data-ng-click="togglePassword($event)"> Show Password</label>
@@ -212,7 +209,7 @@
 		<div class="row">
 			<div class="small-2 columns">&nbsp;</div>
 			<div class="small-10 columns">
-				<button class="small button"><i class="fa fa-save"></i> Save Changes</button>
+				<a class="small button save-config"><i class="fa fa-save"></i> <span class="txt">Save Changes</span></a>
 			</div>
 		</div>
 		</form>

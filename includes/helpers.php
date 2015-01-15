@@ -364,25 +364,21 @@ function title ($only_keyword = FALSE)
 			break;
 
 			case 'result':
-				if ($only_keyword)
+				if (! $only_keyword)
 				{
-					$title = ucwords($title);
-				}
-				else
-				{
-					$title = sprintf(str_replace('{keyword}', '%s', config('result.title')), ucwords($title));
+					$title = sprintf(str_replace('{keyword}', '%s', config('result.title')), title_case($title));
 				}
 			break;
 
 			case 'single':
 			if ($only_keyword)
 			{
-				$title = ucwords(normalize(results('title')));
+				$title = normalize(results('title'));
 			}
 			else
 			{
 				$search = array('{keyword}', '{title}');
-				$replace = ucwords(normalize(results('title')));
+				$replace = normalize(results('title'));
 				$title = str_replace($search, $replace, config('single.title'));
 			}
 			break;
@@ -392,7 +388,7 @@ function title ($only_keyword = FALSE)
 			break;
 		}
 
-		$title = str_replace('{category}', ucwords(get_category()), $title);
+		$title = str_replace('{category}', get_category(), $title);
 	}
 	else
 	{
@@ -400,6 +396,7 @@ function title ($only_keyword = FALSE)
 	}
 
 	$title = replace_syntax($title);
+	$title = title_case ($title);
 	return $title;
 }
 
@@ -424,12 +421,12 @@ function description ()
 			mt_srand(make_seed());
 			$rand_number = mt_rand(0, count($result) - 1);
 			$result = $result[$rand_number];
-			$description = str_replace('{keyword}', ucwords($description), config('result.title'));
+			$description = str_replace('{keyword}', title_case($description), config('result.title'));
 			$description = str_replace('{description}', trim($result['description']), config('result.description'));
 			break;
 
 			case 'single':
-			$title = ucwords(normalize(results('title')));
+			$title = title_case(normalize(results('title')));
 			$search = array('{keyword}', '{title}', '{description}');
 			$replace = array($title, $title, results('description'));
 			$description = str_replace($search, $replace, config('single.description'));
@@ -762,7 +759,7 @@ function widget ($query, $options)
 					$category = url_title($result['category'], config('separator'), $is_capitalize);
 					$link = $category .'/'. url_title($result['keyword'], config('separator'), $is_capitalize) . $is_pdf;
 					$output .= '<'.$options['item'].'>';
-					$output .= '<a href="'. base_url() . $link.'" title="'. ucwords($result['keyword']) .'">'. ucwords($result['keyword']) .'</a>';
+					$output .= '<a href="'. base_url() . $link.'" title="'. title_case($result['keyword']) .'">'. title_case($result['keyword']) .'</a>';
 					$output .= '</'.$options['item'].'>';
 				}
 			}
@@ -811,7 +808,7 @@ function random ($options = array())
 				$category = url_title($result['category'], config('separator'), $is_capitalize);
 				$link = $category .'/'. url_title($result['keyword'], config('separator'), $is_capitalize) . $is_pdf .'?'. config('single_var') .'='. $result['id'];
 				$output .= '<'.$options['item'].'>';
-				$output .= '<a href="'. base_url() . $link.'" title="'. ucwords($result['title']) .'" rel="nofollow">'. ucwords($result['title']) .'</a>';
+				$output .= '<a href="'. base_url() . $link.'" title="'. title_case($result['title']) .'" rel="nofollow">'. title_case($result['title']) .'</a>';
 				$output .= '</'.$options['item'].'>';
 			}
 			$output .= '</'.$options['prefix'].'>';
@@ -876,10 +873,10 @@ function recent_document ($keyword_id, $options = array())
 				$link = base_url() . $category .'/'. url_title($result['keyword'], config('separator'), $is_capitalize) . $is_pdf .'?'. config('single_var') .'='. $result['id'];
 				$new_keyword = url_title($result['title'], config('separator'), $is_capitalize);
 				$output .= '<'.$options['item'].'>';
-				$output .= '<h3 itemprop="name"><a href="'. generate_permalink($result['title'], $category) .'" title="'. ucwords($result['title']) .'" rel="nofollow">'. ucwords($result['title']) .'</a></h3>';
-				$output .= '<a href="'. $link .'" title="'. ucwords($result['title']) .'" rel="nofollow" class="tiny button"><i class="fa fa-book"></i> Read</a>';
+				$output .= '<h3 itemprop="name"><a href="'. generate_permalink($result['title'], $category) .'" title="'. title_case($result['title']) .'" rel="nofollow">'. title_case($result['title']) .'</a></h3>';
+				$output .= '<a href="'. $link .'" title="'. title_case($result['title']) .'" rel="nofollow" class="tiny button"><i class="fa fa-book"></i> Read</a>';
 				$output .= '<div class="desc">'. $result['description'] .'</div>';
-				$output .= '<a href="'. $link .'" title="'. ucwords($result['title']) .'" rel="nofollow" class="read"><i class="fa fa-external-link-square"></i> '. $link .'</a>';
+				$output .= '<a href="'. $link .'" title="'. title_case($result['title']) .'" rel="nofollow" class="read"><i class="fa fa-external-link-square"></i> '. $link .'</a>';
 				$output .= '</'.$options['item'].'>';
 				endif;
 			}
@@ -922,7 +919,7 @@ function show_item ($list)
 			{
 				$category = url_title($list['name'], config('separator'), $is_capitalize);
 				$link = $category .'/'. url_title($result['keyword'], config('separator'), $is_capitalize) . $is_pdf;
-				$output .= '<a href="'. base_url() . $link.'" title="'. ucwords($result['keyword']) .'" rel="nofollow">'. ucwords($result['keyword']) .'</a>, ';
+				$output .= '<a href="'. base_url() . $link.'" title="'. title_case($result['keyword']) .'" rel="nofollow">'. title_case($result['keyword']) .'</a>, ';
 			}
 		}
 		$output = rtrim($output, ', ');
@@ -1168,7 +1165,7 @@ function get_categories ()
 
 function get_categories_map ($arr)
 {
-	$title = ucwords($arr['name']);
+	$title = title_case($arr['name']);
 	$arr['name'] = $title;
 	return $arr;
 }
@@ -1182,7 +1179,7 @@ function get_keywords ($category_name)
 
 function get_keywords_map ($arr)
 {
-	$keyword = ucwords($arr['keyword']);
+	$keyword = title_case($arr['keyword']);
 	$arr['keyword'] = $keyword;
 	return $arr;
 }
@@ -1252,6 +1249,42 @@ function get_count ($category_id = '')
 	if (count($result) > 0) {
 		return $result[0]['count'];
 	}
+}
+
+function title_case ($title)
+{
+    $regx = '/<(code|var)[^>]*>.*?<\/\1>|<[^>]+>|&\S+;/';
+    preg_match_all($regx, $title, $html, PREG_OFFSET_CAPTURE);
+    $title = preg_replace ($regx, '', $title);
+    $q_left = chr(8216);
+    $q_right = chr(8217);
+    $double_q = chr(8220);
+
+    preg_match_all ('/[\w\p{L}&`\''. $q_left . $q_right .'"'. $double_q .'\.@:\/\{\(\[<>_]+-? */u', $title, $m1, PREG_OFFSET_CAPTURE);
+    foreach ($m1[0] as &$m2) {
+        list ($m, $i) = $m2;
+        $i = mb_strlen (substr ($title, 0, $i), 'UTF-8');
+        
+        $m = $i>0 && mb_substr ($title, max (0, $i-2), 1, 'UTF-8') !== ':' && 
+            !preg_match ('/[\x{2014}\x{2013}] ?/u', mb_substr ($title, max (0, $i-2), 2, 'UTF-8')) && 
+             preg_match ('/^(a(nd?|s|t)?|b(ut|y)|en|for|i[fn]|o[fnr]|t(he|o)|vs?\.?|via)[ \-]/i', $m)
+        ? mb_strtolower ($m, 'UTF-8')
+        : (	preg_match ('/[\'"_{(\['. $q_left . $double_q .']/u', mb_substr ($title, max (0, $i-1), 3, 'UTF-8'))
+        ? mb_substr ($m, 0, 1, 'UTF-8').
+            mb_strtoupper (mb_substr ($m, 1, 1, 'UTF-8'), 'UTF-8').
+            mb_substr ($m, 2, mb_strlen ($m, 'UTF-8')-2, 'UTF-8')
+        : (	preg_match ('/[\])}]/', mb_substr ($title, max (0, $i-1), 3, 'UTF-8')) ||
+            preg_match ('/[A-Z]+|&|\w+[._]\w+/u', mb_substr ($m, 1, mb_strlen ($m, 'UTF-8')-1, 'UTF-8'))
+        ? $m
+        : mb_strtoupper (mb_substr ($m, 0, 1, 'UTF-8'), 'UTF-8').
+            mb_substr ($m, 1, mb_strlen ($m, 'UTF-8'), 'UTF-8')
+        ));
+        
+        $title = mb_substr ($title, 0, $i, 'UTF-8').$m. mb_substr ($title, $i+mb_strlen ($m, 'UTF-8'), mb_strlen ($title, 'UTF-8'), 'UTF-8');
+    }
+
+    foreach ($html[0] as &$tag) $title = substr_replace ($title, $tag[0], $tag[1], 0);
+    return $title;
 }
 
 /** EOF */

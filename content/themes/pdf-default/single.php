@@ -19,7 +19,7 @@
 
 			<div class="results single color-<?php echo random_color(); ?>">
 				<div class="title">
-					<h1><?php echo ucwords(title(true)); ?></h1>
+					<h1><?php echo title(true); ?></h1>
 				</div>
 				<div class="viewer">
 					<div id="pdf-viewer"></div>

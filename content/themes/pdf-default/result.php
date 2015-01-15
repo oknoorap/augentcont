@@ -5,7 +5,7 @@
 		<div class="large-9 columns">
 			<div itemscope itemtype="http://schema.org/ItemList" class="results color-<?php echo random_color(); ?>">
 				<div class="title">
-					<h1 itemprop="name"><?php echo ucwords(title(true)); ?></h1>
+					<h1 itemprop="name"><?php echo title(true); ?></h1>
 					<div class="breadcrumb"><?php echo breadcrumbs(); ?></div>
 				</div>
 

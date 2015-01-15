@@ -94,21 +94,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'):
 				$post_config = $_POST['config'];
 				
 				# upload logo
-				if (! empty($_FILES['config']['name']['logo'])) {
+				if ($post_config['logo_tmp'] !== 'no') {
 					$uploaddir = '../content/logo/';
-					recursive_remove_directory($uploaddir);
-					$filename = basename($_FILES['config']['name']['logo']);
-					$encrypted_filename = md5($filename) .'_'. $filename;
-					$uploadfile = $uploaddir . $encrypted_filename;
+					$filename = md5($post_config['logo_tmp']) .'_logo.'. $post_config['logo_ext'];
 
-					if (move_uploaded_file($_FILES['config']['tmp_name']['logo'], $uploadfile)) {
-						$post_config['logo'] = $encrypted_filename;
-					}
+					recursive_remove_directory($uploaddir);
+					write_file($uploaddir . $filename, base64_decode($post_config['logo_data']), 'w');
+
+					$post_config['logo'] = $filename;
+
 				} else {
-					$post_config['logo'] = $post_config['logo_tmp'];
+					$post_config['logo'] = $post_config['logo_old'];
 				}
 
+				unset($post_config['logo_ext']);
+				unset($post_config['logo_data']);
 				unset($post_config['logo_tmp']);
+				unset($post_config['logo_old']);
 
 				$post_config['header.script'] = json_escape($post_config['header.script']);
 				$post_config['footer.script'] = json_escape($post_config['footer.script']);
@@ -122,11 +124,17 @@ $config_str
 php;
 				write_file('../config.php', $str, 'w');
 
+				$response = array('status' => 404);
+
 				if ($_POST['config']['password'] !== $_SESSION["passwd"]) {
-					header("Location: ./logout.php");
+					$response['status'] = 302;
 				} else {
-					header("Location: ./");
+					$response['status'] = 200;
 				}
+
+				header("Content-type: application/json");
+				echo json_encode($response);
+				die();
 			break;
 
 			case 'page':

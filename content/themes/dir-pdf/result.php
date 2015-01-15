@@ -41,7 +41,7 @@ foreach($the_title as $index => $value)
 	'</tr>';
 }
 
-$html = '<h1 style="text-align:center">'. ucwords($keyword) .'</h1><br />'.
+$html = '<h1 style="text-align:center">'. title_case($keyword) .'</h1><br />'.
 '<h2 style="font-family:georgia;font-style:italic;text-align:center;">Table of Contents</h2>'.
 '<div>'.
 	'<table>'. $title .'</table>'.

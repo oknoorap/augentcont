@@ -437,7 +437,7 @@ class DB_Driver
 		}
 
 		if (isset($arr['title'])) {
-			$arr['title'] = normalize(clean_words(strtolower($arr['title'])), true);
+			$arr['title'] = title_case(normalize(clean_words(strtolower($arr['title']))));
 		}
 
 		return $arr;
