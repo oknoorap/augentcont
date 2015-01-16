@@ -9,7 +9,7 @@
 	$db = new DB_Driver('localhost', config('database.name'), config('database.username'), config('database.password'));
 	?>
 	<div class="content active" id="panel-1">
-		<p>Insert keywords separated by line. Total keywords <code><?php echo get_count(); ?></code>.</p>
+		<p>Insert keywords separated by line. Total keywords <code><?php echo get_keyword_count(); ?></code>.</p>
 		<form method="POST" enctype="multipart/form-data">
 			<div id="insert-keyword-box" data-ng-if="! $root.onPrepare">
 				<textarea data-ng-model="$root.keywords" style="height: 250px"></textarea>

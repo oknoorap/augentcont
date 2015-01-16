@@ -1,4 +1,6 @@
-<?php get_header(); ?>
+<?php get_header();
+$result = results();
+?>
 
 <div id="main">
 	<div class="row">
@@ -22,7 +24,7 @@
 					<h1><?php echo title(true); ?></h1>
 				</div>
 				<div class="viewer">
-					<div id="pdf-viewer"></div>
+					<div id="pdf-viewer" data-src="<?php echo $result['url']; ?>"></div>
 					<div id="pdf-download" style="display:none">
 						<p>Please wait <span class="counter">15</span> to download <strong>&quot;<?php echo results('title'); ?>.PDF&quot;</strong>.</p>
 					</div>

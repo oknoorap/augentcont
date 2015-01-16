@@ -17,7 +17,8 @@ if (! empty($_GET))
 {
 	$path = array_keys($_GET);
 	$path = explode('/', $path[0]);
-	$path = array_diff($path, array(''));
+	$path = array_filter($path);
+	#$path = array_diff($path, array());
 	$path = array_combine(range(1, count($path)), array_values($path));
 }
 
@@ -150,7 +151,8 @@ class Engine {
 					$list = array();
 					$is_results_exists = false;
 
-					if ($keyword = $this->get_keyword_id($q))
+					$keyword = $this->get_keyword_id($q);
+					if (! empty($keyword))
 					{
 						$keyword_id = $keyword[0]['id'];
 						$category_id = $keyword[0]['cat_id'];
@@ -178,13 +180,12 @@ class Engine {
 						$list = $this->insert_keyword($q, $category_id);
 
 						# if results exists
-						if ($list !== false)
+						if (! empty($list))
 						{
 							$is_results_exists = true;
 						}
 					}
 
-					# if results exists
 					if ($is_results_exists)
 					{
 						if ($is_single)

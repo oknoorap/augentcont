@@ -81,7 +81,8 @@ function theme_url ()
 
 function remove_empty_array ($arr)
 {
-	$arr = array_diff($arr, array(''));
+	$arr = array_filter($arr);
+	#$arr = array_diff($arr, array());
 	$arr = array_combine(range(1, count($arr)), array_values($arr));
 	return $arr;
 }
@@ -1246,6 +1247,17 @@ function get_count ($category_id = '')
 	{
 		$query = "SELECT COUNT(*) as `count` FROM `index` WHERE `keyword_id` IN (SELECT `id` FROM `keywords` WHERE `cat_id` = '{$category_id}')";
 	}
+	$result = $db->query($query)->result();
+
+	if (count($result) > 0) {
+		return $result[0]['count'];
+	}
+}
+
+function get_keyword_count ()
+{
+	global $db;
+	$query = "SELECT COUNT(*) as `count` FROM `keywords`";
 	$result = $db->query($query)->result();
 
 	if (count($result) > 0) {

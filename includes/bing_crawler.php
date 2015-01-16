@@ -27,8 +27,10 @@ class Bing_Crawler {
 			curl_setopt($process, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
 			curl_setopt($process, CURLOPT_USERPWD, $options['api_key'].':'.$options['api_key']);
 			curl_setopt($process, CURLOPT_TIMEOUT, 30);
+			curl_setopt($process, CURLOPT_VERBOSE, 0);
 			curl_setopt($process, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($process, CURLOPT_SSL_VERIFYPEER, 0);
+			curl_setopt($process, CURLOPT_FOLLOWLOCATION, 1);
 			curl_setopt($process, CURLOPT_USERAGENT, $user_agent);
 			$results = curl_exec($process);
 			curl_close($process);
@@ -56,9 +58,9 @@ class Bing_Crawler {
 			curl_setopt($process, CURLOPT_PROXY, "127.0.0.1:9050");
 			curl_setopt($process, CURLOPT_PROXYTYPE, 7);
 			curl_setopt($process, CURLOPT_HEADER, 0); 
-			curl_setopt($process, CURLOPT_FOLLOWLOCATION, 1);
 			//curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, 1); 
-			curl_setopt($process, CURLOPT_VERBOSE, 1);
+			curl_setopt($process, CURLOPT_VERBOSE, 0);
+			curl_setopt($process, CURLOPT_FOLLOWLOCATION, 1);
 			curl_setopt($process, CURLOPT_SSL_VERIFYPEER, 0);
 			curl_setopt($process, CURLOPT_USERAGENT, $user_agent);
 			$results = curl_exec($process);
@@ -75,7 +77,8 @@ class Bing_Crawler {
 				if (! empty($response))
 				{
 					$response = array_map(array($this, 'arr_filter_bing_proxy'), $response);
-					$response = array_diff($response, array(''));
+					$response = array_filter($response);
+					#$response = array_diff($response, array());
 					$response = array_combine(range(1, count($response)), array_values($response));
 				}
 			}
