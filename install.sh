@@ -172,7 +172,7 @@ sudo service apache2 restart
 #--------------------------
 # Fix Permission
 #--------------------------
-chown -R www-data:www-data ./
+chown -R www-data:www-data /var/www/
 find /var/www/ -type d -exec chmod 755 {} \;
 find /var/www/ -type f -exec chmod 644 {} \;
 usermod -aG ftpgroup www-data

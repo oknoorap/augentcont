@@ -25,11 +25,11 @@ rm augencont -rf
 #--------------------------
 # Fix Permission
 #--------------------------
-find ./ -type d -exec chmod 755 {} \;
-find ./ -type f -exec chmod 644 {} \;
+find /var/www/ -type d -exec chmod 755 {} \;
+find /var/www/ -type f -exec chmod 644 {} \;
 usermod -aG ftpgroup www-data
-chown -R ftpuser:ftpgroup ./
-chmod -R g+ws ./
+chown -R ftpuser:ftpgroup /var/www/
+chmod -R g+ws /var/www/
 chmod +x backup.sh
 chmod +x update.sh
 service apache2 restart
