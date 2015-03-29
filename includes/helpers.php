@@ -1301,4 +1301,9 @@ function title_case ($title)
     return $title;
 }
 
+function download_url ($title)
+{
+	return base_url() . 'download.php?file=' . url_title($title, '-', true) .'&format=pdf';
+}
+
 /** EOF */

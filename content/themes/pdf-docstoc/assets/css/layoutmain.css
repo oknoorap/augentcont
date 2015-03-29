@@ -5963,3 +5963,17 @@ a:hover .icon-search-box {
 .disc a:hover,.sitemaps a:hover {
   color: #ffffff;
 }
+.big-dl {
+  display: block;
+  padding: 15px 10px;
+  background: #40D47E;
+  color: #ffffff;
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  margin: 5px 0 20px;
+}
+.big-dl:hover {
+  color: #ffffff;
+}

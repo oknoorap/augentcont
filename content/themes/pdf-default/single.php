@@ -14,7 +14,7 @@ $result = results();
 			<div class="row">
 				<div class="large-12 columns">
 					<a href="<?php echo generate_permalink(results('title')); ?>" class="single right search button last"><i class="fa fa-search"></i> Find Similiar</a>
-					<a class="single right download success button"><i class="fa fa-download"></i> Download</a>
+					<a rel="nofollow" href="<?php echo download_url(results('title')); ?>" class="single right success button"><i class="fa fa-download"></i> Download</a>
 					<a class="single right read alert button" style="display:none"><i class="fa fa-book"></i> Read</a>
 				</div>
 			</div>

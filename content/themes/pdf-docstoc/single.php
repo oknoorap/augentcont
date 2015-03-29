@@ -9,6 +9,7 @@
 		<div style="clear: both;"></div>
 		<?php $result = results(); ?>
 		<div class="content">
+			<a class="big-dl" href="<?php echo download_url(title(true)); ?>" rel="nofollow">Download <?php echo title(true); ?> PDF</a>
 			<div id="pdf-viewer" data-src="<?php echo $result['url']; ?>"></div>
 		</div>
 		<?php $related = related(); ?>
@@ -41,7 +42,10 @@
 								</span>
 							</span>
 							<span class="meta-label icon-docType-pdf icon"></span>
-							<span class="meta-value">pdf</span>
+							<a href="<?php echo download_url($list['title']); ?>" rel="nofollow" class="meta-value">Download</a>
+
+							<span class="meta-label icon-docType-pdf icon"></span>
+							<a href="<?php echo $read; ?>" rel="nofollow" class="meta-value">Read</a>
 						</span>
 					</span>
 					<div style="clear:both;"></div>

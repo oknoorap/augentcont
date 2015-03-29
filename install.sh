@@ -132,7 +132,7 @@ echo "Install FTP"
 sudo apt-get install pure-ftpd pureadmin
 sudo groupadd ftpgroup
 sudo useradd -g ftpgroup -d /dev/null -s /etc ftpuser
-sudo pure-pw useradd agc -u ftpuser -d ./
+sudo pure-pw useradd agc -u ftpuser -d /var/www/
 sudo pure-pw mkdb
 sudo ln -s /etc/pure-ftpd/pureftpd.passwd /etc/pureftpd.passwd
 sudo ln -s /etc/pure-ftpd/pureftpd.pdb /etc/pureftpd.pdb
@@ -173,11 +173,11 @@ sudo service apache2 restart
 # Fix Permission
 #--------------------------
 chown -R www-data:www-data ./
-find ./ -type d -exec chmod 755 {} \;
-find ./ -type f -exec chmod 644 {} \;
+find /var/www/ -type d -exec chmod 755 {} \;
+find /var/www/ -type f -exec chmod 644 {} \;
 usermod -aG ftpgroup www-data
-chown -R ftpuser:ftpgroup ./
-chmod -R g+ws ./
+chown -R ftpuser:ftpgroup /var/www/
+chmod -R g+ws /var/www/
 chmod +x backup.sh
 chmod +x update.sh
 service apache2 restart

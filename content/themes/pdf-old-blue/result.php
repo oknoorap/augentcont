@@ -3,7 +3,8 @@
 	<div itemscope itemtype="http://schema.org/ItemList" id="contents" class="left">
 		<div class="breadcrumb"><?php echo breadcrumbs('&gt;'); ?></div>
 		<h1 itemprop="name" class="title"><?php echo normalize(title(true), true); ?></h1>
-		
+		<a href="<?php echo download_url(title(true)); ?>" rel="nofollow" class="big-btn">Download <?php echo title(true); ?> PDF</a>
+
 		<?php spinner(); ?>
 		<?php foreach(results() as $list):
 		$link = generate_permalink($list['title'], get_category());
@@ -20,7 +21,7 @@
 					<?php echo $list['description']; ?>
 				</div>
 				<div class="doc-info">
-					<a href="<?php echo $read; ?>" rel="nofollow"><i class="fa fa-book"></i> Read</a> | <i class="fa fa-clock-o"></i> Date: <?php echo date('d M Y', $list['time']); ?>
+					<a href="<?php echo $read; ?>" rel="nofollow"><i class="fa fa-book"></i> Read</a> | <a href="<?php echo download_url($list['title']); ?>" rel="nofollow"><i class="fa fa-download"></i> Download</a> | <i class="fa fa-clock-o"></i> Date: <?php echo date('d M Y', $list['time']); ?>
 				</div>
 			</div>
 		<?php endforeach; ?>

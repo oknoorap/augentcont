@@ -5,6 +5,7 @@
 		<h1 class="title single"><?php echo normalize(title(true), true); ?></h1>
 		<?php $result = results(); ?>
 		<div class="info">Date: <?php echo date('d M Y', $result['time']); ?></div>
+		<a href="<?php echo download_url(title(true)); ?>" rel="nofollow" class="big-btn">Download <?php echo title(true); ?> PDF</a>
 		<div id="pdf-viewer" data-src="<?php echo $result['url']; ?>"></div>
 
 		<div id="related">
