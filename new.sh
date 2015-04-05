@@ -10,6 +10,9 @@ folder=${2-html}
 #dbname
 dbname=${3-agc}
 
+mkdir /var/www/$folder
+cd /var/www/$folder
+
 #--------------------------
 # add mysql database
 #--------------------------
@@ -24,7 +27,7 @@ echo "Mod Rewrite"
 sudo a2enmod rewrite
 sudo service apache2 restart
 
-cat << EOFTEST1 >> /etc/apache2/sites-available/${folder}.conf
+cat << EOFTEST1 > /etc/apache2/sites-available/${folder}.conf
 <VirtualHost *:80>
     ServerName ${folder}
     DocumentRoot /var/www/${folder}
@@ -47,7 +50,6 @@ sudo service apache2 restart
 #--------------------------
 # Clone website source
 #--------------------------
-cd /var/www/$folder
 git clone https://oknoorap@bitbucket.org/oknoorap/augencont.git
 mv augencont/* ./
 rm augencont -rf
@@ -55,7 +57,7 @@ rm augencont -rf
 #--------------------------
 # nano .htaccess
 #--------------------------
-cat << EOFTEST1 >> ./.htaccess
+cat << EOFTEST1 > ./.htaccess
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
