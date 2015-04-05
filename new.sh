@@ -47,7 +47,7 @@ sudo service apache2 restart
 #--------------------------
 # Clone website source
 #--------------------------
-cd /var/www/${folder}
+cd /var/www/$folder
 git clone https://oknoorap@bitbucket.org/oknoorap/augencont.git
 mv augencont/* ./
 rm augencont -rf
@@ -96,7 +96,7 @@ promptyn () {
 
 if promptyn "NEW installation [y/n]?"; then
     echo "Import MySQL database"
-    mysql -u root -p$kunci agc < db.sql
+    mysql -u root -p$mysqlpwd $dbname < db.sql
     echo "Success. Please insert keyword."
 else
     echo "Enter website's source (include http:// without /) : "
@@ -105,7 +105,7 @@ else
     echo "Extract Zip"
     tar -zxvf backup.tar.gz
     echo "Import MySQL database"
-    mysql -u root -p$kunci agc < backup/db.sql
+    mysql -u root -p$mysqlpwd $dbname < backup/db.sql
     mv backup/config_backup.php config.php
     rm backup.tar.gz -rf
     rm backup -rf
