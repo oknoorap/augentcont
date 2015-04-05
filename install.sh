@@ -137,7 +137,7 @@ sudo pure-pw mkdb
 sudo ln -s /etc/pure-ftpd/pureftpd.passwd /etc/pureftpd.passwd
 sudo ln -s /etc/pure-ftpd/pureftpd.pdb /etc/pureftpd.pdb
 sudo ln -s /etc/pure-ftpd/conf/PureDB /etc/pure-ftpd/auth/PureDB
-sudo chown -hR ftpuser:ftpgroup ./
+sudo chown -hR ftpuser:ftpgroup /var/www/
 sudo /etc/init.d/pure-ftpd restart
 
 #--------------------------
@@ -220,3 +220,4 @@ sed -i "s/sukses999/${kunci}/g" config.php
 rm db.sql -rf
 rm monitor.sh -rf
 rm install.sh -rf
+rm new.sh -rf
