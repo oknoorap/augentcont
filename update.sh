@@ -22,6 +22,7 @@ rm includes -rf
 rm content -rf
 mv augencont/* ./
 rm augencont -rf
+chmod +x update.sh
 
 #--------------------------
 # Fix Permission
