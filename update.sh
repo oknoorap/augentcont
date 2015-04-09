@@ -24,6 +24,18 @@ mv augencont/* ./
 rm augencont -rf
 
 #--------------------------
+# Fix Permission
+#--------------------------
+find /var/www/ -type d -exec chmod 755 {} \;
+find /var/www/ -type f -exec chmod 644 {} \;
+usermod -aG ftpgroup www-data
+chown -R ftpuser:ftpgroup /var/www/
+chmod -R g+ws /var/www/
+chmod +x backup.sh
+chmod +x update.sh
+service pure-ftpd restart
+
+#--------------------------
 # nano .htaccess
 #--------------------------
 cat << EOFTEST1 > ./.htaccess
@@ -37,16 +49,3 @@ cat << EOFTEST1 > ./.htaccess
 </IfModule>
 EOFTEST1
 sudo service apache2 restart
-
-#--------------------------
-# Fix Permission
-#--------------------------
-find /var/www/ -type d -exec chmod 755 {} \;
-find /var/www/ -type f -exec chmod 644 {} \;
-usermod -aG ftpgroup www-data
-chown -R ftpuser:ftpgroup /var/www/
-chmod -R g+ws /var/www/
-chmod +x backup.sh
-chmod +x update.sh
-service apache2 restart
-service pure-ftpd restart
