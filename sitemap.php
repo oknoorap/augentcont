@@ -51,7 +51,7 @@ if ($count > 0)
 
 		if (count($sitemap) > 0)
 		{
-			$sitemap_name = 'sitemap'. ($_GET['offset'] + 1). '.xml.gz';
+			$sitemap_name = 'sitemap'. $_GET['offset']. '.xml.gz';
 			header('content-type: application/x-gzip');
 			header('Content-Disposition: attachment; filename="'. $sitemap_name .'"');
 
