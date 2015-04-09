@@ -61,10 +61,10 @@ cat << EOFTEST1 > ./.htaccess
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
-    RewriteRule ^sitemap([0-9]{0,3})?\.xml(\.gz)?$ sitemap.php?offset=$1&format=$2 [QSA,L]
+    RewriteRule ^sitemap([0-9]{0,3})?\.xml(\.gz)?\$ sitemap.php?offset=\$1&format=\$2 [QSA,L]
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ index.php?\$1 [L,QSA]
+    RewriteRule ^(.*)\$ index.php?\$1 [L,QSA]
 </IfModule>
 EOFTEST1
 

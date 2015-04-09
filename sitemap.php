@@ -47,11 +47,11 @@ if ($count > 0)
 		$offset = ($offset > 1) ? ($limit * ($offset - 1)) + 1: 0;
 
 		# sitemap index
-		$sitemap = $db->query("SELECT `keywords`.`keyword`, `keywords`.`time`, `cat`.`name` as `cat` FROM `keywords`, `cat` GROUP BY `keywords`.`keyword` ORDER BY `keywords`.`time` DESC LIMIT {$offset}, {$limit}")->result();
+		$sitemap = $db->query("SELECT `keywords`.`keyword`, `keywords`.`time`, `cat`.`name` as `cat` FROM `keywords`, `cat` GROUP BY `keywords`.`keyword` ORDER BY `keywords`.`time` DESC LIMIT {$limit}, {$offset}")->result();
 
 		if (count($sitemap) > 0)
 		{
-			$sitemap_name = 'sitemap'. ($offset + 1). '.xml.gz';
+			$sitemap_name = 'sitemap'. ($_GET['offset'] + 1). '.xml.gz';
 			header('content-type: application/x-gzip');
 			header('Content-Disposition: attachment; filename="'. $sitemap_name .'"');
 
