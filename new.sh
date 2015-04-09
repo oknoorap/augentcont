@@ -25,10 +25,10 @@ mysql -u root -p$mysqlpwd -e "create database ${dbname}; GRANT ALL PRIVILEGES ON
 #--------------------------
 echo "Mod Rewrite"
 sudo a2enmod rewrite
-sudo service apache2 restart
 
 cat << EOFTEST1 > /etc/apache2/sites-available/${folder}.conf
 <VirtualHost *:80>
+    # server for ${folder}
     ServerName ${folder}
     DocumentRoot /var/www/${folder}
     
@@ -44,7 +44,7 @@ EOFTEST1
 #--------------------------
 # nano .htaccess
 #--------------------------
-a2ensite ${folder}
+a2ensite $folder
 sudo service apache2 restart
 
 #--------------------------
@@ -67,7 +67,6 @@ cat << EOFTEST1 > ./.htaccess
     RewriteRule ^(.*)$ index.php?\$1 [L,QSA]
 </IfModule>
 EOFTEST1
-sudo service apache2 restart
 
 #--------------------------
 # Fix Permission
@@ -80,7 +79,8 @@ chown -R ftpuser:ftpgroup /var/www/
 chmod -R g+ws /var/www/
 chmod +x backup.sh
 chmod +x update.sh
-service apache2 restart
+
+sudo service apache2 restart
 service pure-ftpd restart
 
 #--------------------------
