@@ -30,14 +30,15 @@ if ($count > 0)
 
 	if ($offset === 0)
 	{
-		$diff = round($count / $limit) + 1;
+		# split sitemap
+		$diff = floor($count / $limit) + 1;
 
 		# split sitemap index
 		header("Content-type: application/xml");
 		$output .= '<sitemapindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/siteindex.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
-		foreach (range(1, $diff) as $index):
-			$output .= '<sitemap><loc>'. base_url() .'sitemap'. $index .'.xml.gz</loc><lastmod>'. date('Y-m-d') .'</lastmod></sitemap>';
-		endforeach;
+		for ($i = 1; $i <= $diff; $i++):
+			$output .= '<sitemap><loc>'. base_url() .'sitemap'. $i .'.xml.gz</loc><lastmod>'. date('Y-m-d') .'</lastmod></sitemap>';
+		endfor;
 		$output .= '</sitemapindex>';
 		echo $output;
 	}
@@ -45,7 +46,7 @@ if ($count > 0)
 	{
 		# get offset
 		$offset = ($offset > 1) ? ($limit * ($offset - 1)) + 1: 0;
-		
+
 		# sitemap index
 		$sitemap = $db->query("SELECT `keywords`.`keyword`, `keywords`.`time`, `cat`.`name` as `cat` FROM `keywords`, `cat` GROUP BY `keywords`.`keyword` ORDER BY `keywords`.`time` DESC LIMIT {$limit} OFFSET {$offset}")->result();
 
