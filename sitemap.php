@@ -25,16 +25,16 @@ $count = $total['count'];
 
 if ($count > 0)
 {
-	header("Content-type: application/xml");
-	echo '<?xml version="1.0" encoding="UTF-8"?>';
-	echo '<?xml-stylesheet type="text/xsl" href="'. base_url() .'sitemap.xsl"?>';
+	$output = '<?xml version="1.0" encoding="UTF-8"?>';
+	$output .= '<?xml-stylesheet type="text/xsl" href="'. base_url() .'sitemap.xsl"?>';
 
 	if ($offset === 0)
 	{
 		$diff = round($count / $limit) + 1;
 
 		# split sitemap index
-		$output = '<sitemapindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/siteindex.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+		header("Content-type: application/xml");
+		$output .= '<sitemapindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/siteindex.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
 		foreach (range(1, $diff) as $index):
 			$output .= '<sitemap><loc>'. base_url() .'sitemap'. $index .'.xml.gz</loc><lastmod>'. date('Y-m-d') .'</lastmod></sitemap>';
 		endforeach;
@@ -51,12 +51,16 @@ if ($count > 0)
 
 		if (count($sitemap) > 0)
 		{
-			$output = '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+			$sitemap_name = 'sitemap'. ($offset + 1). '.xml.gz';
+			header('content-type: application/x-gzip');
+			header('Content-Disposition: attachment; filename="'. $sitemap_name .'"');
+
+			$output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
 			foreach ($sitemap as $permalink):
 				$output .= '<url><loc>'. generate_permalink_url($permalink['keyword'], $permalink['cat']). '</loc><lastmod>'. date('Y-m-d', $permalink['time']) .'</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>';
 			endforeach;
 			$output .= '</urlset>';
-			echo $output;
+			echo gzencode($output);
 		}
 		else
 		{
