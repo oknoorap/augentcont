@@ -1,5 +1,6 @@
-# MT refugees
 User-agent: *
-Disallow: /sukses/
+Disallow: /admin/
 Disallow: /includes/
 Disallow: /content/
+
+Sitemap: /sitemap.xml
