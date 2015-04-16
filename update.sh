@@ -13,6 +13,7 @@ rm augencont/db.sql -rf
 rm augencont/install.sh -rf
 rm augencont/monitor.sh -rf
 rm augencont/new.sh -rf
+rm augencont/lamp.sh -rf
 
 #--------------------------
 # Remove autogent dir

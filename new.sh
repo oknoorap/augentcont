@@ -123,3 +123,4 @@ rm db.sql -rf
 rm monitor.sh -rf
 rm install.sh -rf
 rm new.sh -rf
+rm lamp.sh -rf
