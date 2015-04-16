@@ -115,8 +115,9 @@ else
 fi
 
 # change config.php password
-sed -i "s/sukses999/${mysqlpwd}/g" config.php
+sed -i "s/sukses999/${kunci}/g" config.php
 sed -i "s/\"database.name\":\"agc\"/\"database.name\":\"${dbname}\"/g" config.php
+sed -i "s/\"database.password\":\"sukses999\"/\"database.password\":\"${kunci}\"/g" config.php
 
 rm db.sql -rf
 rm monitor.sh -rf
