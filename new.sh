@@ -18,7 +18,7 @@ cd /var/www/$folder
 #--------------------------
 echo "MySQL root's password: "
 read mysqlpwd
-mysql -u root -p$mysqlpwd -e "create database ${dbname}; GRANT ALL PRIVILEGES ON ${dbname}.* TO root@localhost IDENTIFIED BY '$kunci'"
+mysql -u root -p$mysqlpwd -e "create database ${dbname}; GRANT ALL PRIVILEGES ON ${dbname}.* TO root@localhost IDENTIFIED BY '${mysqlpwd}'"
 
 #--------------------------
 # Install mod-rewrite
@@ -117,7 +117,6 @@ fi
 # change config.php password
 sed -i "s/sukses999/${kunci}/g" config.php
 sed -i "s/\"database.name\":\"agc\"/\"database.name\":\"${dbname}\"/g" config.php
-sed -i "s/\"database.password\":\"sukses999\"/\"database.password\":\"${kunci}\"/g" config.php
 
 rm db.sql -rf
 rm monitor.sh -rf
