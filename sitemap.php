@@ -48,7 +48,7 @@ if ($count > 0)
 		$offset = ($offset > 1) ? ($limit * ($offset - 1)) + 1: 0;
 
 		# sitemap index
-		$sitemap = $db->query("SELECT `keywords`.`keyword`, `keywords`.`time`, `cat`.`name` as `cat` FROM `keywords`, `cat` GROUP BY `keywords`.`keyword` ORDER BY `keywords`.`time` DESC LIMIT {$limit} OFFSET {$offset}")->result();
+		$sitemap = $db->query("SELECT `keywords`.`keyword`, `keywords`.`time`, `cat`.`name` as `cat_name` FROM `keywords` LEFT JOIN `cat` ON `keywords`.`cat_id` = `cat`.`id` GROUP BY `keywords`.`keyword` ORDER BY `keywords`.`time` DESC LIMIT {$limit} OFFSET {$offset}")->result();
 
 		if (count($sitemap) > 0)
 		{
