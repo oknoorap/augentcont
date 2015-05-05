@@ -5,20 +5,20 @@
 # wget https://bitbucket.org/oknoorap/augencont/raw/master/install-nginx.sh && chmod +x install-nginx.sh && ./install-nginx.sh domain password
 # ##########
 
-# domain name
-domain=${1-default}
-
-# password
-pass=${2-dollar777}
-
-# Update all
-echo "Update all..."
-sudo apt-get update -qq
-
 # For vultr
 if [ $(hostname) != 'localhost' ]; then
 hostname localhost
 fi
+
+# domain name
+DOMAIN=${1-default}
+
+# password
+PASS=${2-dollar777}
+
+# Update all
+echo "Update all..."
+sudo apt-get update -y > /dev/null
 
 ##############################
 # install LEMP stack
@@ -32,10 +32,9 @@ fi
 ###### Install MySQL Begin #####
 if [ $(dpkg-query -W -f='${Status}' mysql-server 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
   echo "Installing MySQL Server..."
-  export DEBIAN_FRONTEND=noninteractive
-  sudo apt-get install mysql-server -q -y > /dev/null
+  DEBIAN_FRONTEND=noninteractive apt-get -y install mysql-server > /dev/null
   sudo mysql_install_db
-  mysqladmin -u root password $pass
+  sudo mysqladmin -u root password $PASS
   
   if [ $(dpkg-query -W -f='${Status}' expect 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
     sudo apt-get install expect -y > /dev/null
@@ -46,7 +45,7 @@ set timeout 10
 spawn mysql_secure_installation
 
 expect \"Enter current password for root (enter for none):\"
-send \"$pass\r\"
+send \"$PASS\r\"
 
 expect \"Change the root password?\"
 send \"n\r\"
@@ -67,8 +66,8 @@ expect eof
 ")
 
   echo "${SECURE_MYSQL}"
-  sudo apt-get remove expect --purge
-  mysql -u root -p$pass -e "create database agc; GRANT ALL PRIVILEGES ON agc.* TO root@localhost IDENTIFIED BY '$pass'"
+  sudo apt-get -y remove expect --purge
+  mysql -u root -p$PASS -e "create database agc; GRANT ALL PRIVILEGES ON agc.* TO root@localhost IDENTIFIED BY '$PASS'"
 fi
 ############## END ###############
 
