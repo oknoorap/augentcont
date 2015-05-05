@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #################################
 # AGC Script installation with nginx version
 # wget https://bitbucket.org/oknoorap/augencont/raw/master/install-nginx.sh && chmod +x install-nginx.sh && ./install-nginx.sh domain password
@@ -11,7 +13,12 @@ pass=${2-dollar777}
 
 # Update all
 echo "Update all..."
-sudo apt-get update > /dev/null
+sudo apt-get update -qq
+
+# For vultr
+if [ $(hostname) != 'localhost' ]; then
+hostname localhost
+fi
 
 ##############################
 # install LEMP stack
@@ -25,8 +32,10 @@ fi
 ###### Install MySQL Begin #####
 if [ $(dpkg-query -W -f='${Status}' mysql-server 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
   echo "Installing MySQL Server..."
-  sudo apt-get install mysql-server -y > /dev/null
+  export DEBIAN_FRONTEND=noninteractive
+  sudo apt-get install mysql-server -q -y > /dev/null
   sudo mysql_install_db
+  mysqladmin -u root password $pass
   
   if [ $(dpkg-query -W -f='${Status}' expect 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
     sudo apt-get install expect -y > /dev/null
@@ -67,7 +76,7 @@ fi
 sudo apt-get install php5 php5-mysql php5-json php5-mcrypt php5-fpm -y > /dev/null
 
 # Install phpMyAdmin
-#sudo apt-get install phpmyadmin
+#sudo apt-get install phpmyadmin -y > /dev/null
 #sudo ln -s /usr/share/phpmyadmin /usr/share/nginx/html
 #sudo php5enmod mcrypt
 #sudo service php5-fpm restart
