@@ -48,7 +48,8 @@ echo "Your Option: "
 read OPTION
 
 # Make directory
-sudo cd / && sudo mkdir web && sudo mkdir /web/${DOMAIN}
+sudo mkdir -p /web/${DOMAIN}
+cd /web/${DOMAIN}
 
 # specify password, etc
 if [[ $OPTION == '1' ]]; then
@@ -102,15 +103,29 @@ expect eof
 
   # Install php
   if [ $(dpkg-query -W -f='${Status}' php5 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-    sudo apt-get install php5 php5-mysql php5-json php5-mcrypt php5-fpm -y >/dev/null
+    sudo apt-get install php5-mysql -y >/dev/null
+    sudo apt-get install php5 php5-json php5-mcrypt -y >/dev/null
+    sudo apt-get install php5-fpm -y >/dev/null
   fi
 
   # Install phpMyAdmin
-  if [ $(dpkg-query -W -f='${Status}' php5 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-    sudo apt-get install phpmyadmin -y >/dev/null
-    sudo ln -s /usr/share/phpmyadmin /usr/share/nginx/html
-    sudo php5enmod mcrypt
-    sudo service php5-fpm restart
+  if [ $(dpkg-query -W -f='${Status}' phpmyadmin 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+    sudo apt-get install phpmyadmin -y
+    sudo ln -s /usr/share/phpmyadmin /usr/share/nginx/html/phpmyadmin
+    
+    # Password for phpmyadmin
+    PMAPASS=openssl passwd -crypt $PASS
+    echo '${DOMAIN}:${PMAPASS}'>/etc/nginx/pma_pass
+  
+    # Add phpMyAdmin to default nginx conf
+    PMAORIGIN="\#error_page 404 \/404.html;"
+    PMAREPLACEMENT="\#error_page 404 \/404\.html;\n\tlocation \/phpmyadmin \{\n \t\troot \/usr\/share\/;\n \t\tauth_basic \"Admin Login\";\n \t\tauth_basic_user_file \/etc\/nginx\/pma_pass;\n \t\tindex index\.php index\.html index\.htm;\n \t\tlocation ~ ^\/phpmyadmin\/(.+\\.php)\$ \{\n \t\t\ttry_files \$uri =404;\n \t\t\troot \/usr\/share\/;\n \t\t\tfastcgi_pass unix:\/var\/run\/php5-fpm.sock;\n \t\t\tfastcgi_index index\.php;\n \t\t\tfastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;\n \t\t\tinclude fastcgi_params;\n \t\t}\n \t\tlocation ~* ^\/phpmyadmin\/(.+\\\.(jpg|jpeg|gif|css|png|js|ico|html|xml|txt))\$ {\n \t\t\troot \/usr\/share\/;\n \t\t}\n \t\}\n \n \tlocation \/phpMyAdmin \{\n \t\trewrite ^\/* \/phpmyadmin last;\n \t\}\n\n"
+    sudo sed -i "s/$PMAORIGIN/$PMAREPLACEMENT/g" /etc/nginx/sites-available/default
+
+    # Restart 
+    sudo php5enmod mcrypt >/dev/null
+    sudo service php5-fpm restart >/dev/null
+    sudo service nginx restart >/dev/null
   fi
   ############## END INSTALL LEMP ###############
 else
