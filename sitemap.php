@@ -58,7 +58,7 @@ if ($count > 0)
 
 			$output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
 			foreach ($sitemap as $permalink):
-				$output .= '<url><loc>'. generate_permalink_url($permalink['keyword'], $permalink['cat']). '</loc><lastmod>'. date('Y-m-d', $permalink['time']) .'</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>';
+				$output .= '<url><loc>'. generate_permalink_url($permalink['keyword'], $permalink['cat_name']). '</loc><lastmod>'. date('Y-m-d', $permalink['time']) .'</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>';
 			endforeach;
 			$output .= '</urlset>';
 			echo gzencode($output);
