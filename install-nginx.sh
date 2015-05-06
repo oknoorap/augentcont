@@ -387,8 +387,16 @@ if [[ $OPTION != '3' ]]; then
 	fi
 fi
 
-echo -e "========================================="
-echo -e "# FTP user:agc, pass:$PASS"
-echo -e "# phpMyAdmin Auth user:agc pass:$PASS"
-echo -e "# phpMyAdmin SQL user:root pass:$PASS"
-echo -e "========================================="
+if [[ $OPTION == '1' ]]; then
+	echo -e "========================================="
+	echo -e "# FTP user:agc, pass:$PASS"
+	echo -e "# phpMyAdmin Auth user:agc pass:$PASS"
+	echo -e "# phpMyAdmin SQL user:root pass:$PASS"
+	echo -e "========================================="
+elif [[ $OPTION == '2' ]]; then
+	echo -e "========================================="
+	echo -e "# FTP user:agc, pass:$DBPASS"
+	echo -e "# phpMyAdmin Auth user:agc pass:$DBPASS"
+	echo -e "# phpMyAdmin SQL user:root pass:$DBPASS"
+	echo -e "========================================="
+fi
