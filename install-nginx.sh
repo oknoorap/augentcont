@@ -232,7 +232,7 @@ elif [[ $OPTION == '2' ]]; then
 	done < "/etc/mmengine.conf"
 
 	# Create and Change database
-	mysql -u root -p$DBPASS -e "create database $DBNAME; GRANT ALL PRIVILEGES ON $DBNAME.* TO root@localhost IDENTIFIED BY '$DBPASS'"
+	sudo mysql -u root -p${DBPASS} -e "CREATE DATABASE \`$DBNAME\`; GRANT ALL PRIVILEGES ON \`$DBNAME\`.* TO root@localhost IDENTIFIED BY '$DBPASS';"
 
 	sed -i "s/\"database.password\":\"sukses999\"/\"database.password\":\"${DBPASS}\"/g" config.php
 	sed -i "s/\"database.name\":\"agc\"/\"database.name\":\"${DBNAME}\"/g" config.php
@@ -244,7 +244,7 @@ fi
 
 
 # Add redirect script for domain
-if [[ ISSUBDOMAIN == 'y' ]]; then
+if [[ $ISSUBDOMAIN == 'y' ]]; then
 	NGINXCONFREDIRECT=''
 else
 	NGINXCONFREDIRECT="server {
