@@ -2,12 +2,7 @@
 
 #==================================================
 # AGC Script installation with nginx version
-
-# New installation:
 # wget -q https://bitbucket.org/oknoorap/augencont/raw/master/install-nginx.sh && chmod +x install-nginx.sh && ./install-nginx.sh domain password
-
-# Add Domain:
-# wget -q https://bitbucket.org/oknoorap/augencont/raw/master/install-nginx.sh && chmod +x install-nginx.sh && ./install-nginx.sh domain password dbname
 #==================================================
 
 # remove host.vultr (only for vultr.com or others)
@@ -36,8 +31,7 @@ if [[ $PASS == '' ]]; then
 	exit 1
 fi
 
-# Database variables
-DBNAME=${3-}
+# Database password
 DBPASS=''
 
 # Select installation option
@@ -48,6 +42,36 @@ echo -e "| 2 - Add domain"
 echo -e "| 3 - Clone"
 echo -e "=========================================="
 read -p "Your option: " OPTION
+
+# Check dbname for new domain
+if [[ $OPTION == '2' ]]; then
+	read -p "Database Name (no special chars): " DBNAME
+	if [[ $DBNAME == '' ]]; then
+		echo "Database name not provided"
+		exit 1
+	fi
+
+	# Is subdomain or addon domain
+	subdomaincheck () {
+		while true; do
+			read -p "$1 " yn
+			case $yn in
+				[Yy]* ) return 0;;
+				[Nn]* ) return 1;;
+				* ) echo "Please answer yes or no.";;
+			esac
+		done
+	}
+
+	# add prefix www to addon domain
+	if subdomaincheck "Is this subdomain [y/n]"; then
+		ISSUBDOMAIN='y'
+		WWWDOMAIN="$DOMAIN"
+	else
+		ISSUBDOMAIN='n'
+		WWWDOMAIN="www.$DOMAIN"
+	fi
+fi
 
 
 # Make directory
@@ -160,14 +184,6 @@ if [ $(dpkg-query -W -f='${Status}' pure-ftpd 2>/dev/null | grep -c "ok installe
 	sudo chown -hR ftpuser:ftpgroup /web
 fi
 
-# Check dbname for new domain
-if [[ $OPTION == '2' ]]; then
-	if [[ $DBNAME == '' ]]; then
-		echo "Database name not provided"
-		exit 1
-	fi
-fi
-
 # Clone engine from repo
 git clone https://oknoorap@bitbucket.org/oknoorap/augencont.git >/dev/null
 mv augencont/* ./
@@ -210,14 +226,19 @@ elif [[ $OPTION == '3' ]]; then
 echo "Option 3"
 fi
 
+if [[ ISSUBDOMAIN == 'n' ]]; then
+	NGINXCONFREDIRECT="server {
+	listen 80;
+	server_name ${DOMAIN};
+	return 301 http://${WWWDOMAIN}\$request_uri;
+}"
+else
+	NGINXCONFREDIRECT=''
+fi
 
 # Write nginx config
 cat << NGINXCONF > /etc/nginx/sites-available/${DOMAIN}
-server {
-	listen 80;
-	server_name ${DOMAIN};
-	return 301 http://www.${DOMAIN}\$request_uri;
-}
+${NGINXCONFREDIRECT}
 
 server {
 	listen 80;
@@ -228,7 +249,7 @@ server {
 	error_log /var/log/nginx/${DOMAIN}.error.log;
 
 	index index.php index.html index.html;
-	server_name www.${DOMAIN};
+	server_name ${WWWDOMAIN};
 
 	location ~ \\.php$ {
 		try_files \$uri =404;
@@ -286,6 +307,11 @@ NGINXCONF
 # enable site
 sudo ln -s /etc/nginx/sites-available/$DOMAIN /etc/nginx/sites-enabled/$DOMAIN
 
+# add host
+cat << ADDHOST >> /etc/hosts
+127.0.0.1 ${DOMAIN}
+ADDHOST
+
 #==================================================
 # Fix Permission
 #==================================================
@@ -330,7 +356,8 @@ if [[ $OPTION != '3' ]]; then
 		elif [[ $OPTION == '2' ]]; then
 			sudo mysql -u root -p$DBPASS $DBNAME < db.sql
 		fi
-		echo "Success. Please insert keyword."
+		echo -e "================================="
+		echo -e "Success. Please insert keyword."
 	else
 		echo "Enter website's source (include http:// without /) : "
 		read WEBSITE
@@ -348,3 +375,8 @@ if [[ $OPTION != '3' ]]; then
 		sudo rm backup -rf
 	fi
 fi
+
+echo -e "================================================="
+echo -e "# FTP user:agc, pass:$PASS"
+echo -e "# phpMyAdmin user:agc pass:$PASS"
+echo -e "================================================="
