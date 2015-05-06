@@ -23,6 +23,7 @@ if [[ $DOMAIN == '' ]]; then
 fi
 
 # Domain alias www
+ISSUBDOMAIN='n'
 WWWDOMAIN="$DOMAIN"
 
 # Parse Password
@@ -70,7 +71,6 @@ if [[ $OPTION == '2' ]]; then
 	if subdomaincheck "Is this subdomain [y/n]"; then
 		ISSUBDOMAIN='y'
 	else
-		ISSUBDOMAIN='n'
 		WWWDOMAIN="www.$DOMAIN"
 	fi
 fi
@@ -228,6 +228,8 @@ elif [[ $OPTION == '3' ]]; then
 echo "Option 3"
 fi
 
+
+# Add redirect script for domain
 if [[ ISSUBDOMAIN == 'y' ]]; then
 	NGINXCONFREDIRECT=''
 else
