@@ -115,19 +115,19 @@ fi
 if [ $(dpkg-query -W -f='${Status}' phpmyadmin 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
 	sudo apt-get install phpmyadmin -y
 
-  # Restart 
-  sudo ln -s /usr/share/phpmyadmin /usr/share/nginx/html/phpmyadmin
-  sudo php5enmod mcrypt >/dev/null
-  sudo service php5-fpm restart >/dev/null
-  
-  # Password for phpmyadmin
-  PMAPASS=$(openssl passwd -crypt $PASS>/dev/null)
-  echo "$DOMAIN:$PMAPASS">/etc/nginx/pma_pass
+	# Restart 
+	sudo ln -s /usr/share/phpmyadmin /usr/share/nginx/html/phpmyadmin
+	sudo php5enmod mcrypt >/dev/null
+	sudo service php5-fpm restart >/dev/null
 
-  # Add phpMyAdmin to default nginx conf
-  PMAORIGIN="\#error_page 404 \/404.html;"
-  PMAREPLACEMENT="\#error_page 404 \/404\.html;\n\tlocation \/phpmyadmin \{\n \t\troot \/usr\/share\/;\n \t\tauth_basic \"Admin Login\";\n \t\tauth_basic_user_file \/etc\/nginx\/pma_pass;\n \t\tindex index\.php index\.html index\.htm;\n \t\tlocation ~ ^\/phpmyadmin\/(.+\\.php)\$ \{\n \t\t\ttry_files \$uri =404;\n \t\t\troot \/usr\/share\/;\n \t\t\tfastcgi_pass unix:\/var\/run\/php5-fpm.sock;\n \t\t\tfastcgi_index index\.php;\n \t\t\tfastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;\n \t\t\tinclude fastcgi_params;\n \t\t}\n \t\tlocation ~* ^\/phpmyadmin\/(.+\\\.(jpg|jpeg|gif|css|png|js|ico|html|xml|txt))\$ {\n \t\t\troot \/usr\/share\/;\n \t\t}\n \t\}\n \n \tlocation \/phpMyAdmin \{\n \t\trewrite ^\/* \/phpmyadmin last;\n \t\}\n\n"
-  sudo sed -i "s/$PMAORIGIN/$PMAREPLACEMENT/g" /etc/nginx/sites-available/default
+	# Password for phpmyadmin
+	PMAPASS=$(openssl passwd -crypt $PASS>/dev/null)
+	echo "$DOMAIN:$PMAPASS">/etc/nginx/pma_pass
+
+	# Add phpMyAdmin to default nginx conf
+	PMAORIGIN="\#error_page 404 \/404.html;"
+	PMAREPLACEMENT="\#error_page 404 \/404\.html;\n\tlocation \/phpmyadmin \{\n \t\troot \/usr\/share\/;\n \t\tauth_basic \"Admin Login\";\n \t\tauth_basic_user_file \/etc\/nginx\/pma_pass;\n \t\tindex index\.php index\.html index\.htm;\n \t\tlocation ~ ^\/phpmyadmin\/(.+\\.php)\$ \{\n \t\t\ttry_files \$uri =404;\n \t\t\troot \/usr\/share\/;\n \t\t\tfastcgi_pass unix:\/var\/run\/php5-fpm.sock;\n \t\t\tfastcgi_index index\.php;\n \t\t\tfastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;\n \t\t\tinclude fastcgi_params;\n \t\t}\n \t\tlocation ~* ^\/phpmyadmin\/(.+\\\.(jpg|jpeg|gif|css|png|js|ico|html|xml|txt))\$ {\n \t\t\troot \/usr\/share\/;\n \t\t}\n \t\}\n \n \tlocation \/phpMyAdmin \{\n \t\trewrite ^\/* \/phpmyadmin last;\n \t\}\n\n"
+	sudo sed -i "s/$PMAORIGIN/$PMAREPLACEMENT/g" /etc/nginx/sites-available/default
 fi
 
 #==================================================
@@ -186,7 +186,7 @@ elif [[ $OPTION == '2' ]]; then
 	# Read config from last installation
 	# config location at /etc/mmengine.conf
 	while read -r line
-		do
+	do
 		# Split '=' from config
 		arr=(${line//=/ })
 		
@@ -204,7 +204,7 @@ elif [[ $OPTION == '2' ]]; then
 
 # Clone from directory
 elif [[ $OPTION == '3' ]]; then
-
+echo "Option 3"
 fi
 
 #==================================================
