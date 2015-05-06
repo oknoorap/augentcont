@@ -1,4 +1,5 @@
 <?php
+require '../includes/helpers.php';
 
 ob_start();
 include '../includes/ua.txt';
@@ -7,7 +8,7 @@ $user_agent = explode("\n", $user_agent);
 shuffle($user_agent);
 $user_agent = str_replace(array("\n", "\r", "\n\r"), '', end($user_agent));
 
-$url = 'http://checkip.dyndns.com?t=' . time();
+$url = base_url() .'/admin/ip.php';
 $process = curl_init();
 curl_setopt($process, CURLOPT_URL, $url);
 curl_setopt($process, CURLOPT_RETURNTRANSFER, 1);

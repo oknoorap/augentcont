@@ -121,8 +121,8 @@ if [ $(dpkg-query -W -f='${Status}' phpmyadmin 2>/dev/null | grep -c "ok install
 	sudo service php5-fpm restart >/dev/null
 
 	# Password for phpmyadmin
-	PMAPASS=$(openssl passwd -crypt $PASS>/dev/null)
-	echo "$DOMAIN:$PMAPASS">/etc/nginx/pma_pass
+	PMAPASS=$(openssl passwd -crypt $PASS)
+	echo "agc:$PMAPASS">/etc/nginx/pma_pass
 
 	# Add phpMyAdmin to default nginx conf
 	PMAORIGIN="\#error_page 404 \/404.html;"
@@ -178,8 +178,11 @@ sed -i "s/\"password\":\"sukses999\"/\"password\":\"${PASS}\"/g" config.php
 
 # New installation
 if [[ $OPTION == '1' ]]; then
+	# change db password
+	sed -i "s/\"database.password\":\"sukses999\"/\"database.password\":\"${PASS}\"/g" config.php
+
 	# Create config /etc/mmengine.conf
-	echo "dbpass=$PASS\n">/etc/mmengine.conf
+	echo "dbpass=$PASS">/etc/mmengine.conf
 
 # Install new domain/subdomain
 elif [[ $OPTION == '2' ]]; then
@@ -207,6 +210,79 @@ elif [[ $OPTION == '3' ]]; then
 echo "Option 3"
 fi
 
+
+# Write nginx config
+cat << NGINXCONF > /etc/nginx/sites-available/${DOMAIN}
+server {
+	listen 80;
+	server_name ${DOMAIN};
+	return 301 http://www.${DOMAIN}\$request_uri;
+}
+
+server {
+	listen 80;
+	root /web/${DOMAIN};
+
+	#logs
+	access_log /var/log/nginx/${DOMAIN}.access.log;
+	error_log /var/log/nginx/${DOMAIN}.error.log;
+
+	index index.php index.html index.html;
+	server_name www.${DOMAIN};
+
+	location ~ \\.php$ {
+		try_files \$uri =404;
+		fastcgi_split_path_info ^(.+\.php)(/.+)\$;
+		fastcgi_pass unix:/var/run/php5-fpm.sock;
+		fastcgi_index index.php;
+		fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+		include fastcgi_params;
+	}
+
+	# deny all htaccess
+	location ~ /\\.ht {
+		deny all;
+	}
+
+	# disable favicon log
+	location = /favicon.ico {
+		log_not_found off;
+		access_log off;
+	}
+
+	# enable robots.txt
+	location = /robots.txt {
+		allow all;
+		log_not_found off;
+		access_log off;
+	}
+
+	# enable sitemap xsl
+	location = /sitemap.xsl {
+		allow all;
+		log_not_found off;
+		access_log off;
+	}
+
+	# set expiration for assets
+	location ~* \\.(js|css|png|jpg|jpeg|gif|ico|eot|woff|ttf|svg)\$ {
+		expires max;
+		log_not_found off;
+	}
+
+	# homepage
+	location / {
+		rewrite "^/sitemap([0-9]{0,3})?\.xml(\.gz)?$" /sitemap.php?offset=\$1&format=\$2 last;
+		rewrite ^(.*)\$ /index.php?\$1 last;
+	}
+
+	# admin
+	location /admin/  {
+		alias /web/${DOMAIN}/admin/;
+	}
+}
+NGINXCONF
+
 #==================================================
 # Fix Permission
 #==================================================
@@ -220,8 +296,52 @@ sudo chmod -R g+ws /web/
 #==================================================
 # Restart Al System
 #==================================================
+# Restart fast-cgi
+sudo service php5-fpm restart >/dev/null
+
 # Restart nginx
 sudo service nginx restart >/dev/null
 
 # Restart FTP
 sudo /etc/init.d/pure-ftpd restart >/dev/null
+
+
+#==================================================
+# Finishing Installation
+#==================================================
+if [[ $OPTION != '3' ]]; then
+	promptyn () {
+		while true; do
+			read -p "$1 " yn
+			case $yn in
+				[Yy]* ) return 0;;
+				[Nn]* ) return 1;;
+				* ) echo "Please answer yes or no.";;
+			esac
+		done
+	}
+	if promptyn "NEW installation [y/n]?"; then
+		echo "Import MySQL database"
+		if [[ $OPTION == '1' ]]; then
+			sudo mysql -u root -p$PASS agc < db.sql
+		elif [[ $OPTION == '2' ]]; then
+			sudo mysql -u root -p$DBPASS $DBNAME < db.sql
+		fi
+		echo "Success. Please insert keyword."
+	else
+		echo "Enter website's source (include http:// without /) : "
+		read WEBSITE
+		wget -q $WEBSITE/backup.tar.gz
+		echo "Extract Zip"
+		tar -zxvf backup.tar.gz >/dev/null
+		echo "Import MySQL database"
+		if [[ $OPTION == '1' ]]; then
+			mysql -u root -p$PASS agc < backup/db.sql
+		elif [[ $OPTION == '2' ]]; then
+			mysql -u root -p$DBPASS $DBNAME < backup/db.sql
+		fi
+		sudo mv backup/config_backup.php config.php
+		sudo rm backup.tar.gz -rf
+		sudo rm backup -rf
+	fi
+fi
