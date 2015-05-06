@@ -24,7 +24,7 @@ fi
 
 # Domain alias www
 ISSUBDOMAIN='n'
-WWWDOMAIN="$DOMAIN"
+WWWDOMAIN="www.$DOMAIN"
 
 # Parse Password
 # - DB password for new installation
@@ -47,6 +47,18 @@ echo -e "| 3 - Clone"
 echo -e "=========================================="
 read -p "Your option: " OPTION
 
+# function to check yes / no
+yesorno () {
+	while true; do
+		read -p "$1 " yn
+		case $yn in
+			[Yy]* ) return 0;;
+			[Nn]* ) return 1;;
+			* ) echo "Please answer yes or no.";;
+		esac
+	done
+}
+
 # Check dbname for new domain
 if [[ $OPTION == '2' ]]; then
 	read -p "Database Name (no special chars): " DBNAME
@@ -55,30 +67,30 @@ if [[ $OPTION == '2' ]]; then
 		exit 1
 	fi
 
-	# Is subdomain or addon domain
-	subdomaincheck () {
-		while true; do
-			read -p "$1 " yn
-			case $yn in
-				[Yy]* ) return 0;;
-				[Nn]* ) return 1;;
-				* ) echo "Please answer yes or no.";;
-			esac
-		done
-	}
-
 	# add prefix www to addon domain
-	if subdomaincheck "Is this subdomain [y/n]"; then
+	if yesorno "Is this subdomain [y/n]"; then
 		ISSUBDOMAIN='y'
-	else
-		WWWDOMAIN="www.$DOMAIN"
+		WWWDOMAIN="$DOMAIN"
+	fi
+elif [[ $OPTION == '3' ]]; then
+	# add prefix www to addon domain
+	if yesorno "Is this subdomain [y/n]"; then
+		ISSUBDOMAIN='y'
+		WWWDOMAIN="$DOMAIN"
 	fi
 fi
 
-
 # Make directory
-sudo mkdir -p /web/${DOMAIN}
-cd /web/${DOMAIN}
+if [[ $OPTION == '3' ]]; then
+	echo -e "Please select directory to clone"
+	echo $(ls /web)
+	read -p "Choose Dir: " CLONEDIR
+	sudo cp -R /web/${CLONEDIR} /web/${DOMAIN}
+	cd /web/${DOMAIN}
+else
+	sudo mkdir -p /web/${DOMAIN}
+	cd /web/${DOMAIN}
+fi
 
 #==================================================
 # Install LEMP stack
@@ -187,9 +199,11 @@ if [ $(dpkg-query -W -f='${Status}' pure-ftpd 2>/dev/null | grep -c "ok installe
 fi
 
 # Clone engine from repo
-git clone https://oknoorap@bitbucket.org/oknoorap/augencont.git >/dev/null
-mv augencont/* ./
-rm augencont -rf
+if [[ $OPTION != '3' ]]; then
+	git clone https://oknoorap@bitbucket.org/oknoorap/augencont.git >/dev/null
+	mv augencont/* ./
+	rm augencont -rf
+fi
 
 # change config.php password
 sed -i "s/\"password\":\"sukses999\"/\"password\":\"${PASS}\"/g" config.php
@@ -225,7 +239,7 @@ elif [[ $OPTION == '2' ]]; then
 
 # Clone from directory
 elif [[ $OPTION == '3' ]]; then
-echo "Option 3"
+echo "Continue..."
 fi
 
 
@@ -343,17 +357,7 @@ sudo /etc/init.d/pure-ftpd restart >/dev/null
 # Finishing Installation
 #==================================================
 if [[ $OPTION != '3' ]]; then
-	promptyn () {
-		while true; do
-			read -p "$1 " yn
-			case $yn in
-				[Yy]* ) return 0;;
-				[Nn]* ) return 1;;
-				* ) echo "Please answer yes or no.";;
-			esac
-		done
-	}
-	if promptyn "NEW installation [y/n]?"; then
+	if yesorno "NEW installation [y/n]?"; then
 		echo "Import MySQL database"
 		if [[ $OPTION == '1' ]]; then
 			sudo mysql -u root -p$PASS agc < db.sql
