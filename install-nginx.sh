@@ -22,6 +22,9 @@ if [[ $DOMAIN == '' ]]; then
 	exit 1
 fi
 
+# Domain alias www
+WWWDOMAIN="$DOMAIN"
+
 # Parse Password
 # - DB password for new installation
 # - Engine password for new domain
@@ -66,7 +69,6 @@ if [[ $OPTION == '2' ]]; then
 	# add prefix www to addon domain
 	if subdomaincheck "Is this subdomain [y/n]"; then
 		ISSUBDOMAIN='y'
-		WWWDOMAIN="$DOMAIN"
 	else
 		ISSUBDOMAIN='n'
 		WWWDOMAIN="www.$DOMAIN"
@@ -226,14 +228,14 @@ elif [[ $OPTION == '3' ]]; then
 echo "Option 3"
 fi
 
-if [[ ISSUBDOMAIN == 'n' ]]; then
+if [[ ISSUBDOMAIN == 'y' ]]; then
+	NGINXCONFREDIRECT=''
+else
 	NGINXCONFREDIRECT="server {
 	listen 80;
 	server_name ${DOMAIN};
 	return 301 http://${WWWDOMAIN}\$request_uri;
 }"
-else
-	NGINXCONFREDIRECT=''
 fi
 
 # Write nginx config
@@ -305,7 +307,7 @@ server {
 NGINXCONF
 
 # enable site
-sudo ln -s /etc/nginx/sites-available/$DOMAIN /etc/nginx/sites-enabled/$DOMAIN
+sudo ln -s /etc/nginx/sites-available/${DOMAIN} /etc/nginx/sites-enabled/${DOMAIN}
 
 # add host
 cat << ADDHOST >> /etc/hosts
@@ -378,5 +380,6 @@ fi
 
 echo -e "================================================="
 echo -e "# FTP user:agc, pass:$PASS"
-echo -e "# phpMyAdmin user:agc pass:$PASS"
+echo -e "# phpMyAdmin Auth user:agc pass:$PASS"
+echo -e "# phpMyAdmin SQL user:root pass:$PASS"
 echo -e "================================================="
