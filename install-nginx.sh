@@ -364,8 +364,11 @@ if [[ $OPTION != '3' ]]; then
 		elif [[ $OPTION == '2' ]]; then
 			sudo mysql -u root -p$DBPASS $DBNAME < db.sql
 		fi
-		echo -e "================================="
+		echo -e "========================================="
 		echo -e "Success. Please insert keyword."
+		echo -e "========================================="
+		echo -e ""
+		echo -e ""
 	else
 		echo "Enter website's source (include http:// without /) : "
 		read WEBSITE
@@ -384,8 +387,8 @@ if [[ $OPTION != '3' ]]; then
 	fi
 fi
 
-echo -e "================================================="
+echo -e "========================================="
 echo -e "# FTP user:agc, pass:$PASS"
 echo -e "# phpMyAdmin Auth user:agc pass:$PASS"
 echo -e "# phpMyAdmin SQL user:root pass:$PASS"
-echo -e "================================================="
+echo -e "========================================="
