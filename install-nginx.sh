@@ -283,6 +283,9 @@ server {
 }
 NGINXCONF
 
+# enable site
+sudo ln -s /etc/nginx/sites-available/$DOMAIN /etc/nginx/sites-enabled/$DOMAIN
+
 #==================================================
 # Fix Permission
 #==================================================
