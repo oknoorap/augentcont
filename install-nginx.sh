@@ -162,7 +162,7 @@ if [ $(dpkg-query -W -f='${Status}' phpmyadmin 2>/dev/null | grep -c "ok install
 	echo "agc:$PMAPASS">/etc/nginx/pma_pass
 
 	# Add phpMyAdmin to default nginx conf
-	cat << PMACFG >> /etc/nginx/sites-available/phpmyadmin
+	cat << PMACFG > /etc/nginx/sites-available/phpmyadmin
 server {
 	listen 8080;
 	server_name localhost;
@@ -181,7 +181,7 @@ server {
 	}
 }
 PMACFG
-	
+
 	#link config
 	sudo ln -s /etc/nginx/sites-available/phpmyadmin /etc/nginx/sites-enabled/phpmyadmin
 fi
