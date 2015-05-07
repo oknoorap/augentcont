@@ -355,12 +355,12 @@ ADDHOST
 #==================================================
 # Fix Permission
 #==================================================
-sudo chown -R www-data:www-data /web/
-sudo find /web/ -type d -exec chmod 755 {} \;
-sudo find /web/ -type f -exec chmod 644 {} \;
+sudo chown -R www-data:www-data $(pwd)
+sudo find $(pwd) -type d -exec chmod 755 {} \;
+sudo find $(pwd) -type f -exec chmod 644 {} \;
 sudo usermod -aG ftpgroup www-data
-sudo chown -R ftpuser:ftpgroup /web/
-sudo chmod -R g+ws /web/
+sudo chown -R ftpuser:ftpgroup $(pwd)
+sudo chmod -R g+ws $(pwd)
 
 #==================================================
 # Restart Al System
