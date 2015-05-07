@@ -90,6 +90,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'):
 				die();
 			break;
 
+			case 'gen_keyword':
+				$req = open_url('http://en.wikipedia.org/w/api.php?action=query&list=random&rnlimit=10&rnnamespace=0&format=json');
+				$arr_title = array();
+
+				if ($req)
+				{
+					$results = json_decode($req, TRUE);
+
+					if (isset($results['query']) && isset($results['query']['random']))
+					{
+						foreach ($results['query']['random'] as $result)
+						{
+							array_push($arr_title, $result['title']);
+						}
+					}
+				}
+
+				$response['result'] = $arr_title;
+				echo json_encode($response);
+				die();
+			break;
+
 			case 'config':
 				$post_config = $_POST['config'];
 				

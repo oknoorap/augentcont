@@ -9,7 +9,7 @@
 	$db = new DB_Driver('localhost', config('database.name'), config('database.username'), config('database.password'));
 	?>
 	<div class="content active" id="panel-1">
-		<p>Insert keywords separated by line. Total keywords <code><?php echo get_keyword_count(); ?></code>.</p>
+		<p>Insert keywords separated by line. Total keywords <code><?php echo get_keyword_count(); ?></code>. <a data-ng-click="genKeyword()">Insert Random Keyword</a>.</p>
 		<form method="POST" enctype="multipart/form-data">
 			<div id="insert-keyword-box" data-ng-if="! $root.onPrepare">
 				<textarea data-ng-model="$root.keywords" style="height: 250px"></textarea>
@@ -42,7 +42,7 @@
 			</div>
 			<div id="table" data-ng-if="$root.onPrepare"></div>
 
-			<p data-ng-if="$root.onPrepare"><button class="tiny success button" data-ng-click="unPrepare($event)" data-ng-class="{disabled: $root.onProgress}"><i class="fa fa-chevron-left"></i> Previous Step</button> <button class="tiny button" data-ng-click="insertKeyword($event)" data-ng-class="{disabled: noRecords() || $root.onProgress}"><i class="fa fa-plus-square"></i> Insert Keyword</button></p>
+			<p data-ng-if="$root.onPrepare"><button class="tiny success button" data-ng-click="unPrepare($event)" data-ng-class="{disabled: $root.onProgress}"><i class="fa fa-chevron-left"></i> Previous Step</button> <button class="tiny button" data-ng-click="insertKeyword($event)" data-ng-class="{disabled: noRecords() || $root.onProgress}"><i class="fa fa-plus-square"></i> Insert <span data-ng-bind="keywordsCount()"></span> Keyword</button></p>
 			<p data-ng-if="! $root.onPrepare"><button class="tiny success button" data-ng-click="prepareKeywords()">Next Step <i class="fa fa-chevron-right"></i></button></p>
 		</form>
 	</div>

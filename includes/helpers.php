@@ -1306,4 +1306,29 @@ function download_url ($title)
 	return base_url() . 'download.php?file=' . url_title($title, '-', true) .'&format=pdf';
 }
 
+function open_url ($url)
+{
+	ob_start();
+	include 'ua.txt';
+	$user_agent = ob_get_clean();
+	$user_agent = explode("\n", $user_agent);
+	shuffle($user_agent);
+	$user_agent = ob_get_clean();
+	$user_agent = explode("\n", $user_agent);
+	shuffle($user_agent);
+	$user_agent = str_replace(array("\n", "\r", "\n\r"), '', end($user_agent));
+
+	$process = curl_init($url);
+	curl_setopt($process, CURLOPT_TIMEOUT, 30);
+	curl_setopt($process, CURLOPT_VERBOSE, 0);
+	curl_setopt($process, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($process, CURLOPT_SSL_VERIFYPEER, 0);
+	curl_setopt($process, CURLOPT_FOLLOWLOCATION, 1);
+	curl_setopt($process, CURLOPT_USERAGENT, $user_agent);
+	$results = curl_exec($process);
+	curl_close($process);
+
+	return $results;
+}
+
 /** EOF */

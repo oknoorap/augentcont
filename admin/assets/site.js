@@ -153,6 +153,39 @@ var App = angular.module('App', [])
 		});
 	};
 
+	s.keywordbox = "#insert-keyword-box textarea";
+	s.keywordsCount = function () {
+		return _(w2ui.table.records).size()
+	};
+	s.genKeyword = function() {
+		if (! r.onPrepare && ! r.onProgress) {
+			$.ajax({
+				url: './index.php',
+				type: 'POST',
+				data: {type: 'gen_keyword'},
+				success: function (response) {
+					response = JSON.parse(response)
+					if (response.result.length > 0) {
+						var keyword = response.result.map(function (item) {
+							item = S(item).humanize().underscore().latinise().s.replace(/\_/g, ' ');
+							sitem = _.compact(item.split(' '))
+
+							if (sitem.length > 2) {
+								return $.trim(item)
+							}
+						})
+
+						keyword = _.compact(keyword)
+						keyword = keyword.join("\n")
+						r.keywords = r.keywords +"\n"+ keyword
+						if (!r.$$phase) r.$apply()
+						$(s.keywordbox).scrollTop($(s.keywordbox)[0].scrollHeight)
+					}
+				}
+			});
+		}
+	};
+
 	s.render = function () {
 		if(! w2ui.table) {
 			$('#table').w2grid({ 
