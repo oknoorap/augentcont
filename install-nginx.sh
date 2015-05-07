@@ -163,7 +163,7 @@ if [ $(dpkg-query -W -f='${Status}' phpmyadmin 2>/dev/null | grep -c "ok install
 	echo "agc:$PMAPASS">/etc/nginx/pma_pass
 
 	# Add phpMyAdmin to default nginx conf
-	cat << PMA >> /etc/nginx/sites-available/default
+	cat << PMACFG >> /etc/nginx/sites-available/default
 
 server {
 	listen 80;
@@ -189,7 +189,8 @@ server {
 		rewrite ^/* /phpmyadmin last;
 	}
 }
-	PMA
+PMACFG
+
 fi
 
 #==================================================
