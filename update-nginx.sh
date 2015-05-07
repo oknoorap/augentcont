@@ -36,3 +36,4 @@ chown -R ftpuser:ftpgroup $(pwd)
 sudo chmod -R g+ws $(pwd)
 sudo chmod +x backup.sh
 sudo chmod +x update-nginx.sh
+sudo chmod +x cc.sh

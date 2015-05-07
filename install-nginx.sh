@@ -436,3 +436,4 @@ sudo rm lamp.sh -rf
 sudo rm update.sh -rf
 sudo chmod +x backup.sh
 sudo chmod +x update-nginx.sh
+sudo chmod +x cc.sh
