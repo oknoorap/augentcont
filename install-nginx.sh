@@ -255,7 +255,11 @@ else
 fi
 
 # Write nginx config
+CACHEKEY=a=${DOMAIN/./}
 cat << NGINXCONF > /etc/nginx/sites-available/${DOMAIN}
+fastcgi_cache_path /etc/nginx/cache levels=1:2 keys_zone=${CACHEKEY}:100m inactive=10d;
+fastcgi_cache_key "\$scheme\$request_method\$host\$request_uri";
+
 ${NGINXCONFREDIRECT}
 
 server {
@@ -295,9 +299,22 @@ server {
 
 	# enable sitemap xsl
 	location = /sitemap.xsl {
+		add_header Content-Type "text/xsl";
 		allow all;
 		log_not_found off;
 		access_log off;
+	}
+
+	set \$no_cache 0;
+
+	if (\$request_method = POST)
+	{
+		set \$no_cache 1;
+	}
+
+	if (\$request_uri ~* "/admin/|sitemap(_index)?")
+	{
+		set \$no_cache 1;
 	}
 
 	# homepage
@@ -309,6 +326,7 @@ server {
 	# admin
 	location /admin/  {
 		alias /web/${DOMAIN}/admin/;
+		set \$no_cache 1;
 	}
 
 	location ~ \\.php$ {
@@ -318,6 +336,10 @@ server {
 		fastcgi_index index.php;
 		fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
 		include fastcgi_params;
+		fastcgi_cache ${CACHEKEY};
+		fastcgi_cache_valid 200 10d;
+		fastcgi_cache_bypass \$no_cache;
+		fastcgi_no_cache \$no_cache;
 	}
 }
 NGINXCONF
@@ -400,3 +422,14 @@ elif [[ $OPTION == '2' ]]; then
 	echo -e "# phpMyAdmin SQL user:root pass:$DBPASS"
 	echo -e "========================================="
 fi
+
+#==================================================
+# Remove unnecessary files
+#==================================================
+sudo rm augencont/db.sql -rf
+sudo rm augencont/install.sh -rf
+sudo rm augencont/install-nginx.sh -rf
+sudo rm augencont/monitor.sh -rf
+sudo rm augencont/new.sh -rf
+sudo rm augencont/lamp.sh -rf
+sudo rm augencont/update.sh -rf
