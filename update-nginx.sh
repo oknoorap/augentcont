@@ -25,7 +25,7 @@ sudo rm includes -rf
 sudo rm content -rf
 sudo mv augencont/* ./
 sudo rm augencont -rf
-chmod +x update.sh
+chmod +x update-nginx.sh
 
 #--------------------------
 # Fix Permission
