@@ -255,7 +255,7 @@ else
 fi
 
 # Write nginx config
-CACHEKEY=a=${DOMAIN/./}
+CACHEKEY=${DOMAIN/./}
 cat << NGINXCONF > /etc/nginx/sites-available/${DOMAIN}
 fastcgi_cache_path /etc/nginx/cache levels=1:2 keys_zone=${CACHEKEY}:100m inactive=10d;
 fastcgi_cache_key "\$scheme\$request_method\$host\$request_uri";
@@ -281,11 +281,12 @@ server {
 	# set expiration for assets
 	location ~* \\.(js|css|png|jpg|jpeg|gif|ico|eot|woff|ttf|svg)\$ {
 		expires max;
+		access_log off;
 		log_not_found off;
 	}
 
 	# disable favicon log
-	location = /favicon.ico {
+	location ~* favicon.ico\$ {
 		log_not_found off;
 		access_log off;
 	}
