@@ -289,6 +289,12 @@ endif;
 		<?php endif; ?>
 	</div>
 
+	<div class="row">
+		<div class="large-12">
+			<p style="margin:20px 0 0;font-size: 12px;text-align:center">Copyrighted &copy; <?php echo date('Y'); ?> by <a href="http://fb.com/anonymousjapan" target="_blank">fb.com/anonymousjapan</a></p>
+		</div>
+	</div>
+
 <?php if (is_login()): ?>
 <script type="text/javascript" src="./assets/jquery.min.js"></script>
 <script type="text/javascript" src="./assets/angular.min.js"></script>
