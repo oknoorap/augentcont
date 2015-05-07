@@ -269,18 +269,15 @@ server {
 	index index.php index.html index.html;
 	server_name ${WWWDOMAIN};
 
-	location ~ \\.php$ {
-		try_files \$uri =404;
-		fastcgi_split_path_info ^(.+\\.php)(/.+)\$;
-		fastcgi_pass unix:/var/run/php5-fpm.sock;
-		fastcgi_index index.php;
-		fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
-		include fastcgi_params;
-	}
-
 	# deny all htaccess
 	location ~ /\\.ht {
 		deny all;
+	}
+
+	# set expiration for assets
+	location ~* \\.(js|css|png|jpg|jpeg|gif|ico|eot|woff|ttf|svg)\$ {
+		expires max;
+		log_not_found off;
 	}
 
 	# disable favicon log
@@ -303,12 +300,6 @@ server {
 		access_log off;
 	}
 
-	# set expiration for assets
-	location ~* \\.(js|css|png|jpg|jpeg|gif|ico|eot|woff|ttf|svg)\$ {
-		expires max;
-		log_not_found off;
-	}
-
 	# homepage
 	location / {
 		rewrite "^/sitemap([0-9]{0,3})?\.xml(\.gz)?$" /sitemap.php?offset=\$1&format=\$2 last;
@@ -318,6 +309,15 @@ server {
 	# admin
 	location /admin/  {
 		alias /web/${DOMAIN}/admin/;
+	}
+
+	location ~ \\.php$ {
+		try_files \$uri =404;
+		fastcgi_split_path_info ^(.+\\.php)(/.+)\$;
+		fastcgi_pass unix:/var/run/php5-fpm.sock;
+		fastcgi_index index.php;
+		fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+		include fastcgi_params;
 	}
 }
 NGINXCONF
