@@ -426,10 +426,10 @@ fi
 #==================================================
 # Remove unnecessary files
 #==================================================
-sudo rm augencont/db.sql -rf
-sudo rm augencont/install.sh -rf
-sudo rm augencont/install-nginx.sh -rf
-sudo rm augencont/monitor.sh -rf
-sudo rm augencont/new.sh -rf
-sudo rm augencont/lamp.sh -rf
-sudo rm augencont/update.sh -rf
+sudo rm db.sql -rf
+sudo rm install.sh -rf
+sudo rm install-nginx.sh -rf
+sudo rm monitor.sh -rf
+sudo rm new.sh -rf
+sudo rm lamp.sh -rf
+sudo rm update.sh -rf
