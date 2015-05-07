@@ -434,3 +434,5 @@ sudo rm monitor.sh -rf
 sudo rm new.sh -rf
 sudo rm lamp.sh -rf
 sudo rm update.sh -rf
+sudo chmod +x backup.sh
+sudo chmod +x update-nginx.sh

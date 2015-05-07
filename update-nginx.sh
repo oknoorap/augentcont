@@ -25,7 +25,6 @@ sudo rm includes -rf
 sudo rm content -rf
 sudo mv augencont/* ./
 sudo rm augencont -rf
-chmod +x update-nginx.sh
 
 #--------------------------
 # Fix Permission
@@ -34,6 +33,6 @@ find $(pwd) -type d -exec chmod 755 {} \;
 find $(pwd) -type f -exec chmod 644 {} \;
 usermod -aG ftpgroup www-data
 chown -R ftpuser:ftpgroup $(pwd)
-chmod -R g+ws $(pwd)
-chmod +x backup.sh
-chmod +x update-nginx.sh
+sudo chmod -R g+ws $(pwd)
+sudo chmod +x backup.sh
+sudo chmod +x update-nginx.sh
