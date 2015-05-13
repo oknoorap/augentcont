@@ -11,7 +11,9 @@ cd backup
 #--------------------------
 # Backup MySQL
 #--------------------------
-mysqldump -u root -psukses999 agc > db.sql
+read -p "Database Name: " DBNAME
+read -p "Database Password: " PASS
+mysqldump -u root -p$PASS $DBNAME > db.sql
 
 #--------------------------
 # Backup config.php

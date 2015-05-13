@@ -1,10 +1,10 @@
 <?php get_header(); ?>
-<div itemscope itemtype="http://schema.org/ItemList" id="main" class="container_12 browse-container">
+<div id="main" class="container_12 browse-container">
 	<?php get_sidebar(); ?>
 
 	<div class="grid_9">
 		<div class="grid_9 alpha">
-			<h1 itemprop="name" class="browse-title"><?php echo normalize(title(true), true); ?></h1>
+			<h1 class="browse-title"><?php echo ptitle(); ?></h1>
 		</div>
 		<div style="clear: both;"></div>
 		<?php
@@ -14,25 +14,25 @@
 			$items = recent_document($list['id'], array('echo'=>false, 'type' => 'array', 'limit' => 10));
 			if (! empty($items)):
 		?>
-			<div class="search-content">
+			<div itemscope itemtype="http://schema.org/ItemList" class="search-content">
 				<div class="sectionheadercontainer section-spacer">
-					<span class="sectionheader"><a href="<?php echo permalink($list); ?>" rel="nofollow"><?php echo $list['keyword']; ?></a></span>
+					<span class="sectionheader" itemprop="name"><a href="<?php echo permalink($list); ?>" rel="nofollow"><?php echo $list['keyword']; ?></a></span>
 				</div>
-				<ul itemprop="itemListElement" itemscope itemtype="http://schema.org/Thing" class="content-row-wrap">
+				<ul itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem" class="content-row-wrap">
 				<?php
 				foreach($items as $doc):
 					$link = generate_permalink($doc['title'], get_category());
 					$read = read_permalink($doc['id'], $doc['keyword'], $doc['category']);
 				?>
-					<li class="doc-list-item">
+					<li itemprop="item" itemscope itemtype="http://schema.org/Thing" class="doc-list-item">
 						<span class="doc-image">
-							<a href="<?php echo $read; ?>" rel="nofollow"><img src="<?php echo theme_url(); ?>assets/img/preview.gif" width="85" height="113" data-src="<?php echo $doc['url']; ?>" alt="<?php echo $doc['title']; ?> document preview"></a>
+							<a itemprop="url" href="<?php echo $read; ?>" rel="nofollow"><img src="<?php echo theme_url(); ?>assets/img/preview.gif" width="85" height="113" data-src="<?php echo $doc['url']; ?>" alt="<?php echo $doc['title']; ?> document preview"></a>
 						</span>
 						<span class="doc-details">
 							<span class="doc-title">
-								<a href="<?php echo $link; ?>" itemprop="name"><?php echo $doc['title']; ?></a>
+								<a href="<?php echo $link; ?>"><span itemprop="name"><?php echo $doc['title']; ?></span></a>
 							</span>
-							<span class="doc-description">
+							<span itemprop="description" class="doc-description">
 								<?php echo $doc['description']; ?>
 							</span>
 							<span id="iconPlusExpand0" class="doc-footer ">

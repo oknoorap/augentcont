@@ -18,8 +18,12 @@ if (! empty($_GET))
 	$path = array_keys($_GET);
 	$path = explode('/', $path[0]);
 	$path = array_filter($path);
-	#$path = array_diff($path, array());
-	$path = array_combine(range(1, count($path)), array_values($path));
+	$path_arr = array();
+	foreach(array_values($path) as $i => $p)
+	{
+		$path_arr[($i + 1)] = $p;
+	}
+	$path = $path_arr;
 }
 
 $db = new DB_Driver('localhost', config('database.name'), config('database.username'), config('database.password'));
@@ -44,7 +48,8 @@ class Engine {
 		$keyword = get_search_term();
 		if (! empty($keyword) && (location('category') || location('result') || location('single')))
 		{
-			$this->insert_keyword($keyword, get_category());
+			$category_id = $this->is_category_exists();
+			$this->insert_keyword($keyword, $category_id);
 		}
 
 		$this->remove_header();
@@ -78,38 +83,41 @@ class Engine {
 			case 'search':
 				if ($_SERVER['REQUEST_METHOD'] === 'POST')
 				{
-					$q = normalize($_POST['q']);
-
-					if ($q === '')
-					{
-						header("Location: ". base_url());
-					}
-					else
-					{
-						$result = $this->db->query("SELECT `kw`.`keyword` as `keyword`, `kw`.`time` as `time`, `cat`.`name` as `category` FROM `keywords` as `kw` LEFT JOIN `cat` as `cat` ON `cat`.`id`= `kw`.`cat_id` WHERE LOWER(`kw`.`keyword`) LIKE '{$q}'")->result();
-
-						if (empty($result))
-						{
-							if (isset($_POST['cat']))
-							{
-								header("Location: ". generate_permalink_url($q, normalize($_POST['cat'])));
-							}
-							else
-							{
-								header("Location: ". generate_permalink_url($q, 'others'));
-							}
-						}
-						else
-						{
-							$result = $result[0];
-							header("Location: ". generate_permalink_url($result['keyword'], $result['category']));
-						}
-					}
+					$q = (isset($_GET['q']))? $_GET['q']: '';
 				}
 				else
 				{
+					$q = (isset($_GET['q']))? $_GET['q']: '';
+				}
+
+				$q = permalink_url($q, ' ');
+
+				if (empty($q) || strlen($q) < 5)
+				{
 					header("Location: ". base_url());
 				}
+				else
+				{
+					$result = $this->db->query("SELECT `kw`.`keyword` as `keyword`, `kw`.`time` as `time`, `cat`.`name` as `category` FROM `keywords` as `kw` LEFT JOIN `cat` as `cat` ON `cat`.`id`= `kw`.`cat_id` WHERE LOWER(`kw`.`keyword`) LIKE '{$q}'")->result();
+
+					if (empty($result))
+					{
+						if (isset($_POST['cat']))
+						{
+							header("Location: ". generate_permalink_url($q, normalize($_POST['cat'])));
+						}
+						else
+						{
+							header("Location: ". generate_permalink_url($q, 'others'));
+						}
+					}
+					else
+					{
+						$result = $result[0];
+						header("Location: ". generate_permalink_url($result['keyword'], $result['category']));
+					}
+				}
+
 			break;
 
 			case 'category':
@@ -312,16 +320,22 @@ class Engine {
 		$time = time();
 
 		$query = "INSERT INTO `index` (`id`, `keyword_id`, `title`, `description`, `url`, `time`) VALUES ";
-		foreach ($list as $item)
+		foreach ($list as $k => $item)
 		{
-			$title	= $this->db->escape_str($item['title']);
-			$description = $this->db->escape_str($item['description']);
-			$url	= $this->db->escape_str($item['url']);
+			$title = safe_string_insert($this->db->escape_str($item['title']), 'title');
+			$list[$k]['title'] = $title;
+
+			$description = safe_string_insert($this->db->escape_str($item['description']), 'desc');
+			$list[$k]['description'] = $description;
+
+			$url = $this->db->escape_str($item['url']);
 
 			$query .= "('{$item['id']}', '{$keyword_id}', '{$title}', '{$description}', '{$url}', '{$time}'), ";
 		}
 		$query = rtrim($query, ", ");
 		$this->db->query("$query ON DUPLICATE KEY UPDATE `id` = `id`;");
+
+		return $list;
 	}
 
 	function get_db ($q)
@@ -402,6 +416,12 @@ class Engine {
 
 	function render ($page_name)
 	{
+		# Load functions before render
+		if (file_exists($this->theme . 'functions.php'))
+		{
+			require $this->theme . 'functions.php';
+		}
+
 		ob_start();
 		include $this->theme . $page_name . '.php';
 		$buffer = ob_get_clean();
@@ -421,10 +441,11 @@ class Engine {
 		);
 
 		if (config('type') === 'html') $buffer = preg_replace($search, $replace, $buffer);
-		if (location('category') || location('result')) {
-			$buffer = str_replace('<html>', '<html itemscope itemtype="http://schema.org/WebPage">', $buffer);
-		}
-		$buffer = str_replace('</body>','<script type="text/javascript">var ngintip="'. config('method') .'";</script><script type="text/javascript" src="'.base_url().'content/views.js"></script></body>', $buffer);
+		$buffer = str_replace('<html>', '<html itemscope itemtype="http://schema.org/WebPage">', $buffer);
+		$buffer = str_replace('<title>', '<title itemprop="name">', $buffer);
+		$script = array('<script type="text/javascript">var delok="'. config('method') .'";</script><script type="text/javascript" src="'.base_url().'content/views.js">',
+			'</script><script type="application/ld+json">{"@context": "http://schema.org", "@type": "WebSite","url": "'. base_url() .'","potentialAction": {"@type": "SearchAction", "target": "'. base_url() .'search?q={search_term_string}", "query-input": "required name=search_term_string"},"name" : "'. site_name() .'"}</script>');
+		$buffer = str_replace('</body>', implode('', $script) . '</body>', $buffer);
 		echo $buffer;
 	}
 
@@ -434,9 +455,12 @@ class Engine {
 		$this->render('404');
 	}
 
-	function insert_keyword ($keyword, $cat_id = 'VoXl0m3N1q')
+	function insert_keyword ($keyword, $cat_id = '')
 	{
 		$time = time();
+
+		$keyword = strtolower(permalink_url($keyword, true));
+		$cat_id = (empty($cat_id)) ? 'VoXl0m3N1q': $cat_id;
 		$keyword_id = new Hashids(md5($keyword), 10);
 		$keyword_id = $keyword_id->encrypt(1);
 		$keyword_is = $this->db->query("SELECT count(*) as `exists` FROM `keywords` WHERE `id` = '{$keyword_id}'")->result();
@@ -448,7 +472,7 @@ class Engine {
 			if ($list !== NULL)
 			{
 				$this->db->query("INSERT INTO `keywords` (`id`, `keyword`, `cat_id`, `time`) VALUES ('{$keyword_id}', '{$keyword}', '{$cat_id}', '{$time}') ON DUPLICATE KEY UPDATE `count` = `count` + 1;");
-				$this->add_db($keyword, $list, $keyword_id);
+				$list = $this->add_db($keyword, $list, $keyword_id);
 				return $list;
 			}
 			else
@@ -459,7 +483,7 @@ class Engine {
 		}
 		else
 		{
-			$list = $this->search_db($keyword_is);
+			$list = $this->search_db($keyword);
 			return $list;
 		}
 	}

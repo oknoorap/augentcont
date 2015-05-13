@@ -5,7 +5,7 @@ $result = results();
 <div id="main">
 	<div class="row">
 		<div class="large-9 columns">
-			<div class="breadcrumb"><?php echo breadcrumbs(); ?></div>
+			<div class="breadcrumb"><?php echo breadcrumbs('&gt;'); ?></div>
 			<div class="short-desc">
 				<h2>Short Description</h2>
 				<p><?php echo capitalize(results('description')); ?></p>

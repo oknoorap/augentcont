@@ -3,7 +3,7 @@
 
 <div id="main">
 	<div class="breadcrumb"><?php echo breadcrumbs('&gt;'); ?></div>
-	<h1 class="title"><?php echo normalize(title(true), true); ?></h1>
+	<h1 class="title"><?php echo ptitle(); ?></h1>
 	<?php $result = results(); ?>
 	<a href="<?php echo download_url(title(true)); ?>" rel="nofollow" class="download-pdf">Download <?php echo title(true); ?> PDF</a>
 	<div id="pdf-viewer" data-src="<?php echo $result['url']; ?>"></div>

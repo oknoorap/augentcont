@@ -2,7 +2,8 @@
 <div id="container">
 	<div id="contents" class="left">
 		<div class="breadcrumb"><?php echo breadcrumbs('&gt;'); ?></div>
-		<h1 class="title single"><?php echo normalize(title(true), true); ?></h1>
+		<h1 class="title single"><?php echo ptitle(); ?></h1>
+		
 		<?php $result = results(); ?>
 		<div class="info">Date: <?php echo date('d M Y', $result['time']); ?></div>
 		<a href="<?php echo download_url(title(true)); ?>" rel="nofollow" class="big-btn">Download <?php echo title(true); ?> PDF</a>

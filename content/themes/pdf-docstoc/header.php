@@ -44,7 +44,7 @@
 	<div id="browse-breadcrumbs" class="browse-breadcrumbs clearfix">
 		<div class="container_12">
 			<div class="grid_12">
-				<?php echo breadcrumbs('<span class="icon-arrow_right"></span>'); ?>
+				<?php echo breadcrumbs('&gt;'); ?>
 			</div>
 		</div>
 	</div>

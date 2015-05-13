@@ -17,8 +17,8 @@ function base_url()
 	*  [filename] => script
 	* )
 	*/
-$path_parts = pathinfo($path);
-$directory = $path_parts['dirname'];
+	$path_parts = pathinfo($path);
+	$directory = $path_parts['dirname'];
 
 	/**
 	* Replace backslash dirname,
@@ -66,10 +66,10 @@ function build_config ($config_file)
 	return $config;
 }
 
-function config ($name = '')
+function config ($name = '', $is_attr = false)
 {
 	global $config;
-	if ($name !== '') return $config[$name];
+	if ($name !== '') return ($is_attr) ? htmlentities($config[$name]): $config[$name];
 
 	return $config;
 }
@@ -107,17 +107,20 @@ function current_path ()
 
 function get_keyword ()
 {
-	return normalize_path (str_replace('_'.config('type'), '', current_path()));
+	$path = str_replace('_' . config('type'), '', current_path());
+	return normalize_path($path);
 }
 
 function get_category ($url = false)
 {
-	$category = normalize_path(first_path());;
-	if ($url) {
+	$category = normalize_path(first_path());
+
+	if ($url)
+	{
 		$is_pdf = (config('type') === 'pdf') ? '.pdf': '.html';
-		$is_capitalize = (config('capitalize')) ? false: true;
-		return url_title($category, config('separator'), $is_capitalize);
+		return permalink_url($category);
 	}
+
 	return $category;
 }
 
@@ -134,7 +137,7 @@ function capitalize ($str)
 
 function normalize ($str, $ucwords = FALSE)
 {
-	$str = url_title($str, '_', true);
+	$str = url_title($str, '_', false);
 	$str = str_replace('-', ' ', $str);
 	$str = humanize($str);
 	$str = strtolower($str);
@@ -149,51 +152,133 @@ function humanize($str)
 	return ucwords(preg_replace('/[_]+/', ' ', strtolower(trim($str))));
 }
 
-function url_title($str, $separator = '-', $lowercase = FALSE)
+function utf8_uri_encode( $utf8_string, $length = 0 ) {
+	$unicode = '';
+	$values = array();
+	$num_octets = 1;
+	$unicode_length = 0;
+
+	$string_length = strlen( $utf8_string );
+	for ($i = 0; $i < $string_length; $i++ ) {
+
+		$value = ord( $utf8_string[ $i ] );
+
+		if ( $value < 128 ) {
+			if ( $length && ( $unicode_length >= $length ) )
+				break;
+			$unicode .= chr($value);
+			$unicode_length++;
+		} else {
+			if ( count( $values ) == 0 ) $num_octets = ( $value < 224 ) ? 2 : 3;
+
+			$values[] = $value;
+
+			if ( $length && ( $unicode_length + ($num_octets * 3) ) > $length )
+				break;
+			if ( count( $values ) == $num_octets ) {
+				if ($num_octets == 3) {
+					$unicode .= '%' . dechex($values[0]) . '%' . dechex($values[1]) . '%' . dechex($values[2]);
+					$unicode_length += 9;
+				} else {
+					$unicode .= '%' . dechex($values[0]) . '%' . dechex($values[1]);
+					$unicode_length += 6;
+				}
+
+				$values = array();
+				$num_octets = 1;
+			}
+		}
+	}
+
+	return $unicode;
+}
+
+//taken from wordpress
+function seems_utf8($str) {
+	$length = strlen($str);
+	for ($i=0; $i < $length; $i++) {
+		$c = ord($str[$i]);
+		if ($c < 0x80) $n = 0; # 0bbbbbbb
+		elseif (($c & 0xE0) == 0xC0) $n=1; # 110bbbbb
+		elseif (($c & 0xF0) == 0xE0) $n=2; # 1110bbbb
+		elseif (($c & 0xF8) == 0xF0) $n=3; # 11110bbb
+		elseif (($c & 0xFC) == 0xF8) $n=4; # 111110bb
+		elseif (($c & 0xFE) == 0xFC) $n=5; # 1111110b
+		else return false; # Does not match any model
+		for ($j=0; $j<$n; $j++) { # n bytes matching 10bbbbbb follow ?
+			if ((++$i == $length) || ((ord($str[$i]) & 0xC0) != 0x80))
+				return false;
+		}
+	}
+	return true;
+}
+
+function url_title($title, $separator = '-', $capitalize = FALSE)
 {
-	if ($separator == '-')
-	{
-		$search		= '_';
-		$replace	= '-';
-	}
-	else
-	{
-		$search		= '-';
-		$replace	= '_';
-	}
+	$title = strip_tags($title);
+	$title = str_replace(array("\xe2\x80\x98", "\xe2\x80\x99", "\xe2\x80\x9c", "\xe2\x80\x9d", "\xe2\x80\x93", "\xe2\x80\x94", "\xe2\x80\xa6"), '', $title);
+	// Preserve escaped octets.
+	$title = preg_replace('|%([a-fA-F0-9][a-fA-F0-9])|', '---$1---', $title);
+	// Remove percent signs that are not part of an octet.
+	$title = str_replace('%', '', $title);
+	// Restore octets.
+	$title = preg_replace('|---([a-fA-F0-9][a-fA-F0-9])---|', '%$1', $title);
 
-	$str = preg_replace('/\./msU', '-', $str);
-	$trans = array(
-		'&\#\d+?;' => '',
-		'&\S+?;' => '',
-		'\s+' => $replace,
-		'[^a-z0-9\-\._]' => '',
-		$replace.'+' => $replace,
-		$replace.'$' => $replace,
-		'^'.$replace => $replace,
-		'\.+$' => ''
-		);
-
-	$str = strip_tags($str);
-
-	if ($lowercase === FALSE)
-	{
-		$str = ucwords($str);
+	if (seems_utf8($title)) {
+		if (function_exists('mb_strtolower')) {
+			$title = mb_strtolower($title, 'UTF-8');
+		}
+		$title = utf8_uri_encode($title, 200);
 	}
 
-	foreach ($trans as $key => $val)
+	$title = preg_replace('/\`\~\!\@\#\$\%\^\&\*\(\)\_\+\-\=\<\>\?\:\"\{\}\|\,\.\/\;\[\]/', '', $title);
+	$title = str_replace('.', $separator, $title);
+	$title = preg_replace('/[^%a-z0-9 _-]/', '', $title);
+	$title = ($capitalize) ? ucwords($title): $title;
+	$title = preg_replace('/\s+/', $separator, $title);
+	$title = preg_replace('|-+|', $separator, $title);
+	$title = rtrim($title, $separator);
+	$title = trim($title);
+	$title = stripslashes($title);
+	$title = ($capitalize) ? $title: strtolower($title);
+	$title = urldecode($title);
+	//$title = html_entity_decode($title, ENT_QUOTES, "UTF-8");
+	return $title;
+}
+
+function permalink_url ($str, $replace_separator_to_space = false)
+{
+	$str = url_title($str, config('separator'), config('capitalize'));
+
+	if ($replace_separator_to_space)
 	{
-		$str = preg_replace("#".$key."#i", $val, $str);
+		$str = str_replace(config('separator'), ' ', $str);
 	}
 
-	if ($lowercase === TRUE)
-	{
-		$str = strtolower($str);
+	return $str;
+}
+
+function safe_string ($str)
+{
+	$str = url_title($str, '-');
+	$str = str_replace('-', ' ', $str);
+	return $str;
+}
+
+function safe_string_insert ($str, $type)
+{
+	$str = title_case(safe_string($str));
+
+	switch ($type) {
+		case 'title':
+			return (strlen($str) < 8)? "Document " . $str: $str;
+			break;
+		case 'desc':
+			return (strlen($str) < 8)? "Document " . $str: $str;
+			break;
 	}
 
-	$str = rtrim($str, $separator);
-
-	return trim(stripslashes($str));
+	return $str;
 }
 
 
@@ -401,6 +486,13 @@ function title ($only_keyword = FALSE)
 	return $title;
 }
 
+function ptitle ()
+{
+	$title = title(true);
+	$title = title_case($title);
+	return $title;
+}
+
 function description ()
 {
 	global $path;
@@ -478,22 +570,20 @@ function make_seed ()
 
 function get_cat_permalink ($name)
 {
-	$is_capitalize = (config('capitalize')) ? false: true;
-	return base_url() . url_title($name, config('separator'), $is_capitalize) .'/';
+	return base_url() . permalink_url($name) .'/';
 }
 
 function permalink ($link)
 {
 	$is_pdf = (config('type') === 'pdf') ? '.pdf': '.html';
-	$is_capitalize = (config('capitalize')) ? false: true;
 
 	# category
 	if (isset($link['icon'])) {
-		return base_url() . url_title($link['name'], config('separator'), $is_capitalize) .'/';
+		return base_url() . permalink_url($link['name']) .'/';
 	} else {
 		if (isset($link['keyword'])) {
 			if (! location('result')) {
-				$link = url_title($link['keyword'], config('separator'), $is_capitalize) . $is_pdf;
+				$link = permalink_url($link['keyword']) . $is_pdf;
 				$link = current_path_url() . $link;
 				return $link;
 			}
@@ -621,7 +711,7 @@ function get_search_term ()
 		'altavista'=> 'p=',
 		'lycos'	=> 'query=',
 		'kanoodle' => 'query='
-		);
+	);
 
 	foreach($engines as $engine => $query_param)
 	{
@@ -745,7 +835,6 @@ function widget ($query, $options)
 	global $db;
 	$results = $db->query($query)->result();
 	$is_pdf = (config('type') === 'pdf') ? '.pdf': '.html';
-	$is_capitalize = (config('capitalize')) ? false: true;
 
 	if (! empty($results))
 	{
@@ -757,8 +846,8 @@ function widget ($query, $options)
 			{
 				if ($result['cat_id'] !== 'NULL')
 				{
-					$category = url_title($result['category'], config('separator'), $is_capitalize);
-					$link = $category .'/'. url_title($result['keyword'], config('separator'), $is_capitalize) . $is_pdf;
+					$category = permalink_url($result['category']);
+					$link = $category .'/'. permalink_url($result['keyword']) . $is_pdf;
 					$output .= '<'.$options['item'].'>';
 					$output .= '<a href="'. base_url() . $link.'" title="'. title_case($result['keyword']) .'">'. title_case($result['keyword']) .'</a>';
 					$output .= '</'.$options['item'].'>';
@@ -795,7 +884,6 @@ function random ($options = array())
 	global $db;
 	$results = $db->query("SELECT `cat`.`name` as `category`, `kw`.`keyword` as `keyword`, `kw`.`id` as `keyword_id`, `i`.`id` as `id`, `kw`.`cat_id` as `cat_id`, `i`.`title` FROM `index` as `i` LEFT JOIN `keywords` as `kw` ON `i`.`keyword_id` = `kw`.`id` LEFT JOIN `cat` as `cat` ON `kw`.`cat_id` = `cat`.`id` WHERE `keyword_id` IN (SELECT `kw`.`id` as `keyword_id` FROM `keywords` as `kw` LEFT JOIN `cat` as `cat` ON `cat`.`id`= `kw`.`cat_id` ORDER BY `kw`.`count` DESC) ORDER BY rand() LIMIT 0, {$options['limit']}")->result();
 	$is_pdf = (config('type') === 'pdf') ? '.pdf': '.html';
-	$is_capitalize = (config('capitalize')) ? false: true;
 
 	if (! empty($results))
 	{
@@ -806,8 +894,8 @@ function random ($options = array())
 			$results = array_map("unserialize", array_unique(array_map("serialize", $results)));
 			foreach($results as $result)
 			{
-				$category = url_title($result['category'], config('separator'), $is_capitalize);
-				$link = $category .'/'. url_title($result['keyword'], config('separator'), $is_capitalize) . $is_pdf .'?'. config('single_var') .'='. $result['id'];
+				$category = permalink_url($result['category']);
+				$link = $category .'/'. permalink_url($result['keyword']) . $is_pdf .'?'. config('single_var') .'='. $result['id'];
 				$output .= '<'.$options['item'].'>';
 				$output .= '<a href="'. base_url() . $link.'" title="'. title_case($result['title']) .'" rel="nofollow">'. title_case($result['title']) .'</a>';
 				$output .= '</'.$options['item'].'>';
@@ -828,11 +916,9 @@ function random ($options = array())
 function generate_permalink_url ($keyword, $category = '', $id = '')
 {
 	if ($category === '') $category = get_category();
-	$separator = config('separator');
 	$is_pdf = (config('type') === 'pdf') ? '.pdf': '.html';
-	$is_capitalize = (config('capitalize')) ? false: true;
-	$category = url_title($category, $separator, $is_capitalize);
-	$keyword = url_title($keyword, $separator, $is_capitalize);
+	$category = permalink_url($category);
+	$keyword = permalink_url($keyword);
 	$view = ($id !== '') ? '?'. config('single_var') .'='. $id: '';
 	return base_url() . $category .'/'. $keyword . $is_pdf . $view;
 }
@@ -840,11 +926,9 @@ function generate_permalink_url ($keyword, $category = '', $id = '')
 function generate_permalink ($keyword, $category = '', $id = '')
 {
 	if ($category === '') $category = get_category();
-	$separator = config('separator');
 	$is_pdf = (config('type') === 'pdf') ? '.pdf': '.html';
-	$is_capitalize = (config('capitalize')) ? false: true;
-	$category = url_title($category, $separator, $is_capitalize);
-	$keyword = url_title($keyword, $separator, $is_capitalize);
+	$category = permalink_url($category);
+	$keyword = permalink_url($keyword);
 	$view = ($id !== '') ? '?'. config('single_var') .'='. $id: '';
 
 	if (config('boost.mode') || location('single') || location('sitemap') || $id !== '') {
@@ -859,24 +943,23 @@ function recent_document ($keyword_id, $options = array())
 	global $db;
 	$results = $db->query("SELECT `cat`.`name` as `category`, `kw`.`keyword` as `keyword`, `kw`.`id` as `keyword_id`, `i`.`id` as `id`, `i`.`title`, `i`.`description`, `i`.`url`, `i`.`time` FROM `index` as `i` LEFT JOIN `keywords` as `kw` ON `i`.`keyword_id` = `kw`.`id` LEFT JOIN `cat` as `cat` ON `kw`.`cat_id` = `cat`.`id` WHERE `keyword_id` = '{$keyword_id}' LIMIT 0, {$options['limit']}")->result();
 	$is_pdf = (config('type') === 'pdf') ? '.pdf': '.html';
-	$is_capitalize = (config('capitalize')) ? false: true;
 
 	if (! empty($results))
 	{
 		if ($options['type'] === 'html')
 		{
 			$parent_class = 'class="'.$options['parent_class'].'"';
-			$output = '<'.$options['prefix'].' itemprop="itemListElement" itemscope itemtype="http://schema.org/Thing" '.$parent_class.'>';
+			$output = '<'.$options['prefix'].' itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem" '.$parent_class.'>';
 			foreach($results as $result)
 			{
 				if (! in_array($result['id'], $options['exclude'])):
-				$category = url_title($result['category'], config('separator'), $is_capitalize);
-				$link = base_url() . $category .'/'. url_title($result['keyword'], config('separator'), $is_capitalize) . $is_pdf .'?'. config('single_var') .'='. $result['id'];
-				$new_keyword = url_title($result['title'], config('separator'), $is_capitalize);
-				$output .= '<'.$options['item'].'>';
+				$category = permalink_url($result['category']);
+				$link = base_url() . $category .'/'. permalink_url($result['keyword']) . $is_pdf .'?'. config('single_var') .'='. $result['id'];
+				$new_keyword = permalink_url($result['title']);
+				$output .= '<'.$options['item'].' itemprop="item" itemscope itemtype="http://schema.org/Thing">';
 				$output .= '<h3 itemprop="name"><a href="'. generate_permalink($result['title'], $category) .'" title="'. title_case($result['title']) .'" rel="nofollow">'. title_case($result['title']) .'</a></h3>';
-				$output .= '<a href="'. $link .'" title="'. title_case($result['title']) .'" rel="nofollow" class="tiny button"><i class="fa fa-book"></i> Read</a>';
-				$output .= '<div class="desc">'. $result['description'] .'</div>';
+				$output .= '<a itemprop="url" href="'. $link .'" title="'. title_case($result['title']) .'" rel="nofollow" class="tiny button"><i class="fa fa-book"></i> Read</a>';
+				$output .= '<div itemprop="description" class="desc">'. $result['description'] .'</div>';
 				$output .= '<a href="'. $link .'" title="'. title_case($result['title']) .'" rel="nofollow" class="read"><i class="fa fa-external-link-square"></i> '. $link .'</a>';
 				$output .= '</'.$options['item'].'>';
 				endif;
@@ -909,7 +992,6 @@ function show_item ($list)
 	$count = config("results");
 	$results = $db->query("SELECT * FROM `keywords` WHERE `cat_id` = '{$list['id']}' ORDER BY  `time` DESC  LIMIT 0,5")->result();
 	$is_pdf = (config('type') === 'pdf') ? '.pdf': '.html';
-	$is_capitalize = (config('capitalize')) ? false: true;
 
 	if (! empty($results))
 	{
@@ -918,8 +1000,8 @@ function show_item ($list)
 		{
 			if ($result['cat_id'] !== 'NULL')
 			{
-				$category = url_title($list['name'], config('separator'), $is_capitalize);
-				$link = $category .'/'. url_title($result['keyword'], config('separator'), $is_capitalize) . $is_pdf;
+				$category = permalink_url($list['name']);
+				$link = $category .'/'. permalink_url($result['keyword']) . $is_pdf;
 				$output .= '<a href="'. base_url() . $link.'" title="'. title_case($result['keyword']) .'" rel="nofollow">'. title_case($result['keyword']) .'</a>, ';
 			}
 		}
@@ -1005,6 +1087,19 @@ function random_color ($str = '')
 	return $color;
 }
 
+function get_id ()
+{
+	$id = '';
+
+	if (location("single"))
+	{
+		$id = config('single_var');
+		$id = (isset($_GET[$id]))? $_GET[$id]: '';
+	}
+
+	return $id;
+}
+
 function read_permalink ($id, $keyword = '', $category = '')
 {
 	if ($keyword === '' && $category === '')
@@ -1025,57 +1120,57 @@ function breadcrumbs ($nav = '')
 {
 	global $path;
 	$nav = ($nav === '')? ' <i class="fa fa-chevron-right"></i> ': ' '. $nav .' ';
-	$output = '<a href="'.base_url().'" title="'.config('index.title').'">Home</a> '. $nav;
+	$output = '<span itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a itemprop="url" href="'.base_url().'" title="'.config('index.title').'"><span itemprop="title">Home</span></a></span> '. $nav;
 
-	$category = capitalize(get_category());
+	$category = title_case(get_category());
 	$category_url = base_url() . get_category();
 
-	$keyword = capitalize(get_keyword());
-	$keyword_url = generate_permalink(get_keyword(), get_category());
+	$keyword = title_case(get_keyword());
+	$keyword_url = generate_permalink_url(get_keyword());
+
+	$nav_cat = '<span itemscope itemtype="http://data-vocabulary.org/Breadcrumb"%s><a itemprop="url" href="'. $category_url .'"><span itemprop="title">'. $category .'</span></a></span> ';
+	$nav_kwd = '<span itemscope itemtype="http://data-vocabulary.org/Breadcrumb"%s><a itemprop="url" href="'. $keyword_url .'"><span itemprop="title">'. $keyword .'</span></a></span> ';
 
 	switch (location('', false)) {
 		case 'category':
-		$output .= '<span class="current-page">'. normalize($category, true).'</span>';
+			$output .= sprintf($nav_cat, ' class="current-page"');
 		break;
 
 		case 'result':
-		$output .= '<a href="'. $category_url .'">'. $category .'</a>'. $nav;
-		$output .= '<span class="current-page">'. normalize(get_keyword(), true) .'</span>';
+			$output .= sprintf($nav_cat, '') . $nav;
+			$output .= sprintf($nav_kwd, ' class="current-page"');
 		break;
 
 		case 'single':
-		$output .= '<a href="'. $category_url .'">'. $category .'</a>'. $nav;
-		$output .= '<a href="'. $keyword_url .'">'. $keyword .'</a>'. $nav;
-		$output .= '<span class="current-page">'. normalize(title(true), true).'</span>';
+			$output .= sprintf($nav_cat, '') . $nav;
+			$output .= sprintf($nav_kwd, '') . $nav;
+			$output .= '<span itemscope itemtype="http://data-vocabulary.org/Breadcrumb" class="current-page"><a itemprop="url" href="'. generate_permalink(get_keyword(), get_category(), get_id()) .'"><span itemprop="title">'. ptitle() .'</span></a></span>';
 		break;
 	}
+
+	$output = '<div itemprop="breadcrumb">'. $output.'</div>';
 
 	return $output;
 }
 
 function clean_words ($str)
 {
-	$words = explode(',', config('clean.words'));
-
-	if ($str !== '')
-	{
-		$str = explode(' ', strtolower($str));
-		$output = array();
-		foreach ($str as $arr)
-		{
-			if (! in_array($arr, $words))
-			{
-				array_push($output, $arr);
-			}
-		}
-
-		$output = implode(' ', $output);
-		return $output;
-	}
-
 	$str = preg_replace('%(?:(?:https?|ftp)://)?(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\x{00a1}-\x{ffff}0-9]-*)*[a-z\x{00a1}-\x{ffff}0-9]+)(?:\.(?:[a-z\x{00a1}-\x{ffff}0-9]-*)*[a-z\x{00a1}-\x{ffff}0-9]+)*(?:\.(?:[a-z\x{00a1}-\x{ffff}]{2,})))(?::\d{2,5})?(?:/\S*)?%u', '', $str);
+	$rurl = '/(http(s)?(:\/\/)?)?(w{3}|www2|asset(s)?|files|cdn|blog)?\.(.[^\.]*)\.(.[^.]+)?/';
+	$str = preg_replace($rurl, '$6', $str);
+	$words = explode(',', config('clean.words'));
+	$words = array_map('clean_wordsfn', $words);
+	$words = implode($words, '|');
+	$str = preg_replace("/$words/", "", $str);
 
 	return $str;
+}
+
+function clean_wordsfn ($val)
+{
+	$val = preg_replace('/[^\w\s]/', '', $val);
+	$val = '\b'.$val.'(s)?\b';
+	return $val;
 }
 
 function bad_words ($str)
@@ -1138,11 +1233,7 @@ function head ()
 	endif;
 
 	if(location('home') ||location('category') ||location('result') || location('single')):
-		$description = '<meta name="description" content="'. description() .'">';
-	endif;
-
-	if(location('category') || location('result')):
-		$microdata = '<meta itemprop="mainContentOfPage" content="true"><meta itemprop="itemListOrder" content="Ascending">';
+		$description = '<meta itemprop="description" name="description" content="'. description() .'">';
 	endif;
 
 	echo <<<SCRIPT
@@ -1267,56 +1358,59 @@ function get_keyword_count ()
 
 function title_case ($title)
 {
-    $regx = '/<(code|var)[^>]*>.*?<\/\1>|<[^>]+>|&\S+;/';
-    preg_match_all($regx, $title, $html, PREG_OFFSET_CAPTURE);
-    $title = preg_replace ($regx, '', $title);
-    $q_left = chr(8216);
-    $q_right = chr(8217);
-    $double_q = chr(8220);
+	$regx = '/<(code|var)[^>]*>.*?<\/\1>|<[^>]+>|&\S+;/';
+	preg_match_all($regx, $title, $html, PREG_OFFSET_CAPTURE);
+	$title = preg_replace ($regx, '', $title);
+	$q_left = chr(8216);
+	$q_right = chr(8217);
+	$double_q = chr(8220);
 
-    preg_match_all ('/[\w\p{L}&`\''. $q_left . $q_right .'"'. $double_q .'\.@:\/\{\(\[<>_]+-? */u', $title, $m1, PREG_OFFSET_CAPTURE);
-    foreach ($m1[0] as &$m2) {
-        list ($m, $i) = $m2;
-        $i = mb_strlen (substr ($title, 0, $i), 'UTF-8');
-        
-        $m = $i>0 && mb_substr ($title, max (0, $i-2), 1, 'UTF-8') !== ':' && 
-            !preg_match ('/[\x{2014}\x{2013}] ?/u', mb_substr ($title, max (0, $i-2), 2, 'UTF-8')) && 
-             preg_match ('/^(a(nd?|s|t)?|b(ut|y)|en|for|i[fn]|o[fnr]|t(he|o)|vs?\.?|via)[ \-]/i', $m)
-        ? mb_strtolower ($m, 'UTF-8')
-        : (	preg_match ('/[\'"_{(\['. $q_left . $double_q .']/u', mb_substr ($title, max (0, $i-1), 3, 'UTF-8'))
-        ? mb_substr ($m, 0, 1, 'UTF-8').
-            mb_strtoupper (mb_substr ($m, 1, 1, 'UTF-8'), 'UTF-8').
-            mb_substr ($m, 2, mb_strlen ($m, 'UTF-8')-2, 'UTF-8')
-        : (	preg_match ('/[\])}]/', mb_substr ($title, max (0, $i-1), 3, 'UTF-8')) ||
-            preg_match ('/[A-Z]+|&|\w+[._]\w+/u', mb_substr ($m, 1, mb_strlen ($m, 'UTF-8')-1, 'UTF-8'))
-        ? $m
-        : mb_strtoupper (mb_substr ($m, 0, 1, 'UTF-8'), 'UTF-8').
-            mb_substr ($m, 1, mb_strlen ($m, 'UTF-8'), 'UTF-8')
-        ));
-        
-        $title = mb_substr ($title, 0, $i, 'UTF-8').$m. mb_substr ($title, $i+mb_strlen ($m, 'UTF-8'), mb_strlen ($title, 'UTF-8'), 'UTF-8');
-    }
+	preg_match_all ('/[\w\p{L}&`\''. $q_left . $q_right .'"'. $double_q .'\.@:\/\{\(\[<>_]+-? */u', $title, $m1, PREG_OFFSET_CAPTURE);
+	foreach ($m1[0] as &$m2) {
+		list ($m, $i) = $m2;
+		$i = mb_strlen (substr ($title, 0, $i), 'UTF-8');
+		
+		$m = $i>0 && mb_substr ($title, max (0, $i-2), 1, 'UTF-8') !== ':' && 
+			!preg_match ('/[\x{2014}\x{2013}] ?/u', mb_substr ($title, max (0, $i-2), 2, 'UTF-8')) && 
+			 preg_match ('/^(a(nd?|s|t)?|b(ut|y)|en|for|i[fn]|o[fnr]|t(he|o)|vs?\.?|via)[ \-]/i', $m)
+		? mb_strtolower ($m, 'UTF-8')
+		: (	preg_match ('/[\'"_{(\['. $q_left . $double_q .']/u', mb_substr ($title, max (0, $i-1), 3, 'UTF-8'))
+		? mb_substr ($m, 0, 1, 'UTF-8').
+			mb_strtoupper (mb_substr ($m, 1, 1, 'UTF-8'), 'UTF-8').
+			mb_substr ($m, 2, mb_strlen ($m, 'UTF-8')-2, 'UTF-8')
+		: (	preg_match ('/[\])}]/', mb_substr ($title, max (0, $i-1), 3, 'UTF-8')) ||
+			preg_match ('/[A-Z]+|&|\w+[._]\w+/u', mb_substr ($m, 1, mb_strlen ($m, 'UTF-8')-1, 'UTF-8'))
+		? $m
+		: mb_strtoupper (mb_substr ($m, 0, 1, 'UTF-8'), 'UTF-8').
+			mb_substr ($m, 1, mb_strlen ($m, 'UTF-8'), 'UTF-8')
+		));
+		
+		$title = mb_substr ($title, 0, $i, 'UTF-8').$m. mb_substr ($title, $i+mb_strlen ($m, 'UTF-8'), mb_strlen ($title, 'UTF-8'), 'UTF-8');
+	}
 
-    foreach ($html[0] as &$tag) $title = substr_replace ($title, $tag[0], $tag[1], 0);
-    return $title;
+	foreach ($html[0] as &$tag) $title = substr_replace ($title, $tag[0], $tag[1], 0);
+	return $title;
 }
 
 function download_url ($title)
 {
-	return base_url() . 'download.php?file=' . url_title($title, '-', true) .'&format=pdf';
+	return base_url() . 'download.php?file=' . url_title($title, '-', false) .'&format=pdf';
 }
 
-function open_url ($url)
+function open_url ($url, $user_agent = '')
 {
-	ob_start();
-	include 'ua.txt';
-	$user_agent = ob_get_clean();
-	$user_agent = explode("\n", $user_agent);
-	shuffle($user_agent);
-	$user_agent = ob_get_clean();
-	$user_agent = explode("\n", $user_agent);
-	shuffle($user_agent);
-	$user_agent = str_replace(array("\n", "\r", "\n\r"), '', end($user_agent));
+	if (empty($user_agent))
+	{
+		ob_start();
+		include 'ua.txt';
+		$user_agent = ob_get_clean();
+		$user_agent = explode("\n", $user_agent);
+		shuffle($user_agent);
+		$user_agent = ob_get_clean();
+		$user_agent = explode("\n", $user_agent);
+		shuffle($user_agent);
+		$user_agent = str_replace(array("\n", "\r", "\n\r"), '', end($user_agent));
+	}
 
 	$process = curl_init($url);
 	curl_setopt($process, CURLOPT_TIMEOUT, 30);
@@ -1329,6 +1423,19 @@ function open_url ($url)
 	curl_close($process);
 
 	return $results;
+}
+
+function pathjoin()
+{
+	$args = func_get_args();
+	$paths = array();
+	foreach ($args as $arg) {
+		$paths = array_merge($paths, (array)$arg);
+	}
+
+	$paths = array_map(create_function('$p', 'return trim($p, "/");'), $paths);
+	$paths = array_filter($paths);
+	return join('/', $paths);
 }
 
 /** EOF */

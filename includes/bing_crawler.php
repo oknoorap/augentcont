@@ -19,6 +19,10 @@ class Bing_Crawler {
 
 		# set default response
 		$response = array();
+		if (strlen($options['q']) < 7) 
+		{
+			return $response;
+		}
 
 		if ($options['method'] === 'api')
 		{
@@ -45,7 +49,12 @@ class Bing_Crawler {
 				{
 					$response = array_map(array($this, 'arr_filter_bing'), $response);
 					$response = array_diff($response, array(''));
-					$response = array_combine(range(1, count($response)), array_values($response));
+					$arr = array();
+					foreach (array_values($response) as $i => $result)
+					{
+						$arr[($i + 1)] = $result;
+					}
+					$response = $arr;
 				}
 			}
 		}
@@ -78,8 +87,12 @@ class Bing_Crawler {
 				{
 					$response = array_map(array($this, 'arr_filter_bing_proxy'), $response);
 					$response = array_filter($response);
-					#$response = array_diff($response, array());
-					$response = array_combine(range(1, count($response)), array_values($response));
+					$arr = array();
+					foreach (array_values($response) as $i => $result)
+					{
+						$arr[($i + 1)] = $result;
+					}
+					$response = $arr;
 				}
 			}
 		}
@@ -97,23 +110,41 @@ class Bing_Crawler {
 		return $this->result;
 	}
 
+	function safe_string($str)
+	{
+		$str = strip_tags($str);
+		$str = strtolower($str);
+		$str = clean_words($str);
+		$str = permalink_url($str, ' ');
+		$str = ucwords($str);
+		return $str;
+	}
+
 	function arr_filter_bing ($arr)
 	{
 		$url = $arr['Url'];
 		$eurl = explode('.', $url);
-		if (array_key_exists('Description', $arr) && array_key_exists('Title', $arr) && array_key_exists('Url', $arr) && end($eurl) === 'pdf')
+		if (is_array($arr) && array_key_exists('Description', $arr) && array_key_exists('Title', $arr) && array_key_exists('Url', $arr) && end($eurl) === 'pdf')
 		{
-			$description = ucwords(clean_words(normalize(strip_tags($arr['Description']))));
-			$title = ucwords(clean_words(normalize(strip_tags($arr['Title']))));
+			$description = $arr['Description'];
+			$description = $this->safe_string($description);
+			$description = (empty($description))? 'No Description': $description;
+			$description = ucfirst($description);
 
-			if (! bad_words($title) && ! bad_words($description) && str_word_count($title) > 1)
+			$title = $arr['Title'];
+			$title = $this->safe_string($title);
+			$title = (empty($title))? 'Untitled Document': $title;
+			$title = title_case($title);
+
+			if (! bad_words($title) && ! bad_words($description))
 			{
-				$hash = new Hashids(md5($url), 15);
+				$hash = new Hashids(md5(base_url() . $url), 15);
 				$output = array(
 					'id'			=> $hash->encrypt(1),
 					'description'	=> $description,
 					'title'			=> $title,
 					'url'			=> $url,
+					'time'			=> time()
 				);
 				
 				return $output;
@@ -125,19 +156,27 @@ class Bing_Crawler {
 	{
 		$url = $arr['link'];
 		$eurl = explode('.', $url);
-		if (array_key_exists('description', $arr) && array_key_exists('title', $arr) && array_key_exists('link', $arr) && end($eurl) === 'pdf')
+		if (is_array($arr) && array_key_exists('description', $arr) && array_key_exists('title', $arr) && array_key_exists('link', $arr) && end($eurl) === 'pdf')
 		{
-			$description = ucwords(clean_words(normalize(strip_tags($arr['description']))));
-			$title = ucwords(clean_words(normalize(strip_tags($arr['title']))));
+			$description = $arr['description'];
+			$description = $this->safe_string($description);
+			$description = (empty($description))? 'No Description': $description;
+			$description = ucfirst($description);
 
-			if (! bad_words($title) && ! bad_words($description) && str_word_count($title) > 1)
+			$title = $arr['title'];
+			$title = $this->safe_string($title);
+			$title = (empty($title))? 'Untitled Document': $title;
+			$title = title_case($title);
+
+			if (! bad_words($title) && ! bad_words($description))
 			{
-				$hash = new Hashids(md5($url), 15);
+				$hash = new Hashids(md5(base_url() . $url), 15);
 				$output = array(
 					'id'			=> $hash->encrypt(1),
 					'description'	=> $description,
 					'title'			=> $title,
 					'url'			=> $url,
+					'time'			=> time()
 				);
 				
 				return $output;

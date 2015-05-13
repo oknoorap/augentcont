@@ -45,12 +45,14 @@ class DB_Driver
 	private function connect()
 	{
 		$mysql_connect = mysql_connect($this->host, $this->username, $this->password);
+		
 		if (!$mysql_connect)
 		{
 			die('Error: Could not connect: ' . mysql_error());
 		}
 		else
 		{
+			mysql_set_charset('utf8', $mysql_connect);
 			mysql_select_db($this->database);
 		}
 
@@ -337,7 +339,6 @@ class DB_Driver
 			$fields = rtrim($fields, ', ');
 			$values = rtrim($values, ', ');
 			$query = "INSERT INTO `{$table}` ({$fields}) VALUES ({$values})";
-
 			$this->query($query);
 		}
 

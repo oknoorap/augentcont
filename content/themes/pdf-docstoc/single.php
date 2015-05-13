@@ -4,7 +4,7 @@
 
 	<div class="grid_9">
 		<div class="grid_9 alpha">
-			<h1 class="browse-title"><?php echo normalize(title(true), true); ?></h1>
+			<h1 class="browse-title"><?php echo ptitle(); ?></h1>
 		</div>
 		<div style="clear: both;"></div>
 		<?php $result = results(); ?>

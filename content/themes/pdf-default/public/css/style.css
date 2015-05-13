@@ -187,19 +187,19 @@ div.read a {
 	font-size: 13px;
 	font-weight: bold;
 }
-.item-0 h2, .color-1 .title, .color-2 .title {
+.item-0 h2, .color-1 .title, .color-2 .title, .breadcrumb.color-1, .breadcrumb.color-2 {
 	background: #E74C3C;
 }
-.item-1 h2, .color-3 .title, .color-4 .title {
+.item-1 h2, .color-3 .title, .color-4 .title, .breadcrumb.color-3, .breadcrumb.color-4 {
 	background: #3498DB;
 }
-.item-2 h2, .color-5 .title, .color-6 .title {
+.item-2 h2, .color-5 .title, .color-6 .title, .breadcrumb.color-5, .breadcrumb.color-6 {
 	background: #40D47E;
 }
-.item-3 h2, .color-7 .title, .color-8 .title {
+.item-3 h2, .color-7 .title, .color-8 .title, .breadcrumb.color-7, .breadcrumb.color-8 {
 	background: #F39C12;
 }
-.item-4 h2, .color-0 .title, .color-9 .title {
+.item-4 h2, .color-0 .title, .color-9 .title, .breadcrumb.color-0, .breadcrumb.color-9 {
 	background: #1ABC9C;
 }
 
@@ -248,8 +248,12 @@ div.results {
 	border-style: solid;
 }
 
-div.results .title, div.results .content {
-	padding: 10px;
+div.results .title {
+	padding: 0 10px 10px;
+}
+
+div.results .content, div.results.single .title {
+	padding: 10px !important;
 }
 
 div.results > .row {
@@ -258,10 +262,24 @@ div.results > .row {
 
 div.results .breadcrumb {
 	margin-bottom: 0;
+	padding: 5px 10px 0px;
 	color: #ffffff;
 }
-div.results .breadcrumb>a {
-	color: #ECF0F1;
+
+div.results .breadcrumb a {
+	color: #ffffff;
+}
+
+.breadcrumb {
+	font-weight: bold;
+}
+
+.breadcrumb a {
+	font-weight: bold;
+}
+.breadcrumb .current-page a {
+	font-weight: normal;
+	font-style: italic;
 }
 
 div.results h1 {

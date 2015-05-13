@@ -1,10 +1,10 @@
 <?php get_header(); ?>
 
-<div itemscope itemtype="http://schema.org/ItemList" id="main">
+<div id="main">
 	<div class="row">
 		<div class="small-12 columns">
-			<h1 itemprop="name" class="title"><?php echo normalize(title(true), true); ?></h1>
-			<div class="breadcrumb"><?php echo breadcrumbs(); ?></div>
+			<h1 class="title"><?php echo ptitle(); ?></h1>
+			<div class="breadcrumb"><?php echo breadcrumbs('&gt;'); ?></div>
 
 			<div id="popular-in">
 				<h2 class="subtitle">Popular in <?php echo title(true); ?></h2>
@@ -16,8 +16,8 @@
 						$items = recent_document($list['id'], array('parent_class'=>'', 'echo'=>false));
 						if (! empty($items)):
 					?>
-					<div class="item item-<?php echo $k; ?>">
-						<h2><a href="<?php echo permalink($list); ?>" rel="nofollow"><?php echo $list['keyword']; ?></a></h2>
+					<div class="item item-<?php echo $k; ?>" itemscope itemtype="http://schema.org/ItemList">
+						<h2 itemprop="name"><a href="<?php echo permalink($list); ?>" rel="nofollow"><?php echo $list['keyword']; ?></a></h2>
 						<?php echo $items; ?>
 					</div>
 				<?php endif; endforeach; ?>

@@ -14,24 +14,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'):
 	{
 		switch ($_POST['type'])
 		{
-			case 'installdb':
-				$db = new DB_Driver('localhost', $_POST['db_name'], $_POST['db_username'], $_POST['db_password']);
-				$db->query("CREATE TABLE IF NOT EXISTS `cat` (`id` varchar(255) NOT NULL, `name` text NOT NULL, `icon` varchar(50) NOT NULL DEFAULT 'ellipsis-h', `time` int(11) NOT NULL, PRIMARY KEY (`id`), UNIQUE KEY `id` (`id`)) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
-
-				$db->query("CREATE TABLE IF NOT EXISTS `index` ( `id` varchar(255) NOT NULL, `keyword_id` varchar(255) DEFAULT NULL, `title` text NOT NULL, `description` text NOT NULL, `url` text NOT NULL, `time` int(11) NOT NULL, PRIMARY KEY (`id`), UNIQUE KEY `id` (`id`)) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
-
-				$db->query("CREATE TABLE IF NOT EXISTS `keywords` (`id` varchar(255) NOT NULL, `keyword` text NOT NULL,`cat_id` varchar(255) NOT NULL,`count` bigint(20) unsigned NOT NULL, `time` int(11) NOT NULL,PRIMARY KEY (`id`),UNIQUE KEY `id` (`id`)) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
-
-				$db->query("INSERT INTO `cat` (`id`, `name`, `icon`, `time`) VALUES ('VoXl0m3N1q', 'Others', 'ellipsis-h', 1415098244);");
-
-				$str = str_replace('"installed":"0"', '"installed":"1"', file_get_contents('../config.php'));
-				write_file('../config.php', $str, 'w');
-				
-				$response['status'] = 200;
-
-				echo json_encode($response);
-				die();
-			break;
 			case 'checkdb':
 				$response = array('status' => 404);
 				$mysql_connect = mysql_connect('localhost', $_POST['db_username'], $_POST['db_password']);
@@ -55,11 +37,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'):
 				$index = intval($_POST['index']);
 				$icon = $_POST['icon'];
 				$q = clean_words($_POST['keyword']);
+				$q = permalink_url($q, ' ');
 
-				if (! bad_words($q))
+				if (! bad_words($q) && ! empty($q))
 				{
 					$list = search_bing($q);
-					if ($list !== NULL)
+					if ($list !== NULL && ! empty($list))
 					{
 						$keyword_id = new Hashids(md5($q), 10);
 						$keyword_id = $keyword_id->encrypt(1);
@@ -72,8 +55,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'):
 						$query = "INSERT INTO `index` (`id`, `keyword_id`, `title`, `description`, `url`, `time`) VALUES ";
 						foreach ($list as $item)
 						{
-							$title	= $db->escape_str($item['title']);
-							$description = $db->escape_str($item['description']);
+							$title	= safe_string_insert($db->escape_str($item['title']), 'title');
+							$description = safe_string_insert($db->escape_str($item['description']), 'desc');
 							$url	= $db->escape_str($item['url']);
 
 							$query .= "('{$item['id']}', '{$keyword_id}', '{$title}', '{$description}', '{$url}', '{$time}'), ";
@@ -91,7 +74,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'):
 			break;
 
 			case 'gen_keyword':
-				$req = open_url('http://en.wikipedia.org/w/api.php?action=query&list=random&rnlimit=10&rnnamespace=0&format=json');
+				if (empty($_POST['lang']))
+				{
+					$lang = array('en', 'sv', 'nl', 'de', 'fr', 'war', 'ru', 'ceb', 'it', 'es', 'vi', 'pl', 'ja', 'pt', 'zh', 'uk', 'ca', 'fa', 'no', 'sh', 'fi', 'id', 'ar', 'cs', 'sr', 'ro', 'ko', 'hu', 'ms', 'tr', 'min', 'eo', 'kk', 'eu', 'sk', 'da', 'bg', 'he', 'lt', 'hy', 'hr', 'sl', 'et', 'uz', 'gl', 'nn', 'vo', 'la', 'simple', 'el', 'hi', 'az', 'th', 'ka', 'oc', 'ce', 'be', 'mk', 'mg', 'new', 'ur', 'tt', 'ta', 'pms', 'cy', 'tl', 'lv', 'bs', 'te', 'be-x-old', 'br', 'ht', 'sq', 'jv', 'lb', 'mr', 'is', 'ml', 'zh-yue', 'bn', 'af', 'ba', 'ga', 'pnb', 'cv', 'fy', 'lmo', 'tg', 'my', 'yo', 'sco', 'an', 'ky', 'sw', 'io', 'ne', 'gu', 'scn', 'bpy', 'nds', 'ku', 'ast', 'qu', 'als', 'su', 'pa', 'kn', 'ckb', 'ia', 'mn', 'nap', 'bug', 'bat-smg', 'arz', 'wa', 'zh-min-nan', 'gd', 'am', 'map-bms', 'yi', 'mzn', 'si', 'fo', 'bar', 'vec', 'nah', 'sah', 'os', 'sa', 'roa-tara', 'li', 'hsb', 'or', 'pam', 'mrj', 'mhr', 'se', 'mi', 'ilo', 'hif', 'bcl', 'gan', 'rue', 'glk', 'nds-nl', 'bo', 'vls', 'ps', 'diq', 'fiu-vro', 'bh', 'xmf', 'tk', 'gv', 'sc', 'co', 'csb', 'hak', 'km', 'kv', 'zea', 'vep', 'crh', 'zh-classical', 'frr', 'eml', 'ay', 'wuu', 'stq', 'udm', 'nrm', 'kw', 'rm', 'szl', 'so', 'koi', 'as', 'lad', 'mt', 'fur', 'dv', 'gn', 'dsb', 'pcd', 'ie', 'cbk-zam', 'cdo', 'lij', 'ksh', 'ext', 'mwl', 'gag', 'ang', 'ug', 'ace', 'pi', 'pag', 'nv', 'sd', 'frp', 'sn', 'kab', 'lez', 'ln', 'pfl', 'xal', 'krc', 'myv', 'haw', 'rw', 'kaa', 'pdc', 'to', 'kl', 'arc', 'nov', 'kbd', 'av', 'bxr', 'lo', 'bjn', 'ha', 'tet', 'tpi', 'na', 'pap', 'lbe', 'jbo', 'ty', 'mdf', 'roa-rup', 'wo', 'tyv', 'ig', 'srn', 'nso', 'kg', 'ab', 'ltg', 'zu', 'om', 'chy', 'za', 'cu', 'rmy', 'tw', 'tn', 'chr', 'mai', 'pih', 'got', 'bi', 'xh', 'sm', 'ss', 'mo', 'rn', 'ki', 'pnt', 'bm', 'iu', 'ee', 'lg', 'ts', 'ak', 'fj', 'ik', 'sg', 'st', 'ff', 'dz', 'ny', 'ch', 'ti', 've', 'ks', 'cr', 'tum');
+
+					shuffle($lang);
+					$lang = array('en', 'en', 'en', end($lang));
+					shuffle($lang);
+					$lang = end($lang);
+				}
+				else
+				{
+					$lang = $_POST['lang'];
+				}
+
+				switch ($_POST['endpoint'])
+				{
+					case 'b':
+						$endpoint = 'wikibooks.org';
+						break;
+					break;
+
+					default:
+						$endpoint = 'wikipedia.org';
+						break;
+				}
+
+				$req = open_url("http://$lang.$endpoint/w/api.php?action=query&list=random&rnlimit=10&rnnamespace=0&format=json");
+
 				$arr_title = array();
 
 				if ($req)
@@ -114,6 +124,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'):
 
 			case 'config':
 				$post_config = $_POST['config'];
+				$post_config['header.script'] = json_escape($post_config['header.script']);
+				$post_config['footer.script'] = json_escape($post_config['footer.script']);
+				$post_config['bing.api'] = json_escape($post_config['bing.api']);
 				
 				# upload logo
 				if ($post_config['logo_tmp'] !== 'no') {
@@ -134,9 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'):
 				unset($post_config['logo_tmp']);
 				unset($post_config['logo_old']);
 
-				$post_config['header.script'] = json_escape($post_config['header.script']);
-				$post_config['footer.script'] = json_escape($post_config['footer.script']);
-				$post_config['bing.api'] = json_escape($post_config['bing.api']);
+				# write config
 				$config_str = '$config = <<<config'."\r\n". json_encode($post_config) ."\r\n". 'config;';
 				$str = <<<php
 <?php
@@ -215,13 +226,13 @@ endif;
 	<meta charset="utf-8">
 	<meta name="robots" content="noindex,nofollow">
 	<title>Admin</title>
-	<link rel="stylesheet" href="./assets/normalize.css">
-	<link rel="stylesheet" href="./assets/foundation.min.css">
-	<link rel="stylesheet" href="./assets/font-awesome.min.css">
+	<link rel="stylesheet" href="./assets/css/normalize.css">
+	<link rel="stylesheet" href="./assets/css/foundation.min.css">
+	<link rel="stylesheet" href="./assets/css/font-awesome.min.css">
 	<?php if (is_login()): ?>
-	<link rel="stylesheet" href="./assets/w2ui.min.css">
+	<link rel="stylesheet" href="./assets/css/w2ui.min.css">
 	<?php endif; ?>
-	<link rel="stylesheet" href="./assets/site.css">
+	<link rel="stylesheet" href="./assets/css/site.css">
 </head>
 
 <body <?php echo (! is_login())? 'class="nologin"': ''; ?> data-ng-controller="Main">
@@ -231,7 +242,7 @@ endif;
 			<div class="large-6 columns">
 				<div class="row">
 					<div class="large-12 columns">
-						<img src="./assets/login.jpg">
+						<img src="./assets/img/login.jpg">
 					</div>
 				</div>
 			</div>
@@ -270,7 +281,7 @@ endif;
 					<div class="large-12 columns">
 						<a href="./" class="no-margin tiny secondary button"><i class="fa fa-home"></i> Home</a>
 						<a href="?page=1" class="no-margin tiny secondary button"><i class="fa fa-file-text-o"></i> Page</a>
-						<a  data-ng-show="usingSpinner === 'true'" href="?spinner=1" class="no-margin tiny secondary button"><i class="fa fa-file-text-o"></i> Spinner</a>
+						<a  data-ng-show="usingSpinner" href="?spinner=1" class="no-margin tiny secondary button"><i class="fa fa-spinner"></i> Spinner</a>
 						<a href="logout.php" class="no-margin tiny alert button"><i class="fa fa-sign-out"></i> Logout</a>
 						<a target="_blank" class="right a-small" href="<?php echo dirname(base_url()); ?>"><i class="fa fa-share"></i> View Site</a>
 					</div>
@@ -291,21 +302,22 @@ endif;
 
 	<div class="row">
 		<div class="large-12">
-			<p style="margin:20px 0 0;font-size: 12px;text-align:center">Copyrighted &copy; <?php echo date('Y'); ?> by <a href="http://fb.com/anonymousjapan" target="_blank">fb.com/anonymousjapan</a></p>
+			<p style="margin:40px 0 20px;font-size: 12px;text-align:center">&copy; <?php echo date('Y'); ?> - Copyrighted by <a href="http://fb.com/anonymousjapan" target="_blank">fb.com/anonymousjapan</a></p>
 		</div>
 	</div>
 
 <?php if (is_login()): ?>
-<script type="text/javascript" src="./assets/jquery.min.js"></script>
-<script type="text/javascript" src="./assets/angular.min.js"></script>
-<script type="text/javascript" src="./assets/string.min.js"></script>
-<script type="text/javascript" src="./assets/w2ui.min.js"></script>
-<script type="text/javascript" src="./assets/underscore.min.js"></script>
-<script type="text/javascript" src="./assets/async.js"></script>
+<script type="text/javascript" src="./assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="./assets/js/angular.min.js"></script>
+<script type="text/javascript" src="./assets/js/string.min.js"></script>
+<script type="text/javascript" src="./assets/js/w2ui.min.js"></script>
+<script type="text/javascript" src="./assets/js/underscore.min.js"></script>
+<script type="text/javascript" src="./assets/js/async.js"></script>
+<script type="text/javascript" src="./assets/js/uslug.js"></script>
 <?php if(isset($_GET['page']) || isset($_GET['spinner'])): ?>
-<script type="text/javascript" src="./assets/ckeditor/ckeditor.js" charset="utf-8"></script>
+<script type="text/javascript" src="./assets/js/ckeditor/ckeditor.js" charset="utf-8"></script>
 <script type="text/javascript">
-var fileEditor = './assets/fileman/index.php'; 
+var fileEditor = './assets/js/fileman/index.php'; 
 (function($){
 	$(document).ready(function() {
 		$('.editor').each(function (i, el) {
@@ -320,7 +332,7 @@ var fileEditor = './assets/fileman/index.php';
 })(jQuery);
 </script>
 <?php endif; ?>
-<script type="text/javascript" src="./assets/site.js"></script>
+<script type="text/javascript" src="./assets/js/site.js"></script>
 <?php endif; ?>
 </body>
 </html>
