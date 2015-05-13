@@ -459,7 +459,7 @@ class Engine {
 	{
 		$time = time();
 
-		$keyword = strtolower(permalink_url($keyword, true));
+		$keyword = safe_strtolower(permalink_url($keyword, true));
 		$cat_id = (empty($cat_id)) ? 'VoXl0m3N1q': $cat_id;
 		$keyword_id = new Hashids(md5($keyword), 10);
 		$keyword_id = $keyword_id->encrypt(1);

@@ -425,23 +425,10 @@ class DB_Driver
 				$output[] = $this->stripslashes_deep($row);
 			}
 
-			return array_map(array($this, 'clean_words'), $output);
+			return $output;
 		}
 
 		return array();
-	}
-
-	function clean_words($arr)
-	{
-		if (isset($arr['keyword'])) {
-			$arr['keyword'] = normalize(clean_words(strtolower($arr['keyword'])), true);
-		}
-
-		if (isset($arr['title'])) {
-			$arr['title'] = title_case(normalize(clean_words(strtolower($arr['title']))));
-		}
-
-		return $arr;
 	}
 
 	public function num_rows()

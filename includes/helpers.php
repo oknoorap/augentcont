@@ -132,7 +132,7 @@ function normalize_path ($path)
 
 function capitalize ($str)
 {
-	return ucfirst(strtolower($str));
+	return safe_ucfirst(safe_strtolower($str));
 }
 
 function normalize ($str, $ucwords = FALSE)
@@ -140,16 +140,16 @@ function normalize ($str, $ucwords = FALSE)
 	$str = url_title($str, '_', false);
 	$str = str_replace('-', ' ', $str);
 	$str = humanize($str);
-	$str = strtolower($str);
+	$str = safe_strtolower($str);
 	$str = trim($str);
-	$str = ($ucwords) ? ucwords($str): $str;
+	$str = ($ucwords) ? safe_ucwords($str): $str;
 
 	return $str;
 }
 
 function humanize($str)
 {
-	return ucwords(preg_replace('/[_]+/', ' ', strtolower(trim($str))));
+	return safe_ucwords(preg_replace('/[_]+/', ' ', safe_strtolower(trim($str))));
 }
 
 function utf8_uri_encode( $utf8_string, $length = 0 ) {
@@ -234,13 +234,13 @@ function url_title($title, $separator = '-', $capitalize = FALSE)
 	$title = preg_replace('/\`\~\!\@\#\$\%\^\&\*\(\)\_\+\-\=\<\>\?\:\"\{\}\|\,\.\/\;\[\]/', '', $title);
 	$title = str_replace('.', $separator, $title);
 	$title = preg_replace('/[^%a-z0-9 _-]/', '', $title);
-	$title = ($capitalize) ? ucwords($title): $title;
+	$title = ($capitalize) ? safe_ucwords($title): $title;
 	$title = preg_replace('/\s+/', $separator, $title);
 	$title = preg_replace('|-+|', $separator, $title);
 	$title = rtrim($title, $separator);
 	$title = trim($title);
 	$title = stripslashes($title);
-	$title = ($capitalize) ? $title: strtolower($title);
+	$title = ($capitalize) ? $title: safe_strtolower($title);
 	$title = urldecode($title);
 	//$title = html_entity_decode($title, ENT_QUOTES, "UTF-8");
 	return $title;
@@ -265,16 +265,85 @@ function safe_string ($str)
 	return $str;
 }
 
+function safe_ucfirst($str)
+{
+	if (seems_utf8($str))
+	{
+		if (function_exists('mb_strtoupper'))
+		{
+			$encoding = "UTF-8";
+			$strlen = mb_strlen($str, $encoding);
+			$first_char = mb_substr($str, 0, 1, $encoding);
+			$then = mb_substr($str, 1, $strlen - 1, $encoding);
+			$str = mb_strtoupper($first_char, $encoding) . $then;
+		}
+	}
+	else
+	{
+		$str = ucfirst($str);
+	}
+
+	return $str;
+}
+
+function safe_strtolower($str)
+{
+	if (seems_utf8($str))
+	{
+		if (function_exists('mb_convert_case'))
+		{
+			$str = mb_convert_case($str, MB_CASE_LOWER, "UTF-8");
+		}
+	}
+	else
+	{
+		$str = strtolower($str);
+	}
+
+	return $str;
+}
+
+function safe_ucwords($str)
+{
+	if (seems_utf8($str))
+	{
+		if (function_exists('mb_convert_case'))
+		{
+			$str = mb_convert_case($str, MB_CASE_TITLE, "UTF-8");
+		}
+	}
+	else
+	{
+		$str = ucwords($str);
+	}
+
+	return $str;
+}
+
 function safe_string_insert ($str, $type)
 {
 	$str = title_case(safe_string($str));
 
 	switch ($type) {
 		case 'title':
-			return (strlen($str) < 8)? "Document " . $str: $str;
+			if (strlen($str) < 3)
+			{
+				$str = "Untitled Document";
+			}
+			else if (strlen($str) > 3 && strlen($str) < 8)
+			{
+				$str = "Document " . $str;
+			}
 			break;
 		case 'desc':
-			return (strlen($str) < 8)? "Document " . $str: $str;
+			if (strlen($str) < 3)
+			{
+				$str = "No Description";
+			}
+			else if (strlen($str) > 3 && strlen($str) < 8)
+			{
+				$str = "Document " . $str;
+			}
 			break;
 	}
 
@@ -722,7 +791,10 @@ function get_search_term ()
 			preg_match($pattern, $referer, $matches);
 			$search_phrase = urldecode($matches[1]);
 			# return array($engine, $search_phrase);
-			return normalize(clean_words($search_phrase));
+			$search_phrase = safe_string($search_phrase);
+			$search_phrase = clean_words($search_phrase);
+			$search_phrase = safe_strtolower($search_phrase);
+			return $search_phrase;
 		}
 	}
 	return;

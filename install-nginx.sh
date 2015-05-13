@@ -290,6 +290,7 @@ server {
 
 	index index.php index.html index.html;
 	server_name ${WWWDOMAIN};
+	charset utf-8;
 
 	# deny all htaccess
 	location ~ /\\.ht {

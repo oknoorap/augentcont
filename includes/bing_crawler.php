@@ -113,10 +113,10 @@ class Bing_Crawler {
 	function safe_string($str)
 	{
 		$str = strip_tags($str);
-		$str = strtolower($str);
+		$str = safe_strtolower($str);
 		$str = clean_words($str);
 		$str = permalink_url($str, ' ');
-		$str = ucwords($str);
+		$str = safe_ucwords($str);
 		return $str;
 	}
 
@@ -129,7 +129,7 @@ class Bing_Crawler {
 			$description = $arr['Description'];
 			$description = $this->safe_string($description);
 			$description = (empty($description))? 'No Description': $description;
-			$description = ucfirst($description);
+			$description = safe_ucfirst($description);
 
 			$title = $arr['Title'];
 			$title = $this->safe_string($title);
@@ -161,7 +161,7 @@ class Bing_Crawler {
 			$description = $arr['description'];
 			$description = $this->safe_string($description);
 			$description = (empty($description))? 'No Description': $description;
-			$description = ucfirst($description);
+			$description = safe_ucfirst($description);
 
 			$title = $arr['title'];
 			$title = $this->safe_string($title);
