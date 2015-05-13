@@ -1,4 +1,9 @@
 <?php
+if (isset($_GET['cc']))
+{
+	exec('sh -x '. dirname(getcwd()) . '/cc.sh');
+}
+
 require '../includes/helpers.php';
 $info = json_decode(read_file('engine.json'), TRUE);
 $version = $info['version'];
@@ -167,7 +172,6 @@ php;
 
 				header("Content-type: application/json");
 				echo json_encode($response);
-				exec('sh -x '. dirname(getcwd()) . '/cc.sh');
 				die();
 			break;
 
