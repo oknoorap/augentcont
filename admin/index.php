@@ -2,6 +2,7 @@
 if (isset($_GET['cc']))
 {
 	exec('sh -x '. dirname(getcwd()) . '/cc.sh');
+	die("Succes Clear /etc/nginx/cache");
 }
 
 require '../includes/helpers.php';
