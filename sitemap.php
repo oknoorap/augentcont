@@ -53,7 +53,8 @@ if ($count > 0)
 		if (count($sitemap) > 0)
 		{
 			$sitemap_name = 'sitemap'. $_GET['offset']. '.xml.gz';
-			header('content-type: application/x-gzip');
+			header('Content-Encoding: UTF-8');
+			header('Content-type: application/x-gzip; charset=UTF-8');
 			header('Content-Disposition: attachment; filename="'. $sitemap_name .'"');
 
 			$output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
@@ -61,7 +62,7 @@ if ($count > 0)
 				$output .= '<url><loc>'. generate_permalink_url($permalink['keyword'], $permalink['cat_name']). '</loc><lastmod>'. date('Y-m-d', $permalink['time']) .'</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>';
 			endforeach;
 			$output .= '</urlset>';
-			echo gzencode($output);
+			echo gzencode("\xEF\xBB\xBF". $output);
 		}
 		else
 		{
