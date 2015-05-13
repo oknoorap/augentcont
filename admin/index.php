@@ -1,338 +1,494 @@
-<?php
-require '../includes/helpers.php';
-$info = json_decode(read_file('engine.json'), TRUE);
-$version = $info['version'];
-$config = build_config('../config.php');
+<?php 
+define('CONTENTPATH', 'content');
+define('KEYWORDPATH', CONTENTPATH . '/keywords');
+define('INCLUDESPATH', 'includes');
 
-require '../includes/DB_Driver.php';
-require '../includes/Hashids.php';
+require INCLUDESPATH . '/helpers.php';
+$config = build_config('config.php');
 
-session_start();
+require INCLUDESPATH . '/DB_Driver.php';
+require INCLUDESPATH . '/Hashids.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST'):
-	if (is_login () && isset($_POST['type']))
+$path = '';
+$results = array();
+$related = array();
+
+if (! empty($_GET))
+{
+	$path = array_keys($_GET);
+	$path = explode('/', $path[0]);
+	$path = array_filter($path);
+	$path_arr = array();
+	foreach(array_values($path) as $i => $p)
 	{
-		switch ($_POST['type'])
+		$path_arr[($i + 1)] = $p;
+	}
+	$path = $path_arr;
+}
+
+$db = new DB_Driver('localhost', config('database.name'), config('database.username'), config('database.password'));
+
+class Engine {
+
+	var $path;
+	var $db;
+	var $location;
+
+	function __construct()
+	{
+		$this->location = location('', false);
+	}
+
+	function init ()
+	{
+		global $db;
+		$this->db = $db;
+
+		# record keyword
+		$keyword = get_search_term();
+		if (! empty($keyword) && (location('category') || location('result') || location('single')))
 		{
-			case 'checkdb':
-				$response = array('status' => 404);
-				$mysql_connect = mysql_connect('localhost', $_POST['db_username'], $_POST['db_password']);
+			$category_id = $this->is_category_exists();
+			$this->insert_keyword($keyword, $category_id);
+		}
 
-				if ($mysql_connect)
-				{
-					if (mysql_select_db($_POST['db_name']))
-					{
-						$response['status'] = 200;
-					}
-				}
+		$this->remove_header();
+		$this->run();
+	}
 
-				echo json_encode($response);
-				die();
+	function run ()
+	{
+		global $results;
+		$this->path = get_path();
+		$this->theme = $this->theme_path();
+
+		switch($this->location)
+		{
+			case 'opensearch':
+				include 'opensearch.php';
 			break;
-			case 'insert':
-				$db = new DB_Driver('localhost', config('database.name'), config('database.username'), config('database.password'));
-				$response = array('status' => 404);
-				$time = time();
-				$category = $_POST['category'];
-				$index = intval($_POST['index']);
-				$icon = $_POST['icon'];
-				$q = clean_words($_POST['keyword']);
-				$q = permalink_url($q, ' ');
-
-				if (! bad_words($q) && ! empty($q))
+			case 'home':
+				$categories = get_categories();
+				if (is_array($categories) && count($categories) > 0)
 				{
-					$list = search_bing($q);
-					if ($list !== NULL && ! empty($list))
-					{
-						$keyword_id = new Hashids(md5($q), 10);
-						$keyword_id = $keyword_id->encrypt(1);
-						$category_id = new Hashids(md5($category), 10);
-						$category_id = $category_id->encrypt(1);
-
-						$db->query("INSERT INTO `cat` (`id`, `name`, `icon`, `time`) VALUES ('{$category_id}', '{$category}', '{$icon}', '{$time}') ON DUPLICATE KEY UPDATE `id` = `id`;");
-						$db->query("INSERT INTO `keywords` (`id`, `keyword`, `cat_id`, `time`) VALUES ('{$keyword_id}', '{$q}', '{$category_id}', '{$time}') ON DUPLICATE KEY UPDATE `count` = `count` + 1;");
-
-						$query = "INSERT INTO `index` (`id`, `keyword_id`, `title`, `description`, `url`, `time`) VALUES ";
-						foreach ($list as $item)
-						{
-							$title	= safe_string_insert($db->escape_str($item['title']), 'title');
-							$description = safe_string_insert($db->escape_str($item['description']), 'desc');
-							$url	= $db->escape_str($item['url']);
-
-							$query .= "('{$item['id']}', '{$keyword_id}', '{$title}', '{$description}', '{$url}', '{$time}'), ";
-						}
-						$query = rtrim($query, ", ");
-						$db->query("$query ON DUPLICATE KEY UPDATE `id` = `id`;");
-
-						$response['status'] = 200;
-					}
-				}
-
-				header("Content-type: application/json");
-				echo json_encode($response);
-				die();
-			break;
-
-			case 'gen_keyword':
-				if (empty($_POST['lang']))
-				{
-					$lang = array('en', 'sv', 'nl', 'de', 'fr', 'war', 'ru', 'ceb', 'it', 'es', 'vi', 'pl', 'ja', 'pt', 'zh', 'uk', 'ca', 'fa', 'no', 'sh', 'fi', 'id', 'ar', 'cs', 'sr', 'ro', 'ko', 'hu', 'ms', 'tr', 'min', 'eo', 'kk', 'eu', 'sk', 'da', 'bg', 'he', 'lt', 'hy', 'hr', 'sl', 'et', 'uz', 'gl', 'nn', 'vo', 'la', 'simple', 'el', 'hi', 'az', 'th', 'ka', 'oc', 'ce', 'be', 'mk', 'mg', 'new', 'ur', 'tt', 'ta', 'pms', 'cy', 'tl', 'lv', 'bs', 'te', 'be-x-old', 'br', 'ht', 'sq', 'jv', 'lb', 'mr', 'is', 'ml', 'zh-yue', 'bn', 'af', 'ba', 'ga', 'pnb', 'cv', 'fy', 'lmo', 'tg', 'my', 'yo', 'sco', 'an', 'ky', 'sw', 'io', 'ne', 'gu', 'scn', 'bpy', 'nds', 'ku', 'ast', 'qu', 'als', 'su', 'pa', 'kn', 'ckb', 'ia', 'mn', 'nap', 'bug', 'bat-smg', 'arz', 'wa', 'zh-min-nan', 'gd', 'am', 'map-bms', 'yi', 'mzn', 'si', 'fo', 'bar', 'vec', 'nah', 'sah', 'os', 'sa', 'roa-tara', 'li', 'hsb', 'or', 'pam', 'mrj', 'mhr', 'se', 'mi', 'ilo', 'hif', 'bcl', 'gan', 'rue', 'glk', 'nds-nl', 'bo', 'vls', 'ps', 'diq', 'fiu-vro', 'bh', 'xmf', 'tk', 'gv', 'sc', 'co', 'csb', 'hak', 'km', 'kv', 'zea', 'vep', 'crh', 'zh-classical', 'frr', 'eml', 'ay', 'wuu', 'stq', 'udm', 'nrm', 'kw', 'rm', 'szl', 'so', 'koi', 'as', 'lad', 'mt', 'fur', 'dv', 'gn', 'dsb', 'pcd', 'ie', 'cbk-zam', 'cdo', 'lij', 'ksh', 'ext', 'mwl', 'gag', 'ang', 'ug', 'ace', 'pi', 'pag', 'nv', 'sd', 'frp', 'sn', 'kab', 'lez', 'ln', 'pfl', 'xal', 'krc', 'myv', 'haw', 'rw', 'kaa', 'pdc', 'to', 'kl', 'arc', 'nov', 'kbd', 'av', 'bxr', 'lo', 'bjn', 'ha', 'tet', 'tpi', 'na', 'pap', 'lbe', 'jbo', 'ty', 'mdf', 'roa-rup', 'wo', 'tyv', 'ig', 'srn', 'nso', 'kg', 'ab', 'ltg', 'zu', 'om', 'chy', 'za', 'cu', 'rmy', 'tw', 'tn', 'chr', 'mai', 'pih', 'got', 'bi', 'xh', 'sm', 'ss', 'mo', 'rn', 'ki', 'pnt', 'bm', 'iu', 'ee', 'lg', 'ts', 'ak', 'fj', 'ik', 'sg', 'st', 'ff', 'dz', 'ny', 'ch', 'ti', 've', 'ks', 'cr', 'tum');
-
-					shuffle($lang);
-					$lang = array('en', 'en', 'en', end($lang));
-					shuffle($lang);
-					$lang = end($lang);
+					$results = array_map('get_categories_map', $categories);
+					$this->render('index');
 				}
 				else
 				{
-					$lang = $_POST['lang'];
+					die('Please insert keywords');
+				}
+			break;
+
+			case 'search':
+				if ($_SERVER['REQUEST_METHOD'] === 'POST')
+				{
+					$q = (isset($_GET['q']))? $_GET['q']: '';
+				}
+				else
+				{
+					$q = (isset($_GET['q']))? $_GET['q']: '';
 				}
 
-				switch ($_POST['endpoint'])
-				{
-					case 'b':
-						$endpoint = 'wikibooks.org';
-						break;
-					break;
+				$q = permalink_url($q, ' ');
 
-					default:
-						$endpoint = 'wikipedia.org';
-						break;
+				if (empty($q) || strlen($q) < 5)
+				{
+					header("Location: ". base_url());
 				}
-
-				$req = open_url("http://$lang.$endpoint/w/api.php?action=query&list=random&rnlimit=10&rnnamespace=0&format=json");
-
-				$arr_title = array();
-
-				if ($req)
+				else
 				{
-					$results = json_decode($req, TRUE);
+					$result = $this->db->query("SELECT `kw`.`keyword` as `keyword`, `kw`.`time` as `time`, `cat`.`name` as `category` FROM `keywords` as `kw` LEFT JOIN `cat` as `cat` ON `cat`.`id`= `kw`.`cat_id` WHERE LOWER(`kw`.`keyword`) LIKE '{$q}'")->result();
 
-					if (isset($results['query']) && isset($results['query']['random']))
+					if (empty($result))
 					{
-						foreach ($results['query']['random'] as $result)
+						if (isset($_POST['cat']))
 						{
-							array_push($arr_title, $result['title']);
+							header("Location: ". generate_permalink_url($q, normalize($_POST['cat'])));
 						}
+						else
+						{
+							header("Location: ". generate_permalink_url($q, 'others'));
+						}
+					}
+					else
+					{
+						$result = $result[0];
+						header("Location: ". generate_permalink_url($result['keyword'], $result['category']));
 					}
 				}
 
-				$response['result'] = $arr_title;
-				echo json_encode($response);
-				die();
 			break;
 
-			case 'config':
-				$post_config = $_POST['config'];
-				$post_config['header.script'] = json_escape($post_config['header.script']);
-				$post_config['footer.script'] = json_escape($post_config['footer.script']);
-				$post_config['bing.api'] = json_escape($post_config['bing.api']);
-				
-				# upload logo
-				if ($post_config['logo_tmp'] !== 'no') {
-					$uploaddir = '../content/logo/';
-					$filename = md5($post_config['logo_tmp']) .'_logo.'. $post_config['logo_ext'];
+			case 'category':
+				if ($category_id = $this->is_category_exists())
+				{
+					$category_name = normalize(get_category());
+					$keywords = get_keywords($category_name);
 
-					recursive_remove_directory($uploaddir);
-					write_file($uploaddir . $filename, base64_decode($post_config['logo_data']), 'w');
-
-					$post_config['logo'] = $filename;
-
-				} else {
-					$post_config['logo'] = $post_config['logo_old'];
+					if(! empty($keywords) && is_array($keywords))
+					{
+						$results = array_map('get_keywords_map', $keywords);
+						$this->render('category');
+					}
+					else
+					{
+						$this->not_found();
+					}
 				}
-
-				unset($post_config['logo_ext']);
-				unset($post_config['logo_data']);
-				unset($post_config['logo_tmp']);
-				unset($post_config['logo_old']);
-
-				# write config
-				$config_str = '$config = <<<config'."\r\n". json_encode($post_config) ."\r\n". 'config;';
-				$str = <<<php
-<?php
-
-$config_str
-
-php;
-				write_file('../config.php', $str, 'w');
-
-				$response = array('status' => 404);
-
-				if ($_POST['config']['password'] !== $_SESSION["passwd"]) {
-					$response['status'] = 302;
-				} else {
-					$response['status'] = 200;
+				else
+				{
+					$this->not_found();
 				}
+			break;
 
-				header("Content-type: application/json");
-				echo json_encode($response);
-				die();
+			case 'result':
+			case 'single':
+				if ($category_id = $this->is_category_exists())
+				{
+					# Get keyword
+					$q = get_keyword();
+					$is_single = isset($_GET[config('single_var')]);
+
+					# Check is valid URL
+					if (! $this->valid_url($q) ) {
+						header("Location: ". base_url());
+					}
+
+					# is keyword exists
+					$list = array();
+					$is_results_exists = false;
+
+					$keyword = $this->get_keyword_id($q);
+					if (! empty($keyword))
+					{
+						$keyword_id = $keyword[0]['id'];
+						$category_id = $keyword[0]['cat_id'];
+
+						# if category_id = NULL redirect to home
+						if ($category_id === 'NULL')
+						{
+							header("Location: " . base_url() . get_category(true));
+							die();
+						}
+
+						# search results by keyword
+						$list = $this->search_db($q);
+
+						if (! empty($list))
+						{
+							$is_results_exists = true;
+						}
+					}
+
+					# keyword not exists
+					else
+					{
+						# search bing and insert to db
+						$list = $this->insert_keyword($q, $category_id);
+
+						# if results exists
+						if (! empty($list))
+						{
+							$is_results_exists = true;
+						}
+					}
+
+					if ($is_results_exists)
+					{
+						if ($is_single)
+						{
+							$results = $this->single($_GET[config('single_var')]);
+
+							if ($results !== NULL)
+							{
+								global $related;
+								$related = $results;
+								$this->render('single');
+							}
+							else
+							{
+								header("Location: ". base_url());
+							}
+						}
+						else
+						{
+							if (config('type') === 'pdf') require INCLUDESPATH . '/tcpdf/tcpdf.php';
+							$results = array_splice($list, 0, config('results'));
+							$this->render('result');
+						}
+					}
+					else
+					{
+						header("Location: ". base_url() . get_category(true));
+					}
+				}
+				else
+				{
+					header("Location: ". base_url());
+				}
 			break;
 
 			case 'page':
-				$title = $_POST['title'];
-				$content = $_POST['content'];
-				$json = json_encode(array('title' => $title, 'content' => $content));
-				write_file('../content/pages/'.$_POST['name'].'.txt', $json, 'w');
-				header("Location: ./?page=1");
+				$json = file_get_contents(CONTENTPATH . '/pages/'. current_path() .'.txt');
+				$json = json_decode($json, TRUE);
+				$title = htmlentities($json['title']);
+				
+				$content = $json['content'];
+				$content = replace_syntax($content);
+
+				$results = array('title' => $title, 'content' => $content);
+				$this->render('page');
 			break;
 
-			case 'spinner':
-				$content = $_POST['content'];
-				$spinner_config = '../content/spinner/conf.json';
-				$spinner = explode(',', read_file($spinner_config));
-				$content_clean = strip_tags($content);
-				$id = $_POST['name'];
+			case 'sitemap':
+				$alphabet = strtolower(current_path());
+				$list = array();
+				$query = '';
 
-				if (empty($content_clean))
+				if ($alphabet === 'numeric')
 				{
-					$spinner = array_diff($spinner, array($id));
+					$query = "SELECT `kw`.`keyword` as `keyword`, `kw`.`cat_id` as `cat_id`, `kw`.`time` as `time`, `cat`.`name` as `category` FROM `keywords` as `kw` LEFT JOIN `cat` as `cat` ON `cat`.`id`= `kw`.`cat_id` WHERE `keyword`  REGEXP '^[0-9]' LIMIT 0, 100000";
 				}
 				else
 				{
-					$spinner = array_merge($spinner, array($id));
+					$query = "SELECT `kw`.`keyword` as `keyword`, `kw`.`cat_id` as `cat_id`, `kw`.`time` as `time`, `cat`.`name` as `category` FROM `keywords` as `kw` LEFT JOIN `cat` as `cat` ON `cat`.`id`= `kw`.`cat_id` WHERE `keyword` LIKE '$alphabet%' LIMIT 0, 100000";
 				}
 
-				$json = array('content' => $content);
-				$json = json_encode($json);
-				write_file('../content/spinner/'.$id.'.spinner', $json, 'w');
+				$db_result = $this->db->query($query)->result();
+				if (! empty($db_result))
+				{
+					foreach ($db_result as $result)
+					{
+						if ($result['cat_id'] !== 'NULL')
+						{
+							array_push($list, $result);
+						}
+					}
+				}
 
-				$spinner = remove_empty_array(array_unique($spinner));
-				sort($spinner);
-				$spinner = implode(',', $spinner);
-				write_file($spinner_config, $spinner, 'w');
+				$results = array('title' => 'Sitemap '. current_path(), 'list' => $list);
+				$this->render('sitemap');
+			break;
 
-				header("Location: ./?spinner=1");
+			default:
+				$this->not_found();
 			break;
 		}
 	}
-	else
-	{
-		$user = $_POST['user'];
-		$passwd = $_POST['passwd'];
 
-		if((isset($user) && $user == 'admin') && (isset($passwd) && $passwd === config('password')) && isset($_POST['login_form']))
+	function is_category_exists ()
+	{
+		$category = get_category();
+		$category_id = $this->get_category_id($category);
+
+		if (! empty($category_id)) return $category_id[0]['id'];
+		return false;
+	}
+
+	function cache_file ($q)
+	{
+		$file_hash = new Hashids(md5($q), 10);
+		$file_hash_id = $file_hash->encrypt(1);
+
+		return CONTENTPATH .'/caches/'. $file_hash_id;
+	}
+
+	function search_db ($q)
+	{
+		$hash = new Hashids(md5($q), 10);
+		$hash = $hash->encrypt(1);
+
+		$result = $this->db->query("SELECT * FROM `index` WHERE `keyword_id` = '{$hash}'")->result();
+		return $result;
+	}
+
+	function get_category_id ($category_name)
+	{
+		$result = $this->db->query("SELECT `id` FROM `cat` WHERE LOWER(`name`) LIKE '%{$category_name}%' LIMIT 0,1")->result();
+		return $result;
+	}
+
+	function get_keyword_id ($keyword)
+	{
+		$result = $this->db->query("SELECT `id`,`cat_id` FROM `keywords` WHERE LOWER(`keyword`) LIKE '{$keyword}' LIMIT 0,1")->result();
+		return $result;
+	}
+
+	function add_db ($q, $list, $keyword_id, $is_new = false)
+	{
+		$time = time();
+
+		$query = "INSERT INTO `index` (`id`, `keyword_id`, `title`, `description`, `url`, `time`) VALUES ";
+		foreach ($list as $k => $item)
 		{
-			$_SESSION["login"] = 'yes';
-			$_SESSION["passwd"] = $passwd;
+			$title = safe_string_insert($this->db->escape_str($item['title']), 'title');
+			$list[$k]['title'] = $title;
+
+			$description = safe_string_insert($this->db->escape_str($item['description']), 'desc');
+			$list[$k]['description'] = $description;
+
+			$url = $this->db->escape_str($item['url']);
+
+			$query .= "('{$item['id']}', '{$keyword_id}', '{$title}', '{$description}', '{$url}', '{$time}'), ";
+		}
+		$query = rtrim($query, ", ");
+		$this->db->query("$query ON DUPLICATE KEY UPDATE `id` = `id`;");
+
+		return $list;
+	}
+
+	function get_db ($q)
+	{
+		$hash = new Hashids(md5($q), 10);
+		$hash = $hash->encrypt(1);
+
+		$this->db->where('keyword_id', $hash);
+		$results = $this->db->get('index', config('results'))->result();
+
+		if (count($results) > 0) {
+			return $results;
+		}
+
+		return NULL;
+	}
+
+	public function single ($id)
+	{
+		$this->db->where('id', $id);
+		$result = $this->db->get('index')->result();
+
+		if (! empty($result))
+		{
+			return $result[0];
+		}
+
+		return NULL;
+	}
+
+	public function theme_path ()
+	{
+		if (file_exists(CONTENTPATH . '/themes/'. config('theme')))
+		{
+			return CONTENTPATH . '/themes/'. config('theme') .'/';
+		}
+		
+		die('theme Doesn\'t Exists');
+	}
+
+	public function valid_url ($q)
+	{
+		$ext = end(explode('_', end($this->path)));
+		if (count($this->path) > 1 && $ext === config('type') && $q !== '') return true;
+		return false;
+	}
+
+	function append_file ($file, $data)
+	{
+		$files = explode("\n", read_file($file));
+		$text = remove_empty_array($files);
+
+		if (count($text) > 0)
+		{
+			$text = array_filter($text, 'normalize');
+			if (! in_array($data, $text) && ! empty($data))
+			{
+				file_put_contents($file, "\n$data", FILE_APPEND);
+			}
 		}
 	}
-endif;
-?>
-<!DOCTYPE html>
-<html data-ng-app="App">
-<head>
-	<meta charset="utf-8">
-	<meta name="robots" content="noindex,nofollow">
-	<title>Admin</title>
-	<link rel="stylesheet" href="./assets/css/normalize.css">
-	<link rel="stylesheet" href="./assets/css/foundation.min.css">
-	<link rel="stylesheet" href="./assets/css/font-awesome.min.css">
-	<?php if (is_login()): ?>
-	<link rel="stylesheet" href="./assets/css/w2ui.min.css">
-	<?php endif; ?>
-	<link rel="stylesheet" href="./assets/css/site.css">
-</head>
 
-<body <?php echo (! is_login())? 'class="nologin"': ''; ?> data-ng-controller="Main">
+	function remove_header ()
+	{
+		if (config('type') === 'pdf')
+		{
+			header('Content-Type: text/html;charset=UTF-8');
+			if (function_exists('header_remove'))
+			{
+				header_remove('X-Powered-By');
+			}
+			else
+			{
+				@ini_set('expose_php', 'off');
+			}
+		}
+	}
 
-	<div class="row" id="<?php echo (! is_login())? 'login-box': 'admin-box'; ?>">
-		<?php if (! is_login()): ?>
-			<div class="large-6 columns">
-				<div class="row">
-					<div class="large-12 columns">
-						<img src="./assets/img/login.jpg">
-					</div>
-				</div>
-			</div>
-			<div class="large-5 large-offset-1 columns">
-				<form method="POST">
-					<h2>Admin Login <?php echo $version; ?></h2>
-					<p>This is secret area, please leave this page if you're not an administrator of this site</p>
+	function render ($page_name)
+	{
+		# Load functions before render
+		if (file_exists($this->theme . 'functions.php'))
+		{
+			require $this->theme . 'functions.php';
+		}
 
-					<div class="row">
-						<div class="large-12 columns">
-							<label>
-								<input type="text" name="user" placeholder="Username" />
-							</label>
-						</div>
-					</div>
+		ob_start();
+		include $this->theme . $page_name . '.php';
+		$buffer = ob_get_clean();
 
-					<div class="row">
-						<div class="large-12 columns">
-							<label>
-								<input type="password" name="passwd" placeholder="Password" />
-							</label>
-						</div>
-					</div>
+		$search = array(
+			'/\>[^\S ]+/s', 
+			'/[^\S ]+\</s', 
+			'/(\s)+/s',
+			'#(?://)?<!\[CDATA\[(.*?)(?://)?\]\]>#s'
+		);
 
-					<div class="row">
-						<div class="large-12 columns">
-							<input type="hidden" name="login_form" value="1">
-							<button class="tiny button"><i class="fa fa-sign-in"></i> Sign In</button>
-						</div>
-					</div>
-				</form>
-			</div>
-		<?php else: ?>
-			<div class="large-12 columns">
-				<div class="row">
-					<div class="large-12 columns">
-						<a href="./" class="no-margin tiny secondary button"><i class="fa fa-home"></i> Home</a>
-						<a href="?page=1" class="no-margin tiny secondary button"><i class="fa fa-file-text-o"></i> Page</a>
-						<a  data-ng-show="usingSpinner" href="?spinner=1" class="no-margin tiny secondary button"><i class="fa fa-spinner"></i> Spinner</a>
-						<a href="logout.php" class="no-margin tiny alert button"><i class="fa fa-sign-out"></i> Logout</a>
-						<a target="_blank" class="right a-small" href="<?php echo dirname(base_url()); ?>"><i class="fa fa-share"></i> View Site</a>
-					</div>
-				</div>
+		$replace = array(
+			'>',
+			'<',
+			'\\1',
+			"//&lt;![CDATA[\n".'\1'."\n//]]>"
+		);
 
-				<?php
-				if (isset($_GET['page'])):
-					include 'page.php';
-				elseif(isset($_GET['spinner'])):
-					include 'spinner.php';
-				else:
-					include 'settings.php';
-				endif;
-				?>
-			</div>
-		<?php endif; ?>
-	</div>
+		if (config('type') === 'html') $buffer = preg_replace($search, $replace, $buffer);
+		$buffer = str_replace('<html>', '<html itemscope itemtype="http://schema.org/WebPage">', $buffer);
+		$buffer = str_replace('<title>', '<title itemprop="name">', $buffer);
+		$script = array('<script type="text/javascript">var delok="'. config('method') .'";</script><script type="text/javascript" src="'.base_url().'content/views.js">',
+			'</script><script type="application/ld+json">{"@context": "http://schema.org", "@type": "WebSite","url": "'. base_url() .'","potentialAction": {"@type": "SearchAction", "target": "'. base_url() .'search?q={search_term_string}", "query-input": "required name=search_term_string"},"name" : "'. site_name() .'"}</script>');
+		$buffer = str_replace('</body>', implode('', $script) . '</body>', $buffer);
+		echo $buffer;
+	}
 
-	<div class="row">
-		<div class="large-12">
-			<p style="margin:40px 0 20px;font-size: 12px;text-align:center">&copy; <?php echo date('Y'); ?> - Copyrighted by <a href="http://fb.com/anonymousjapan" target="_blank">fb.com/anonymousjapan</a></p>
-		</div>
-	</div>
+	function not_found ()
+	{
+		header('HTTP/1.0 404 Not Found');
+		$this->render('404');
+	}
 
-<?php if (is_login()): ?>
-<script type="text/javascript" src="./assets/js/jquery.min.js"></script>
-<script type="text/javascript" src="./assets/js/angular.min.js"></script>
-<script type="text/javascript" src="./assets/js/string.min.js"></script>
-<script type="text/javascript" src="./assets/js/w2ui.min.js"></script>
-<script type="text/javascript" src="./assets/js/underscore.min.js"></script>
-<script type="text/javascript" src="./assets/js/async.js"></script>
-<script type="text/javascript" src="./assets/js/uslug.js"></script>
-<?php if(isset($_GET['page']) || isset($_GET['spinner'])): ?>
-<script type="text/javascript" src="./assets/js/ckeditor/ckeditor.js" charset="utf-8"></script>
-<script type="text/javascript">
-var fileEditor = './assets/js/fileman/index.php'; 
-(function($){
-	$(document).ready(function() {
-		$('.editor').each(function (i, el) {
-			CKEDITOR.replace($(el).get(0), {
-				filebrowserBrowseUrl: fileEditor,
-				filebrowserImageBrowseUrl: fileEditor + '?type=Images',
-				removeDialogTabs: 'link:upload;image:upload',
-				skin: 'moono'
-			}); 
-		});
-	});
-})(jQuery);
-</script>
-<?php endif; ?>
-<script type="text/javascript" src="./assets/js/site.js"></script>
-<?php endif; ?>
-</body>
-</html>
+	function insert_keyword ($keyword, $cat_id = '')
+	{
+		$time = time();
+
+		$keyword = safe_strtolower(permalink_url($keyword, true));
+		$cat_id = (empty($cat_id)) ? 'VoXl0m3N1q': $cat_id;
+		$keyword_id = new Hashids(md5($keyword), 10);
+		$keyword_id = $keyword_id->encrypt(1);
+		$keyword_is = $this->db->query("SELECT count(*) as `exists` FROM `keywords` WHERE `id` = '{$keyword_id}'")->result();
+
+		if (! empty($keyword_is) && $keyword_is[0]['exists'] === '0')
+		{
+			$list = search_bing($keyword);
+
+			if ($list !== NULL)
+			{
+				$this->db->query("INSERT INTO `keywords` (`id`, `keyword`, `cat_id`, `time`) VALUES ('{$keyword_id}', '{$keyword}', '{$cat_id}', '{$time}') ON DUPLICATE KEY UPDATE `count` = `count` + 1;");
+				$list = $this->add_db($keyword, $list, $keyword_id);
+				return $list;
+			}
+			else
+			{
+				$this->db->query("INSERT INTO `keywords` (`id`, `keyword`, `cat_id`, `time`) VALUES ('{$keyword_id}', '{$keyword}', 'NULL', '{$time}') ON DUPLICATE KEY UPDATE `count` = `count` + 1;");
+				return false;
+			}
+		}
+		else
+		{
+			$list = $this->search_db($keyword);
+			return $list;
+		}
+	}
+}
+
+$system = new Engine();
+$system->init();
+/* End of File */
