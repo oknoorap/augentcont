@@ -185,6 +185,7 @@ p.description {
 
 .theme-selector {
 	min-height: 220px;
+	margin-bottom: 10px;
 }
 .theme-selector {
 	border-width: 5px;
