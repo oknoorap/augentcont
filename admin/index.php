@@ -2,7 +2,6 @@
 if (isset($_GET['cc']))
 {
 	exec('sh -x '. dirname(getcwd()) . '/cc.sh');
-	die("Succes Clear /etc/nginx/cache");
 }
 
 require '../includes/helpers.php';
@@ -289,7 +288,8 @@ endif;
 						<a href="?page=1" class="no-margin tiny secondary button"><i class="fa fa-file-text-o"></i> Page</a>
 						<a  data-ng-show="usingSpinner" href="?spinner=1" class="no-margin tiny secondary button"><i class="fa fa-spinner"></i> Spinner</a>
 						<a href="logout.php" class="no-margin tiny alert button"><i class="fa fa-sign-out"></i> Logout</a>
-						<a target="_blank" class="right a-small" href="<?php echo dirname(base_url()); ?>"><i class="fa fa-share"></i> View Site</a>
+						<a target="_blank" class="right a-small" href="<?php echo dirname(base_url()); ?>"><i class="fa fa-share"></i> View Site</a>&nbsp;
+						<a href="?cc=1" class="right a-small"><i class="fa fa-remove"></i> CC</a>
 					</div>
 				</div>
 

@@ -1469,7 +1469,7 @@ function download_url ($title)
 	return base_url() . 'download.php?file=' . url_title($title, '-', false) .'&format=pdf';
 }
 
-function open_url ($url, $user_agent = '')
+function open_url ($url, $user_agent = '', $referer = '')
 {
 	if (empty($user_agent))
 	{
@@ -1490,6 +1490,7 @@ function open_url ($url, $user_agent = '')
 	curl_setopt($process, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($process, CURLOPT_SSL_VERIFYPEER, 0);
 	curl_setopt($process, CURLOPT_FOLLOWLOCATION, 1);
+	if (!empty($referer)) curl_setopt($process, CURLOPT_REFERER, $referer);
 	curl_setopt($process, CURLOPT_USERAGENT, $user_agent);
 	$results = curl_exec($process);
 	curl_close($process);
