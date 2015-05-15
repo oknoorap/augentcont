@@ -83,7 +83,7 @@ class Engine {
 			case 'search':
 				if ($_SERVER['REQUEST_METHOD'] === 'POST')
 				{
-					$q = (isset($_GET['q']))? $_GET['q']: '';
+					$q = (isset($_POST['q']))? $_POST['q']: '';
 				}
 				else
 				{
