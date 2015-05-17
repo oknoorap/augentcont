@@ -49,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'):
 					$list = search_bing($q);
 					if ($list !== NULL && ! empty($list))
 					{
+						$q = safe_strtolower($q);
 						$keyword_id = new Hashids(md5($q), 10);
 						$keyword_id = $keyword_id->encrypt(1);
 						$category_id = new Hashids(md5($category), 10);

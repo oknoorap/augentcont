@@ -296,7 +296,7 @@ class Engine {
 
 	function search_db ($q)
 	{
-		$hash = new Hashids(md5($q), 10);
+		$hash = new Hashids(md5(safe_strtolower($q)), 10);
 		$hash = $hash->encrypt(1);
 
 		$result = $this->db->query("SELECT * FROM `index` WHERE `keyword_id` = '{$hash}'")->result();
@@ -340,7 +340,7 @@ class Engine {
 
 	function get_db ($q)
 	{
-		$hash = new Hashids(md5($q), 10);
+		$hash = new Hashids(md5(safe_strtolower($q)), 10);
 		$hash = $hash->encrypt(1);
 
 		$this->db->where('keyword_id', $hash);
@@ -461,7 +461,7 @@ class Engine {
 
 		$keyword = safe_strtolower(permalink_url($keyword, true));
 		$cat_id = (empty($cat_id)) ? 'VoXl0m3N1q': $cat_id;
-		$keyword_id = new Hashids(md5($keyword), 10);
+		$keyword_id = new Hashids(md5(safe_strtolower($keyword)), 10);
 		$keyword_id = $keyword_id->encrypt(1);
 		$keyword_is = $this->db->query("SELECT count(*) as `exists` FROM `keywords` WHERE `id` = '{$keyword_id}'")->result();
 
