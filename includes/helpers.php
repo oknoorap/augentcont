@@ -1195,7 +1195,7 @@ function breadcrumbs ($nav = '')
 	$output = '<span itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a itemprop="url" href="'.base_url().'" title="'.config('index.title').'"><span itemprop="title">Home</span></a></span> '. $nav;
 
 	$category = title_case(get_category());
-	$category_url = base_url() . get_category();
+	$category_url = base_url() . permalink_url(get_category());
 
 	$keyword = title_case(get_keyword());
 	$keyword_url = generate_permalink_url(get_keyword());
