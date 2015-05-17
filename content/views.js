@@ -113,7 +113,7 @@ if (viewer) {
 	iframe.setAttribute('frameborder', '0');
 	viewer.appendChild(iframe);
 
-	insertNode(viewer, '<div id="pdf-download" style="display:none"><p>Please wait <span id="download-counter">15</span> seconds to download.</p> </div><div style="margin:5px 0;text-align:center"><a href="#" id="download-btn" class="download button" onclick="downloadPDF(this);return false;"><i class="fa fa-download"></i> Download</a><a href="#" id="read-btn" class="read button" style="display:none" onclick="readPDF(this);return false;"><i class="fa fa-file-pdf-o"></i> Read Document</a></div>');
+	insertNode(viewer, '<div id="pdf-download" style="display:none"><p>Please wait <span id="download-counter">15</span> seconds to download.</p> </div><div style="margin:5px 0;text-align:center"><a href="#" id="read-btn" class="read button" style="display:none" onclick="readPDF(this);return false;"><i class="fa fa-file-pdf-o"></i> Read Document</a></div>');
 
 	var downloader = el('pdf-download'), downloadBtn = el('download-btn'), readerBtn = el('read-btn'), counter = el('download-counter'), dlCounter = 15, downloadProcess;
 };
