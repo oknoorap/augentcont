@@ -275,7 +275,7 @@ fi
 # If not new installation
 # remove fast cgi key
 FCGI_KEY=''
-if [[ $OPTION == '2' ]]; then
+if [[ $OPTION == '1' ]]; then
 	FCGI_KEY='fastcgi_cache_key "\$scheme\$request_method\$host\$request_uri"';
 fi
 
