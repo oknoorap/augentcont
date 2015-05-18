@@ -272,11 +272,18 @@ else
 }"
 fi
 
+# If not new installation
+# remove fast cgi key
+FCGI_KEY=''
+if [[ $OPTION == '2' ]]; then
+	FCGI_KEY='fastcgi_cache_key "\$scheme\$request_method\$host\$request_uri"';
+fi
+
 # Write nginx config
 CACHEKEY=${DOMAIN/./}
 cat << NGINXCONF > /etc/nginx/sites-available/${DOMAIN}
 fastcgi_cache_path /etc/nginx/cache levels=1:2 keys_zone=${CACHEKEY}:100m inactive=10d;
-fastcgi_cache_key "\$scheme\$request_method\$host\$request_uri";
+${FCGI_KEY}
 
 ${NGINXCONFREDIRECT}
 
