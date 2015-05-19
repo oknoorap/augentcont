@@ -1,5 +1,17 @@
 #!/bin/bash
 
+# function to check yes / no
+yesorno () {
+	while true; do
+		read -p "$1 " yn
+		case $yn in
+			[Yy]* ) return 0;;
+			[Nn]* ) return 1;;
+			* ) echo "Please answer yes or no.";;
+		esac
+	done
+}
+
 #--------------------------
 # Clone website source
 #--------------------------
@@ -22,7 +34,9 @@ sudo rm augencont/update.sh -rf
 #--------------------------
 sudo rm admin -rf
 sudo rm includes -rf
-sudo rm content -rf
+if yesorno "Delete /content [y/n]"; then
+	sudo rm content -rf
+fi
 sudo mv augencont/* ./
 sudo rm augencont -rf
 
