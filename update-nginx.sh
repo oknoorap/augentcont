@@ -37,3 +37,5 @@ sudo chmod -R g+ws $(pwd)
 sudo chmod +x backup.sh
 sudo chmod +x update-nginx.sh
 sudo chmod +x cc.sh
+DOMAIN=$(pwd | xargs basename)
+sudo sed -i "s/DOMAIN/${DOMAIN}/g" cc.sh
