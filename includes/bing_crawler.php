@@ -154,9 +154,7 @@ class Bing_Crawler {
 
 	function arr_filter_bing_proxy ($arr)
 	{
-		$url = $arr['link'];
-		$eurl = explode('.', $url);
-		if (is_array($arr) && array_key_exists('description', $arr) && array_key_exists('title', $arr) && array_key_exists('link', $arr) && end($eurl) === 'pdf')
+		if (is_array($arr) && array_key_exists('description', $arr) && array_key_exists('title', $arr) && array_key_exists('link', $arr) && end(explode('.', $arr['link']) === 'pdf'))
 		{
 			$description = $arr['description'];
 			$description = $this->safe_string($description);
