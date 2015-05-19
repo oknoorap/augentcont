@@ -303,7 +303,7 @@
 					<div class="small-2 columns">&nbsp;</div>
 					<div class="small-10 columns">
 						<div class="panel callout">
-							<p><strong>Permalink</strong><br /><code><?php echo base_url(); ?><span data-ng-bind="buildPermalink('category page')"></span>/<span data-ng-bind="buildPermalink('result page')"></span>.html?<span data-ng-bind="permalinks.single_var"></span>=ID</code></p>
+							<p><strong>Permalink</strong><br /><code><?php echo str_replace('admin/', '', base_url()); ?><span data-ng-bind="buildPermalink('category page')"></span>/<span data-ng-bind="buildPermalink('result page')"></span>.html?<span data-ng-bind="permalinks.single_var"></span>=ID</code></p>
 						</div>
 					</div>
 				</div>
