@@ -1,5 +1,5 @@
 #!/bin/bash
 
-rm -rf /etc/nginx/cache
-mkdir /etc/nginx/cache
+rm -rf /etc/nginx/cache/DOMAIN
+mkdir /etc/nginx/cache/DOMAIN
 service nginx reload

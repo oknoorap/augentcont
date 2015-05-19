@@ -223,8 +223,11 @@ if [[ $OPTION != '3' ]]; then
 	rm augencont -rf
 fi
 
+# change cache dir
+sudo sed -i "s/DOMAIN/${DOMAIN}/g" cc.sh
+
 # change config.php password
-sed -i "s/\"password\":\"sukses999\"/\"password\":\"${PASS}\"/g" config.php
+sudo sed -i "s/\"password\":\"sukses999\"/\"password\":\"${PASS}\"/g" config.php
 
 # New installation
 if [[ $OPTION == '1' ]]; then
@@ -279,10 +282,14 @@ if [[ $OPTION == '1' ]]; then
 	FCGI_KEY='fastcgi_cache_key "\$scheme\$request_method\$host\$request_uri";';
 fi
 
+# Create cache directory
+sudo mkdir -p /etc/nginx/cache/${DOMAIN}
+
 # Write nginx config
 CACHEKEY=${DOMAIN/./}
+CACHEKEY=${CACHEKEY/-/}
 cat << NGINXCONF > /etc/nginx/sites-available/${DOMAIN}
-fastcgi_cache_path /etc/nginx/cache levels=1:2 keys_zone=${CACHEKEY}:100m inactive=10d;
+fastcgi_cache_path /etc/nginx/cache/${DOMAIN} levels=1:2 keys_zone=${CACHEKEY}:100m inactive=10d;
 ${FCGI_KEY}
 
 ${NGINXCONFREDIRECT}
