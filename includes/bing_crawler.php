@@ -154,32 +154,37 @@ class Bing_Crawler {
 
 	function arr_filter_bing_proxy ($arr)
 	{
-		if (is_array($arr) && array_key_exists('description', $arr) && array_key_exists('title', $arr) && array_key_exists('link', $arr) && end(explode('.', $arr['link']) === 'pdf'))
+		$url = (array_key_exists('link', $arr))? $arr['link']: '';
+		if (! empty($url))
 		{
-			$description = $arr['description'];
-			$description = $this->safe_string($description);
-			$description = (empty($description))? 'No Description': $description;
-			$description = safe_ucfirst($description);
-
-			$title = $arr['title'];
-			$title = $this->safe_string($title);
-			$title = (empty($title))? 'Untitled Document': $title;
-			$title = title_case($title);
-
-			if (! bad_words($title) && ! bad_words($description))
+			$eurl = end(explode('.', $url));
+			if (is_array($arr) && array_key_exists('description', $arr) && array_key_exists('title', $arr) && $eurl === 'pdf')
 			{
-				$hash = new Hashids(md5(base_url() . $url), 15);
-				$output = array(
-					'id'			=> $hash->encrypt(1),
-					'description'	=> $description,
-					'title'			=> $title,
-					'url'			=> $url,
-					'time'			=> time()
-				);
+				$description = $arr['description'];
+				$description = $this->safe_string($description);
+				$description = (empty($description))? 'No Description': $description;
+				$description = safe_ucfirst($description);
+
+				$title = $arr['title'];
+				$title = $this->safe_string($title);
+				$title = (empty($title))? 'Untitled Document': $title;
+				$title = title_case($title);
+
+				if (! bad_words($title) && ! bad_words($description))
+				{
+					$hash = new Hashids(md5(base_url() . $url), 15);
+					$output = array(
+						'id'			=> $hash->encrypt(1),
+						'description'	=> $description,
+						'title'			=> $title,
+						'url'			=> $url,
+						'time'			=> time()
+					);
+					
+					return $output;
+				}
 				
-				return $output;
 			}
-			
 		}
 	}
 }
