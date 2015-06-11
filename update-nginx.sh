@@ -36,6 +36,8 @@ sudo rm admin -rf
 sudo rm includes -rf
 if yesorno "Delete /content [y/n]"; then
 	sudo rm content -rf
+else
+	sudo rm augencont/content -rf
 fi
 sudo mv augencont/* ./ >/dev/null
 sudo rm augencont -rf

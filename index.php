@@ -443,8 +443,7 @@ class Engine {
 		if (config('type') === 'html') $buffer = preg_replace($search, $replace, $buffer);
 		$buffer = str_replace('<html>', '<html itemscope itemtype="http://schema.org/WebPage">', $buffer);
 		$buffer = str_replace('<title>', '<title itemprop="name">', $buffer);
-		$script = array('<script type="text/javascript">var delok="'. config('method') .'";</script><script type="text/javascript" src="'.base_url().'content/views.js">',
-			'</script><script type="application/ld+json">{"@context": "http://schema.org", "@type": "WebSite","url": "'. base_url() .'","potentialAction": {"@type": "SearchAction", "target": "'. base_url() .'search?q={search_term_string}", "query-input": "required name=search_term_string"},"name" : "'. site_name() .'"}</script>');
+		$script = array('<script type="text/javascript">var delok="'. config('method') .'";</script><script type="text/javascript" src="'.base_url().'content/views.js"></script>');
 		$buffer = str_replace('</body>', implode('', $script) . '</body>', $buffer);
 		echo $buffer;
 	}
