@@ -2,8 +2,9 @@
 
 class DB_Driver
 {
-	private static $instance;
-	private static $connection;
+	private $connection;
+	private $use_db;
+
 	/* Public database */
 	public $host;
 	public $database;
@@ -26,42 +27,38 @@ class DB_Driver
 	/* Constructor functions */
 	public function __construct($host, $database, $username, $password)
 	{
-		global $db;
-		self::$instance = & $this;
-
 		$this->host = $host;
 		$this->database = $database;
 		$this->username = $username;
 		$this->password = $password;
-		$this->connect();
+		//$this->connect();
 	}
 
-	/* Get reference */
-	public static function &get_instance()
+	public function __destruct()
 	{
-		return self::$instance;
+		//$this->close();
 	}
 
 	private function connect()
 	{
-		$mysql_connect = mysql_connect($this->host, $this->username, $this->password);
-		
-		if (!$mysql_connect)
+		if (! $connection = mysql_connect($this->host, $this->username, $this->password))
 		{
 			die('Error: Could not connect: ' . mysql_error());
 		}
 		else
 		{
-			mysql_set_charset('utf8', $mysql_connect);
+			$this->connection = $connection;
+			mysql_set_charset('utf8', $this->connection);
 			mysql_select_db($this->database);
 		}
-
-		$this->connection = $mysql_connect;
 	}
 
 	private function close()
 	{
-		mysql_close($this->connection);
+		if (is_resource($this->connection) && get_resource_type($this->connection) === 'mysql link')
+		{
+			mysql_close($this->connection);
+		}
 	}
 
 	public function escape_str($string)

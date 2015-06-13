@@ -366,7 +366,7 @@ function get_footer ()
 function get_sidebar ()
 {
 	$file = CONTENTPATH .'/themes/'. config('theme') . '/sidebar.php';
-	if (file_exists($file))	include $file;
+	if (file_exists($file)) include $file;
 }
 
 function get_file ($filename)
@@ -485,11 +485,16 @@ function spinner ($echo = true)
 function related ()
 {
 	if (location('single')):
-		global $related;
-		$id = $related['id'];
-		$keyword_id = $related['keyword_id'];
-		$results = recent_document($keyword_id, array('type' => 'array', 'limit' => config('results'), 'exclude' => array($id)));
-		return $results;
+		global $related, $results;
+		$output = array();
+		foreach ($related as $rel)
+		{
+			if ($rel['id'] !== $results['id'])
+			{
+				array_push($output, $rel);
+			}
+		}
+		return $output;
 	endif;
 }
 
@@ -664,56 +669,36 @@ function permalink ($link)
 	}
 }
 
-function location ($is = '', $check = true)
+
+function get_location ()
 {
 	global $path;
 	$location = 'home';
-	
+
 	if (! empty($path) && is_array($path))
 	{
-		switch (count($path))
+		$path_count = count($path);
+		if ($path_count === 1)
 		{
-			case 1:
-			if (end($path) === 'search')
-			{
-				$location = 'search';
-			}
-			else if(end($path) === 'search_xml')
-			{
-				$location = 'opensearch';
-			}
-			else
-			{
-				$location = 'category';
-			}
-			break;
-
-			case 2:
-			if (first_path() === 'p')
+			if (end($path) === 'search') $location = 'search';
+			else if (end($path) === 'search_xml') $location = 'opensearch';
+			else $location = 'category';
+		}
+		elseif ($path_count === 2)
+		{
+			$first_path = first_path();
+			if ($first_path === 'p')
 			{
 				$page = array ('about', 'copyrights', 'privacy', 'terms', 'contact', 'faq');
-				if (in_array(end($path), $page))
-				{
-					$location = 'page';
-				}
-				else
-				{
-					$location = '404';
-				}
+				if (in_array(end($path), $page)) $location = 'page';
+				else $location = '404';
 			}
-			else if (first_path() === 'sitemaps')
+			elseif ($first_path === 'sitemaps')
 			{
 				$sitemap = range('A', 'Z');
 				array_push($sitemap, 'numeric');
-
-				if (in_array(end($path), $sitemap))
-				{
-					$location = 'sitemap';
-				}
-				else
-				{
-					$location = '404';
-				}
+				if (in_array(end($path), $sitemap)) $location = 'sitemap';
+				else $location = '404';
 			}
 			else
 			{
@@ -724,24 +709,23 @@ function location ($is = '', $check = true)
 				}
 				else
 				{
-					if (isset($_GET[config('single_var')])) 
-					{
-						$location = 'single';
-					}
-					else
-					{
-						$location = 'result';
-					}
+					if (isset($_GET[config('single_var')])) $location = 'single';
+					else $location = 'result';
 				}
 			}
-			break;
-
-			case 0:
-			default:
+		}
+		else 
+		{
 			$location = '404';
-			break;
 		}
 	}
+
+	return $location;
+}
+
+function location ($is = '', $check = true)
+{
+	global $location;
 
 	if ($check)
 	{
@@ -904,14 +888,14 @@ function search_bing ($q)
 function widget ($query, $options)
 {
 	$options = array_extend(array('prefix' => 'ul', 'parent_class'=>'square', 'item' => 'li', 'echo' => true, 'type' => 'html'), $options);
-	global $db;
-	$results = $db->query($query)->result();
-	$is_pdf = (config('type') === 'pdf') ? '.pdf': '.html';
+	
+	$results = db()->query($query)->result();
 
 	if (! empty($results))
 	{
 		if ($options['type'] === 'html')
 		{
+			$is_pdf = (config('type') === 'pdf') ? '.pdf': '.html';
 			$parent_class = 'class="'.$options['parent_class'].'"';
 			$output = '<'.$options['prefix'].' '.$parent_class.'>';
 			foreach($results as $result)
@@ -953,14 +937,29 @@ function popular ($options = array('prefix' => 'ul', 'parent_class'=>'square', '
 function random ($options = array())
 {
 	$options = array_extend(array('prefix' => 'ul', 'parent_class'=>'square', 'item' => 'li', 'echo' => true, 'type' => 'html', 'limit' => 5), $options);
-	global $db;
-	$results = $db->query("SELECT `cat`.`name` as `category`, `kw`.`keyword` as `keyword`, `kw`.`id` as `keyword_id`, `i`.`id` as `id`, `kw`.`cat_id` as `cat_id`, `i`.`title` FROM `index` as `i` LEFT JOIN `keywords` as `kw` ON `i`.`keyword_id` = `kw`.`id` LEFT JOIN `cat` as `cat` ON `kw`.`cat_id` = `cat`.`id` WHERE `keyword_id` IN (SELECT `kw`.`id` as `keyword_id` FROM `keywords` as `kw` LEFT JOIN `cat` as `cat` ON `cat`.`id`= `kw`.`cat_id` ORDER BY `kw`.`count` DESC) ORDER BY rand() LIMIT 0, {$options['limit']}")->result();
-	$is_pdf = (config('type') === 'pdf') ? '.pdf': '.html';
+	
+	$db = db();
+	$results = array();
+	$query = "SELECT `id` FROM `keywords` order by rand() LIMIT 0, {$options['limit']}";
+	$random = db()->query($query)->result();
+
+	if (! empty($random))
+	{
+		$in = array();
+		foreach($random as $_random)
+		{
+			array_push($in, "'{$_random['id']}'");
+		}
+		$in = implode(',', $in);
+		$query = "SELECT `cat`.`name` as `category`, `kw`.`keyword` as `keyword`, `kw`.`id` as `keyword_id`, `i`.`id` as `id`, `kw`.`cat_id` as `cat_id`, `i`.`title` FROM `index` as `i` LEFT JOIN `keywords` as `kw` ON `i`.`keyword_id` = `kw`.`id` LEFT JOIN `cat` as `cat` ON `kw`.`cat_id` = `cat`.`id` WHERE `keyword_id` IN ($in) LIMIT 0, {$options['limit']}";
+		$results = db()->query($query)->result();
+	}
 
 	if (! empty($results))
 	{
 		if ($options['type'] === 'html')
 		{
+			$is_pdf = (config('type') === 'pdf') ? '.pdf': '.html';
 			$parent_class = 'class="'.$options['parent_class'].'"';
 			$output = '<'.$options['prefix'].' '.$parent_class.'>';
 			$results = array_map("unserialize", array_unique(array_map("serialize", $results)));
@@ -1012,14 +1011,14 @@ function generate_permalink ($keyword, $category = '', $id = '')
 function recent_document ($keyword_id, $options = array())
 {
 	$options = array_extend(array('prefix' => 'ul', 'parent_class'=>'square', 'item' => 'li', 'echo' => true, 'type' => 'html', 'limit' => 3, 'exclude' => array()), $options);
-	global $db;
-	$results = $db->query("SELECT `cat`.`name` as `category`, `kw`.`keyword` as `keyword`, `kw`.`id` as `keyword_id`, `i`.`id` as `id`, `i`.`title`, `i`.`description`, `i`.`url`, `i`.`time` FROM `index` as `i` LEFT JOIN `keywords` as `kw` ON `i`.`keyword_id` = `kw`.`id` LEFT JOIN `cat` as `cat` ON `kw`.`cat_id` = `cat`.`id` WHERE `keyword_id` = '{$keyword_id}' LIMIT 0, {$options['limit']}")->result();
-	$is_pdf = (config('type') === 'pdf') ? '.pdf': '.html';
+	
+	$results = db()->query("SELECT `cat`.`name` as `category`, `kw`.`keyword` as `keyword`, `kw`.`id` as `keyword_id`, `i`.`id` as `id`, `i`.`title`, `i`.`description`, `i`.`url`, `i`.`time` FROM `index` as `i` LEFT JOIN `keywords` as `kw` ON `i`.`keyword_id` = `kw`.`id` LEFT JOIN `cat` as `cat` ON `kw`.`cat_id` = `cat`.`id` WHERE `keyword_id` = '{$keyword_id}' LIMIT 0, {$options['limit']}")->result();
 
 	if (! empty($results))
 	{
 		if ($options['type'] === 'html')
 		{
+			$is_pdf = (config('type') === 'pdf') ? '.pdf': '.html';
 			$parent_class = 'class="'.$options['parent_class'].'"';
 			$output = '<'.$options['prefix'].' itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem" '.$parent_class.'>';
 			foreach($results as $result)
@@ -1060,9 +1059,9 @@ function recent_document ($keyword_id, $options = array())
 
 function show_item ($list)
 {
-	global $db;
+	
 	$count = config("results");
-	$results = $db->query("SELECT * FROM `keywords` WHERE `cat_id` = '{$list['id']}' ORDER BY  `time` DESC  LIMIT 0,5")->result();
+	$results = db()->query("SELECT * FROM `keywords` WHERE `cat_id` = '{$list['id']}' ORDER BY  `time` DESC  LIMIT 0,5")->result();
 	$is_pdf = (config('type') === 'pdf') ? '.pdf': '.html';
 
 	if (! empty($results))
@@ -1324,8 +1323,7 @@ SCRIPT;
 
 function get_categories ()
 {
-	global $db;
-	$result = $db->query("SELECT * FROM `cat` ORDER BY `name` ASC LIMIT 0, 100000")->result();
+	$result = db()->query("SELECT * FROM `cat` ORDER BY `name` ASC LIMIT 0, 100000")->result();
 	return $result;
 }
 
@@ -1336,10 +1334,16 @@ function get_categories_map ($arr)
 	return $arr;
 }
 
-function get_keywords ($category_name)
+function get_keywords ($category_name, $limit = 10)
 {
-	global $db;
-	$result = $db->query("SELECT * FROM `keywords` WHERE `cat_id` = (SELECT `id` FROM `cat` WHERE LOWER(`name`) LIKE '%{$category_name}%' LIMIT 0,1) LIMIT 0, 100000")->result();
+	$db = db();
+	$cat_id = $db->query("SELECT `id` FROM `cat` WHERE LOWER(`name`) LIKE '%{$category_name}%' LIMIT 0,1")->result();
+	$result = NULL;
+	if (! empty($cat_id))
+	{
+		$cat_id = $cat_id[0]['id'];
+		$result = $db->query("SELECT * FROM `keywords` WHERE `cat_id` = '$cat_id' LIMIT 0, {$limit}")->result();
+	}
 	return $result;
 }
 
@@ -1404,13 +1408,10 @@ function replace_syntax ($content)
 
 function get_count ($category_id = '')
 {
-	global $db;
+	
 	$query = "SELECT COUNT(*) as `count` FROM `index`";
-	if (! empty($category_id))
-	{
-		$query = "SELECT COUNT(*) as `count` FROM `index` WHERE `keyword_id` IN (SELECT `id` FROM `keywords` WHERE `cat_id` = '{$category_id}')";
-	}
-	$result = $db->query($query)->result();
+	if (! empty($category_id)) $query = "SELECT COUNT(*) as `count` FROM `keywords` WHERE `cat_id` = '{$category_id}'";
+	$result = db()->query($query)->result();
 
 	if (count($result) > 0) {
 		return $result[0]['count'];
@@ -1419,9 +1420,9 @@ function get_count ($category_id = '')
 
 function get_keyword_count ()
 {
-	global $db;
+	
 	$query = "SELECT COUNT(*) as `count` FROM `keywords`";
-	$result = $db->query($query)->result();
+	$result = db()->query($query)->result();
 
 	if (count($result) > 0) {
 		return $result[0]['count'];
@@ -1509,6 +1510,11 @@ function pathjoin()
 	$paths = array_map(create_function('$p', 'return trim($p, "/");'), $paths);
 	$paths = array_filter($paths);
 	return join('/', $paths);
+}
+
+function db()
+{
+	return new DB_Driver('localhost', config('database.name'), config('database.username'), config('database.password'));
 }
 
 /** EOF */

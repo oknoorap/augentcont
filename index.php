@@ -26,24 +26,22 @@ if (! empty($_GET))
 	$path = $path_arr;
 }
 
-$db = new DB_Driver('localhost', config('database.name'), config('database.username'), config('database.password'));
+// Parse location
+$location = get_location();
 
 class Engine {
 
 	var $path;
-	var $db;
 	var $location;
 
 	function __construct()
 	{
-		$this->location = location('', false);
+		global $location;
+		$this->location = $location;
 	}
 
 	function init ()
 	{
-		global $db;
-		$this->db = $db;
-
 		# record keyword
 		$keyword = get_search_term();
 		if (! empty($keyword) && (location('category') || location('result') || location('single')))
@@ -98,7 +96,7 @@ class Engine {
 				}
 				else
 				{
-					$result = $this->db->query("SELECT `kw`.`keyword` as `keyword`, `kw`.`time` as `time`, `cat`.`name` as `category` FROM `keywords` as `kw` LEFT JOIN `cat` as `cat` ON `cat`.`id`= `kw`.`cat_id` WHERE LOWER(`kw`.`keyword`) LIKE '{$q}'")->result();
+					$result = db()->query("SELECT `kw`.`keyword` as `keyword`, `kw`.`time` as `time`, `cat`.`name` as `category` FROM `keywords` as `kw` LEFT JOIN `cat` as `cat` ON `cat`.`id`= `kw`.`cat_id` WHERE LOWER(`kw`.`keyword`) LIKE '{$q}'")->result();
 
 					if (empty($result))
 					{
@@ -203,7 +201,7 @@ class Engine {
 							if ($results !== NULL)
 							{
 								global $related;
-								$related = $results;
+								$related = array_splice($list, 0, config('results'));
 								$this->render('single');
 							}
 							else
@@ -255,7 +253,7 @@ class Engine {
 					$query = "SELECT `kw`.`keyword` as `keyword`, `kw`.`cat_id` as `cat_id`, `kw`.`time` as `time`, `cat`.`name` as `category` FROM `keywords` as `kw` LEFT JOIN `cat` as `cat` ON `cat`.`id`= `kw`.`cat_id` WHERE `keyword` LIKE '$alphabet%' LIMIT 0, 100000";
 				}
 
-				$db_result = $this->db->query($query)->result();
+				$db_result = db()->query($query)->result();
 				if (! empty($db_result))
 				{
 					foreach ($db_result as $result)
@@ -299,52 +297,53 @@ class Engine {
 		$hash = new Hashids(md5(safe_strtolower($q)), 10);
 		$hash = $hash->encrypt(1);
 
-		$result = $this->db->query("SELECT * FROM `index` WHERE `keyword_id` = '{$hash}'")->result();
+		$result = db()->query("SELECT * FROM `index` WHERE `keyword_id` = '{$hash}'")->result();
 		return $result;
 	}
 
 	function get_category_id ($category_name)
 	{
-		$result = $this->db->query("SELECT `id` FROM `cat` WHERE LOWER(`name`) LIKE '%{$category_name}%' LIMIT 0,1")->result();
+		$result = db()->query("SELECT `id` FROM `cat` WHERE LOWER(`name`) LIKE '%{$category_name}%' LIMIT 0,1")->result();
 		return $result;
 	}
 
 	function get_keyword_id ($keyword)
 	{
-		$result = $this->db->query("SELECT `id`,`cat_id` FROM `keywords` WHERE LOWER(`keyword`) LIKE '{$keyword}' LIMIT 0,1")->result();
+		$result = db()->query("SELECT `id`,`cat_id` FROM `keywords` WHERE LOWER(`keyword`) LIKE '{$keyword}' LIMIT 0,1")->result();
 		return $result;
 	}
 
 	function add_db ($q, $list, $keyword_id, $is_new = false)
 	{
+		$db = db();
 		$time = time();
-
 		$query = "INSERT INTO `index` (`id`, `keyword_id`, `title`, `description`, `url`, `time`) VALUES ";
 		foreach ($list as $k => $item)
 		{
-			$title = safe_string_insert($this->db->escape_str($item['title']), 'title');
+			$title = safe_string_insert($db->escape_str($item['title']), 'title');
 			$list[$k]['title'] = $title;
 
-			$description = safe_string_insert($this->db->escape_str($item['description']), 'desc');
+			$description = safe_string_insert($db->escape_str($item['description']), 'desc');
 			$list[$k]['description'] = $description;
 
-			$url = $this->db->escape_str($item['url']);
+			$url = $db->escape_str($item['url']);
 
 			$query .= "('{$item['id']}', '{$keyword_id}', '{$title}', '{$description}', '{$url}', '{$time}'), ";
 		}
 		$query = rtrim($query, ", ");
-		$this->db->query("$query ON DUPLICATE KEY UPDATE `id` = `id`;");
+		$db->query("$query ON DUPLICATE KEY UPDATE `id` = `id`;");
 
 		return $list;
 	}
 
 	function get_db ($q)
 	{
+		$db = db();
 		$hash = new Hashids(md5(safe_strtolower($q)), 10);
 		$hash = $hash->encrypt(1);
 
-		$this->db->where('keyword_id', $hash);
-		$results = $this->db->get('index', config('results'))->result();
+		$db->where('keyword_id', $hash);
+		$results = $db->get('index', config('results'))->result();
 
 		if (count($results) > 0) {
 			return $results;
@@ -355,8 +354,9 @@ class Engine {
 
 	public function single ($id)
 	{
-		$this->db->where('id', $id);
-		$result = $this->db->get('index')->result();
+		$db = db();
+		$db->where('id', $id);
+		$result = $db->get('index')->result();
 
 		if (! empty($result))
 		{
@@ -456,13 +456,13 @@ class Engine {
 
 	function insert_keyword ($keyword, $cat_id = '')
 	{
+		$db = db();
 		$time = time();
-
 		$keyword = safe_strtolower(permalink_url($keyword, true));
 		$cat_id = (empty($cat_id)) ? 'VoXl0m3N1q': $cat_id;
 		$keyword_id = new Hashids(md5(safe_strtolower($keyword)), 10);
 		$keyword_id = $keyword_id->encrypt(1);
-		$keyword_is = $this->db->query("SELECT count(*) as `exists` FROM `keywords` WHERE `id` = '{$keyword_id}'")->result();
+		$keyword_is = $db->query("SELECT count(*) as `exists` FROM `keywords` WHERE `id` = '{$keyword_id}'")->result();
 
 		if (! empty($keyword_is) && $keyword_is[0]['exists'] === '0')
 		{
@@ -470,13 +470,13 @@ class Engine {
 
 			if ($list !== NULL)
 			{
-				$this->db->query("INSERT INTO `keywords` (`id`, `keyword`, `cat_id`, `time`) VALUES ('{$keyword_id}', '{$keyword}', '{$cat_id}', '{$time}') ON DUPLICATE KEY UPDATE `count` = `count` + 1;");
+				$db->query("INSERT INTO `keywords` (`id`, `keyword`, `cat_id`, `time`) VALUES ('{$keyword_id}', '{$keyword}', '{$cat_id}', '{$time}') ON DUPLICATE KEY UPDATE `count` = `count` + 1;");
 				$list = $this->add_db($keyword, $list, $keyword_id);
 				return $list;
 			}
 			else
 			{
-				$this->db->query("INSERT INTO `keywords` (`id`, `keyword`, `cat_id`, `time`) VALUES ('{$keyword_id}', '{$keyword}', 'NULL', '{$time}') ON DUPLICATE KEY UPDATE `count` = `count` + 1;");
+				$db->query("INSERT INTO `keywords` (`id`, `keyword`, `cat_id`, `time`) VALUES ('{$keyword_id}', '{$keyword}', 'NULL', '{$time}') ON DUPLICATE KEY UPDATE `count` = `count` + 1;");
 				return false;
 			}
 		}
