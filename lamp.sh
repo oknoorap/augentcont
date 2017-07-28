@@ -1,4 +1,4 @@
-# wget https://bitbucket.org/oknoorap/augencont/raw/master/lamp.sh && chmod +x lamp.sh && ./lamp.sh
+# wget hhttps://raw.githubusercontent.com/oknoorap/augentcont/master/lamp.sh && chmod +x lamp.sh && ./lamp.sh
 sudo apt-get update
 sudo apt-get install apache2 -y
 sudo apt-get install mysql-server libapache2-mod-auth-mysql php5-mysql -y

@@ -1,5 +1,5 @@
 # Add new domain:
-# wget https://bitbucket.org/oknoorap/augencont/raw/master/new.sh && chmod +x new.sh && ./new.sh password domain.com dbname
+# wget https://raw.githubusercontent.com/oknoorap/augentcont/master/new.sh && chmod +x new.sh && ./new.sh password domain.com dbname
 
 # Set Default password
 kunci=${1-sukses999}
