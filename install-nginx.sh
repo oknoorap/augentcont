@@ -2,7 +2,7 @@
 
 #==================================================
 # AGC Script installation with nginx version
-# wget -q https://bitbucket.org/oknoorap/augencont/raw/master/install-nginx.sh && chmod +x install-nginx.sh && ./install-nginx.sh domain password
+# wget -q https://raw.githubusercontent.com/oknoorap/augentcont/master/install-nginx.sh && chmod +x install-nginx.sh && ./install-nginx.sh domain password
 #==================================================
 
 # remove host.vultr (only for vultr.com or others)

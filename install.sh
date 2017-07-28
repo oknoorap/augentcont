@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Installation:
-# wget https://bitbucket.org/oknoorap/augencont/raw/master/install.sh && chmod +x install.sh && ./install.sh 
-# wget https://bitbucket.org/oknoorap/augencont/raw/master/install.sh && chmod +x install.sh && ./install.sh password
-# wget https://bitbucket.org/oknoorap/augencont/raw/master/install.sh && chmod +x install.sh && ./install.sh password domain
+# wget https://raw.githubusercontent.com/oknoorap/augentcont/master/install.sh && chmod +x install.sh && ./install.sh 
+# wget https://raw.githubusercontent.com/oknoorap/augentcont/master/install.sh && chmod +x install.sh && ./install.sh password
+# wget https://raw.githubusercontent.com/oknoorap/augentcont/master/install.sh && chmod +x install.sh && ./install.sh password domain
 
 # Set Default password
 kunci=${1-sukses999}
